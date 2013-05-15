@@ -1,0 +1,36 @@
+#+TITLE:     Bourbon with Rob
+#+AUTHOR:    Andrew Caird
+#+EMAIL:     acaird@Andrews-MacBook-Air-2.local
+#+DATE:      2013-05-14 Tue
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+#+XSLT:
+
+Rob came over tonight with a bottle of Michigan-made
+bourbon---Traverse City Whiskey Co. Bourbon---to compare to my
+Michigan-made bourbon---New Holland Artisan Spirits Beer Barrel
+Bourbon.
+
+[[img:Michigan-Bourbon.jpg]]
+
+We tried the New Holland Bourbon first.  It had a pleasant sweetness
+but a moderately sharp alcohol bite at first.
+
+The Traverse City Whiskey Co. Bourbon was much less sweet and much
+less sharp than the New Holland.  It wasn't as complex, but was very
+easy to drink.
+
+Rob has a history of "blind taste tests of alcoholic drinks", so we
+thought we'd try a simple version.  I went into the living room and
+he poured me a glass of one of the two.  With a 50/50 chance, I tried
+to taste for either the bite and sweetness of the New Holland or the
+smoothness of the Traverse City.  I was successful in my guess that
+he poured me the New Holland.
