@@ -27,7 +27,11 @@ bourbon---Traverse City Whiskey Co. Bourbon---to compare to my
 Michigan-made bourbon---New Holland Artisan Spirits Beer Barrel
 Bourbon.
 
-[[file:michigan-bourbon.jpg]]
+#+BEGIN_HTML
+<img src ="/images/2013-05-14-michigan-bourbon.jpg"
+alt="Two Michigan Bourbons" align="left" width="300" height="250"
+title="Two Michigan Bourbons" class="img"</img>
+#+END_HTML
 
 We tried the New Holland Bourbon first.  It had a pleasant sweetness
 but a moderately sharp alcohol bite at first.
