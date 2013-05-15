@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Using org to Blog with Jekyll</title>
+<!-- 2013-05-14 Tue 11:04 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="author" content="Ian Barton."/>
+<link rel="stylesheet" title="Standard" href="/worg/style/worg.css" type="text/css" />
+<link rel="alternate stylesheet" title="Zenburn" href="/worg/style/worg-zenburn.css" type="text/css" />
+<link rel="alternate stylesheet" title="Classic" href="/worg/style/worg-classic.css" type="text/css" />
+<link rel="stylesheet" href="http://orgmode.org/css/lightbox.css" type="text/css" media="screen" />
+<link rel="SHORTCUT ICON" href="/org-mode-unicorn.ico" type="image/x-icon" />
+<link rel="icon" href="/org-mode-unicorn.ico" type="image/ico" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7691209-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</div>
+<div id="content">
+<h1 class="title">Using org to Blog with Jekyll</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">Introduction</a></li>
+<li><a href="#sec-2">Install Jekyll</a></li>
+<li><a href="#sec-3">Project Directory Structure</a></li>
+<li><a href="#sec-4">Configuring org html Export</a></li>
+<li><a href="#sec-5">Creating an org File to be Published with Jekyll</a></li>
+<li><a href="#sec-6">Blogging with Jekyll and Org</a>
+<ul>
+<li><a href="#sec-6-1">Showing Blog Posts on the Front Page</a></li>
+<li><a href="#sec-6-2">Creating Archive Pages</a></li>
+</ul>
+</li>
+<li><a href="#sec-7">Inserting Image</a></li>
+<li><a href="#sec-8">Using Text Markup in Front Matte</a></li>
+<li><a href="#sec-9">Version Control with Jekyl</a></li>
+<li><a href="#sec-10">HappyBlogger's Jekyll Modification</a></li>
+<li><a href="#sec-11">Another example of Org-mode/Jekyll usage</a></li>
+<li><a href="#sec-12">Other Blog Solutions for org</a>
+<ul>
+<li><a href="#sec-12-1">Blorgit</a></li>
+<li><a href="#sec-12-2">ikiwiki</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+<a href="index.html">{Back to Worg's index}</a>
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<a href="http://wiki.github.com/mojombo/jekyll">Jekyll</a> is a static web site generator written in Ruby. It can
+transform various text markups, using a templating language, into
+static html. The resulting site can be served by almost any web server
+without requiring additional components such as php. Jekyll is the
+tool used to produce Github's pages.
+</p>
+
+<p>
+This article discusses how to produce both a static site and a blog
+using Jekyll and org. Rather than writing a markup processor for org
+files, I have relied on org's html export features to generate files
+that can be processed by Jekyll.
+</p>
+
+<p>
+Org already has an excellent html export engine. However, it lacks
+built in support for blogging. Using Jekyll also gives more control
+over the final appearance of your site.
+</p>
+
+<p>
+Publishing your site with org and Jekyll involves three steps:
+</p>
+
+<ol class="org-ol">
+<li>write your page content using org.
+</li>
+
+<li>use org to export your pages to html in the Jekyll project directory.
+</li>
+
+<li>run Jekyll to convert your html pages exported from org into your
+final site.
+</li>
+</ol>
+
+<p>
+By default Jekyll produces its output in the <code>_site</code> directory of
+Jekyll's working directory. This is a self contained version of your
+site, which can be deployed to your web server. The files in <code>_site</code> are
+completely self contained, so all you need to do is to copy them to
+your web server. Methods include using ftp, rsync or a git post commit
+hook. You can configure where Jekyll puts its published files in
+<code>_config.yml</code>.
+</p>
+
+<p>
+Essentially, I am using org to produce everything between the <code>&lt;body&gt;</code>
+tags on the page and Jekyll to produce the rest. Note that you can
+easily embed html content in your org pages using the <code>+BEGIN_HTML</code> tag.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Install Jekyll</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Installation is described at the <a href="http://github.com/mojombo/jekyll">Jekyll</a> web site. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Project Directory Structure</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Jekyll expects a certain directory structure. In the example below my
+Jekyll project is in a directory called <code>jekyll</code>. Blog posts are in
+<code>_posts</code> and the layout templates in <code>_layouts</code>. The <code>_includes</code>
+directory is for files containing code you want to include in other
+pages e.g. a header or sidebar.
+</p>
+
+<p>
+The file <code>_config.yml</code> is a YAML file that contains Jekyll's
+configuration for the site.
+</p>
+
+<p>
+In addition to the <code>_posts</code> directory you can create other directories
+to hold different non blog parts of your site.
+</p>
+
+<pre class="example">
+'|myproject
+'|   |org
+'|      |_posts
+'|      |-- 2009-11-26-my-first-post.org
+'|   |index.org
+'|   |jekyll
+'|   -- _config.yml
+'|   -- _layouts
+'|      |-- default.html
+'|      `-- post.html
+'|   -- _posts
+'|      |-- 2009-11-26-my-first-post.html
+'|      
+'|   -- |_site
+'|   -- |_includes
+`    -- index.html
+</pre>
+
+<p>
+You should setup the directory structure of your org files to mirror
+that of the Jekyll project. Then when you export your org files as
+html the files will end up in the correct place in your Jekyll
+project. I usually place the directory containing my org files in the
+directory about the Jekyll project directory to make sure that Jekyll
+doesn't consider .org files to be part of its project.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Configuring org html Export</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+The fundamentals of publishing html are described in the
+<a href="http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html">HTML publishing tutorial</a> on worg. I am
+assuming that you have a basic working org publishing setup. By
+default org produces complete web pages. However, as I am using Jekyll
+I am only really interested in the section of the page between the
+<code>&lt;body&gt;</code> tags, as Jekyll produces the rest. Most things in org are
+configurable and it's possible to tell org to export only the bits of
+the page between the <code>&lt;body&gt;</code> tags. Here is the relevant section of my 
+<code>.emacs</code> file:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp">(setq org-publish-project-alist
+      '(
+
+  (<span style="color: #daa520; font-style: italic;">"org-ianbarton"</span>
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Path to your org files.</span>
+          <span style="font-weight: bold;">:base-directory</span> <span style="color: #daa520; font-style: italic;">"~/devel/ianbarton/org/"</span>
+          <span style="font-weight: bold;">:base-extension</span> <span style="color: #daa520; font-style: italic;">"org"</span>
+
+          <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Path to your Jekyll project.</span>
+          <span style="font-weight: bold;">:publishing-directory</span> <span style="color: #daa520; font-style: italic;">"~/devel/ianbarton/jekyll/"</span>
+          <span style="font-weight: bold;">:recursive</span> t
+          <span style="font-weight: bold;">:publishing-function</span> org-publish-org-to-html
+          <span style="font-weight: bold;">:headline-levels</span> 4 
+          <span style="font-weight: bold;">:html-extension</span> <span style="color: #daa520; font-style: italic;">"html"</span>
+          <span style="font-weight: bold;">:body-only</span> t <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Only export section between &lt;body&gt; &lt;/body&gt;</span>
+    )
+
+
+    (<span style="color: #daa520; font-style: italic;">"org-static-ian"</span>
+          <span style="font-weight: bold;">:base-directory</span> <span style="color: #daa520; font-style: italic;">"~/devel/ianbarton/org/"</span>
+          <span style="font-weight: bold;">:base-extension</span> <span style="color: #daa520; font-style: italic;">"css</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">js</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">png</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">jpg</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">gif</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">pdf</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">mp3</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">ogg</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">swf</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">|</span><span style="color: #daa520; font-style: italic;">php"</span>
+          <span style="font-weight: bold;">:publishing-directory</span> <span style="color: #daa520; font-style: italic;">"~/devel/ianbarton/"</span>
+          <span style="font-weight: bold;">:recursive</span> t
+          <span style="font-weight: bold;">:publishing-function</span> org-publish-attachment)
+
+    (<span style="color: #daa520; font-style: italic;">"ian"</span> <span style="font-weight: bold;">:components</span> (<span style="color: #daa520; font-style: italic;">"org-ianbarton"</span> <span style="color: #daa520; font-style: italic;">"org-static-ian"</span>))
+
+))
+</pre>
+</div>
+
+<p>
+To export my site I just run <code>C-c e X ian</code>.
+</p>
+
+<p>
+You need to set the destination of your exported files to your Jekyll
+project directory. Assuming you have set up your org directory
+structure to mirror that of your Jekyll project everything should end
+up in the correct place.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">Creating an org File to be Published with Jekyll</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+When you run Jekyll it processes the source files for your site and
+any files with YAML Front Matter are subject to special processing. The
+Front Matter is used to tell Jekyll how to format your page.
+</p>
+
+<p>
+Bear in mind that Jekyll doesn't process your <code>.org</code> files, but the
+<code>.html</code> files produced by exporting. So when writing an org file it
+should be formatted in such a way that when exported it produces html
+suitable for processing by Jekyll.
+</p>
+
+<p>
+YAML Front Matter must be the first thing in the file, with
+no blank lines above the Front Matter Section. A typical Front Matter
+Section would look like:
+</p>
+
+<pre class="example">
+---
+layout: default
+title: My Page Title.
+---
+</pre>
+
+<p>
+So you should ensure that any Front Matter directives come first in
+your org file.
+</p>
+
+<p>
+Note that the three hyphens <code>---</code> are part of the markup and are
+required. The layout tag tells Jekyll which layout from its <code>_layouts</code>
+directory should be used to format your page. You can include any
+other keys in the Front Matter section (e.g. <code>title:</code>), which you can use
+in your page. See the Jekyll <a href="http://wiki.github.com/mojombo/jekyll/yaml-front-matter">wiki</a> for more details on Front Matter.
+</p>
+
+<p>
+Below is a short extract from one of my org files showing my setup:
+</p>
+
+<pre class="example">
+#+STARTUP: showall indent
+#+STARTUP: hidestars
+#+BEGIN_HTML
+---
+layout: default
+title: Benighted on the Ben.
+excerpt: An unplanned bivouac on Ben Nevis.
+---
+#+END_HTML
+It was early January when six of us travelled up to ....
+</pre>
+
+<p>
+The Front Matter section is wrapped in <code>#+BEGIN_HTML</code> so it is exported
+literally to the final html file. You may need to upgrade your org
+version as older versions produced two blank lines before the Front
+Matter section when exported. You can define your own Front Matter keys and use
+them within your generated page. In the above example I use the
+"excerpt" key to display "teasers" for a blog post.
+</p>
+
+<p>
+Note that the current git version of org removes the first <code>---</code> if the
+directory containing the file start with an underscore. The workaround
+is to start your file with <code>---</code> in both the first two lines.
+</p>
+
+<p>
+Carsten has also provided two hooks that are run after exporting is
+complete, which can also be used to tidy up the output:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp">org-export-html-final-hook      (always)
+org-publish-after-export-hook   (<span style="color: #00bfff; font-weight: bold;">when</span> going through org-publish)
+</pre>
+</div>
+
+<p>
+Once you have exported your org project to html it's simply a matter
+of running jekyll to produce the final output. By default Jekyll puts
+its output in the <code>_site</code> directory of your project, but you can
+customize this in your <code>_config.yml</code> file.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">Blogging with Jekyll and Org</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Jekyll has built-in support for blogging. Anything you place in the
+<code>_posts</code> directory of your Jekyll project is considered as a blog
+post. However, the file names of your posts must adhere to the
+following format:
+</p>
+
+<pre class="example">
+yyyy-mm-dd-post_name.html
+</pre>
+
+<p>
+To write a post just create a new file with the correct filename in
+your <code>org/_posts</code> directory. You may find that Yasnippet is useful for
+inserting Front Matter and other directives in your org file. When you
+have finished just run <code>C-c e X</code> project_name to export your org project
+as html and then run jekyll to generate your site.
+</p>
+
+<p>
+You can use Jekyll's <a href="http://wiki.github.com/mojombo/jekyll/template-data">template</a> markup to decide how your blog posts are
+displayed. On the Jekyll <a href="http://wiki.github.com/mojombo/jekyll/sites">sites</a> page there are many sites with source
+listed, so you can study how other people use the markup to create
+their blog. You can also view my site <a href="http://www.ian-barton.com">http://www.ian-barton.com</a> and
+see a snapshot of the source at
+<a href="http://github.com/geekinthesticks/ianbarton">http://github.com/geekinthesticks/ianbarton</a>.
+</p>
+
+<p>
+You can assign categories to your posts either by placing posts inside
+folders like:
+</p>
+
+<pre class="example">
+_posts/org/jekyll/howto.html
+</pre>
+
+<p>
+This would assign your post to the <i>org</i> and <i>jekyll</i> categories.
+</p>
+
+<p>
+or by using YAML markup in your org file:
+</p>
+
+<pre class="example">
+categories:
+    - org
+    - linux
+</pre>
+</div>
+
+<div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1">Showing Blog Posts on the Front Page</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+Most blogs show the latest posts on their front page. The example
+below shows the title and an excerpt for the five latest posts:
+</p>
+
+<pre class="example">
+&lt;ul class="posts"&gt;
+{% for post in site.posts limit: 5 %}
+  &lt;div class="post_info"&gt;
+    &lt;li&gt;
+            &lt;a href="{{ post.url }}"&gt;{{ post.title }}&lt;/a&gt;
+            &lt;span&gt;({{ post.date | date:"%Y-%m-%d" }})&lt;/span&gt;
+    &lt;/li&gt;
+    &lt;/br&gt; &lt;em&gt;{{ post.excerpt }} &lt;/em&gt;
+    &lt;/div&gt;
+  {% endfor %}
+&lt;/ul&gt;
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2">Creating Archive Pages</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+You will probably only want to display a limited number of blog posts
+on your front page. However, you will also want to make older pages
+available. You can create a simple list of all blog posts using the
+following markup:
+</p>
+
+<pre class="example">
+&lt;ul&gt;
+  {% for post in site.posts %}
+  &lt;li&gt;
+    &lt;a href="{{ post.url }}" title="{{ post.title }}"&gt;
+      &lt;span class="date"&gt;
+        &lt;span class="day"&gt;{{ post.date | date: '%d' }}&lt;/span&gt;
+        &lt;span class="month"&gt;&lt;abbr&gt;{{ post.date | date: '%b' }}&lt;/abbr&gt;&lt;/span&gt;
+        &lt;span class="year"&gt;{{ post.date | date: '%Y' }}&lt;/span&gt;
+      &lt;/span&gt;
+      &lt;span class="title"&gt;{{ post.title }}&lt;/span&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7">Inserting Image</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+You will probably want to insert some images into your blog posts. I
+use the following method:
+</p>
+
+<pre class="example">
+&lt;img src ="/images/skiddaw.jpg"
+alt="John and Ella on Skiddaw" align="left" width="300" height="250"
+title="John and Ella on Skiddaw" class="img"&lt;/img&gt;
+</pre>
+
+<p>
+Note that the class attribute refers to the class used to style the
+image tag in your css. My css contains:
+</p>
+
+<pre class="example">
+img {
+    margin: 15px;
+    border: 1px solid blue;
+}
+</pre>
+
+<p>
+Note that if you wish to have some space between your image and the
+text, using padding in your css doesn't seem to work. I use margin,
+which gives the same effect.
+</p>
+
+<p>
+Whilst this works, it won't display captions for your
+images. Unfortunately, after years of development xhtml doesn't seem
+to provide an easy way to display image captions. I decided to use the
+method described <a href="http://www.w3.org/Style/Examples/007/figures">here</a>. An example from of floating a picture to the
+right of the text is shown below.
+</p>
+
+<p>
+In your <code>.org</code> file use the following html to embed the picture:
+</p>
+
+<pre class="example">
+&lt;div class="photofloatr"&gt;
+  &lt;p&gt;&lt;img src="myphoto.jpg" width="300"
+    height="150" alt="My Mug Shot"&gt;&lt;/p&gt;
+  &lt;p&gt;A photo of me&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+
+<p>
+Now you need to add some information to your style sheet:
+</p>
+
+<pre class="example">
+div.photofloatr {
+    float: right;
+    border: thin silver solid;
+    margin: 0.5em;
+    padding: 0.5em;
+}
+
+div.photofloatr p {
+  text-align: center;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+}
+</pre>
+
+<p>
+A third method, which I haven't tried myself, is to use the <i>jQuery EXIF</i>
+plugin to extract the caption from the image EXIF data and use
+Javascript to display it. See <a href="http://www.nihilogic.dk/labs/exif/">here</a> for more details.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8">Using Text Markup in Front Matte</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+By default text in the Front Matter part of your file isn't processed
+by Jekyll's markup engine. However, you can use the Textilize filter
+to convert your Front Matter string into HTML, formatted using textile
+markup.
+</p>
+
+<p>
+I use this to format my page excerpts, which I include in my org files
+Front Matter markup. So in my sites index.html I have:
+</p>
+
+<pre class="example">
+&lt;li&gt;
+  &lt;a href="{{ post.url }}"&gt;{{ post.title }}&lt;/a&gt;
+  &lt;span&gt;({{ post.date | date:"%Y-%m-%d" }})&lt;/span&gt;
+&lt;/li&gt;
+&lt;/br&gt;
+&lt;em&gt;{{ post.excerpt | textilize}}&lt;/em&gt;
+</pre>
+
+<p>
+This lets me use textile markup in my page excerpts, which are defined
+in my page's YAML Front Matter section.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9">Version Control with Jekyl</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+Jekyll is amenable to using version control systems. If you follow my
+suggested directory structure you can create a git repo to your top
+level directory. You can then create a post-commit script that runs
+the org html export and then runs Jekyll to generate your site.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10">HappyBlogger's Jekyll Modification</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Bjørn Arild Mæland has created some modifications to Jekyll to
+provide some pre-processing to org files to allow for better
+integration with Jekyll. You can find his code on <a href="http://github.com/bmaland/happyblogger">github</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11">Another example of Org-mode/Jekyll usage</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+The on-line documentation for <a href="../org-contrib/babel/index.html">Org-babel</a> development is published on
+<a href="http://github.com">github</a> which uses jekyll.  The following code is used to publish one
+blog post for every subheading of the first to top-level headings of a
+org file which tracks Org-babel development.  The results can be seen
+<a href="http://eschulte.github.com/babel-dev/">here</a>, and the code used to create this site is available <a href="http://github.com/eschulte/babel-dev/">here</a>.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp">(<span style="color: #00bfff; font-weight: bold;">save-excursion</span>
+  <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">map over all tasks entries</span>
+  (<span style="color: #00bfff; font-weight: bold;">let</span> ((dev-file (expand-file-name
+                   <span style="color: #daa520; font-style: italic;">"development.org"</span>
+                   (file-name-directory (buffer-file-name))))
+        (posts-dir (expand-file-name
+                    <span style="color: #daa520; font-style: italic;">"_posts"</span>
+                    (file-name-directory (buffer-file-name))))
+        (yaml-front-matter '((<span style="color: #daa520; font-style: italic;">"layout"</span> . <span style="color: #daa520; font-style: italic;">"default"</span>))))
+    <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">go through both the tasks and bugs</span>
+    (mapc
+     (<span style="color: #00bfff; font-weight: bold;">lambda</span> (top-level)
+       (find-file dev-file)
+       (goto-char (point-min))
+       (outline-next-visible-heading 1)
+       (org-map-tree
+        (<span style="color: #00bfff; font-weight: bold;">lambda</span> ()
+          (<span style="color: #00bfff; font-weight: bold;">let*</span> ((props (org-entry-properties))
+                 (todo (cdr (assoc <span style="color: #daa520; font-style: italic;">"TODO"</span> props)))
+                 (time (cdr (assoc <span style="color: #daa520; font-style: italic;">"TIMESTAMP_IA"</span> props))))
+            <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">each task with a state and timestamp can be exported as a</span>
+            <span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">jekyll blog post</span>
+            (<span style="color: #00bfff; font-weight: bold;">when</span> (and todo time)
+              (message <span style="color: #daa520; font-style: italic;">"time=%s"</span> time)
+              (<span style="color: #00bfff; font-weight: bold;">let*</span> ((heading (org-get-heading))
+                     (title (replace-regexp-in-string
+                             <span style="color: #daa520; font-style: italic;">"[:=\(\)\?]"</span> <span style="color: #daa520; font-style: italic;">""</span>
+                             (replace-regexp-in-string
+                              <span style="color: #daa520; font-style: italic;">"[ \t]"</span> <span style="color: #daa520; font-style: italic;">"-"</span> heading)))
+                     (str-time (and (string-match <span style="color: #daa520; font-style: italic;">"</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">(</span><span style="color: #daa520; font-style: italic;">[[:digit:]\-]+</span><span style="color: #daa520; font-weight: bold; font-style: italic;">\\</span><span style="color: #daa520; font-weight: bold; font-style: italic;">)</span><span style="color: #daa520; font-style: italic;"> "</span> time)
+                                    (match-string 1 time)))
+                     (to-file (format <span style="color: #daa520; font-style: italic;">"%s-%s.html"</span> str-time title))
+                     (org-buffer (current-buffer))
+                     (yaml-front-matter (cons (cons <span style="color: #daa520; font-style: italic;">"title"</span> heading) yaml-front-matter))
+                     html)
+                (org-narrow-to-subtree)
+                (setq html (org-export-as-html nil nil nil 'string t nil))
+                (set-buffer org-buffer) (widen)
+                (<span style="color: #00bfff; font-weight: bold;">with-temp-file</span> (expand-file-name to-file posts-dir)
+                  (<span style="color: #00bfff; font-weight: bold;">when</span> yaml-front-matter
+                    (insert <span style="color: #daa520; font-style: italic;">"---\n"</span>)
+                    (mapc (<span style="color: #00bfff; font-weight: bold;">lambda</span> (pair) (insert (format <span style="color: #daa520; font-style: italic;">"%s: %s\n"</span> (car pair) (cdr pair))))
+                          yaml-front-matter)
+                    (insert <span style="color: #daa520; font-style: italic;">"---\n\n"</span>))
+                  (insert html))
+                (get-buffer org-buffer)))))))
+     '(1 2))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-12" class="outline-2">
+<h2 id="sec-12">Other Blog Solutions for org</h2>
+<div class="outline-text-2" id="text-12">
+</div><div id="outline-container-sec-12-1" class="outline-3">
+<h3 id="sec-12-1">Blorgit</h3>
+<div class="outline-text-3" id="text-12-1">
+<p>
+<a href="http://orgmode.org/worg/blorgit.html">Blorgit</a> uses org mode for markup and runs on the Sinatra mini
+framework. It is amenable to using git for posting and maintenance.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-12-2" class="outline-3">
+<h3 id="sec-12-2">ikiwiki</h3>
+<div class="outline-text-3" id="text-12-2">
+<p>
+<a href="http://ikiwiki.info/">ikiwiki</a> is a web site compiler written in Perl. In many ways it is
+similar to Jekyll, but has closer integration with version control
+systems. It supports blogging and has many plugins.
+</p>
+
+<p>
+There is an org mode plugin by <a href="http://www.golden-gryphon.com/blog/manoj/blog/2008/06/08/Using_org-mode_with_Ikiwiki/">Manoj</a>, which lets you write your posts in org
+and converts them to html suitable for processing by ikiwiki.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<div id="show_source"><input type="button" value="Show Org source" onClick='show_org_source()'></div><div id="license"><p>Documentation from the http://orgmode.org/worg/ website (either in its HTML format or in its Org format) is licensed under the <a href="http://www.gnu.org/copyleft/fdl.html">GNU Free Documentation License version 1.3</a> or later.  The code examples and css stylesheets are licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a> or later.</p></div>
+</div>
+</body>
+</html>
