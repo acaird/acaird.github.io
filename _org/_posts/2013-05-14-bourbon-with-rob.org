@@ -13,13 +13,14 @@
 #+LINK_UP:
 #+LINK_HOME:
 #+XSLT:
-#+HTML
+#+BEGIN_HTML
 ---
 layout: page
 title: Bourbon with Rom
 tagline: liquor from the Mitten
+categories: drinking
 ---
-#+HTML
+#+END_HTML
 
 Rob came over tonight with a bottle of Michigan-made
 bourbon---Traverse City Whiskey Co. Bourbon---to compare to my
