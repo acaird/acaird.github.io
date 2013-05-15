@@ -16,7 +16,7 @@
 #+BEGIN_HTML
 ---
 layout: page
-title: Bourbon with Rom
+title: Bourbon with Rob
 tagline: liquor from the Mitten
 categories: drinking
 ---
@@ -27,7 +27,7 @@ bourbon---Traverse City Whiskey Co. Bourbon---to compare to my
 Michigan-made bourbon---New Holland Artisan Spirits Beer Barrel
 Bourbon.
 
-[[img:Michigan-Bourbon.jpg]]
+[[Michigan-Bourbon.jpg]]
 
 We tried the New Holland Bourbon first.  It had a pleasant sweetness
 but a moderately sharp alcohol bite at first.
