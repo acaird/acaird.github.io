@@ -14,6 +14,7 @@ layout: page
 title: Using Python to Update Google Sites Pages
 tagline: oh how I miss SSIs
 categories: computers
+tags: python google sites oauth web
 ---
 #+END_HTML
 
@@ -182,7 +183,7 @@ else:
 f.close()
 #+END_SRC
 
-* Reading data from Google Sites
+** Reading data from Google Sites
 
 #+BEGIN_SRC python :export code :tangle yes
 feed = client.GetSiteFeed()
@@ -228,7 +229,7 @@ old=feed.entry[0]
 
 #+END_SRC
 
-* Writing to a Google Sites Page
+** Writing to a Google Sites Page
 
 To make sure we're updating the web page, here's the current date and
 time for later use, and comparison between the output on this screen
