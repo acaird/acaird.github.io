@@ -182,6 +182,18 @@ else:
 f.close()
 #+END_SRC
 
+* Reading data from Google Sites
+
+#+BEGIN_SRC python :export code :tangle yes
+feed = client.GetSiteFeed()
+print 'Google Sites associated with your account: '
+counter = 0
+for entry in feed.entry:
+  print '       %i   %s (%s)' % (counter,entry.title.text, entry.site_name.text)
+  counter = counter + 1
+print ' --- The End ---'
+#+END_SRC
+
    This section of code, when run on my account, produces this output:
 #+BEGIN_EXAMPLE
 Google Sites associated with your account:
@@ -215,6 +227,8 @@ feed = client.GetContentFeed(uri=uri)
 old=feed.entry[0]
 
 #+END_SRC
+
+* Writing to a Google Sites Page
 
 To make sure we're updating the web page, here's the current date and
 time for later use, and comparison between the output on this screen
