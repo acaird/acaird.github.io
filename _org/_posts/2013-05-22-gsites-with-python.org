@@ -2,7 +2,7 @@
 #+AUTHOR:    Andrew Caird
 #+EMAIL:     acaird@gmail.com
 #+DATE:      2013-05-22 Wed
-#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+LATEX_CLASS:  tufte-handout
 #+LATEX_HEADER: \usepackage{fancyhdr}
