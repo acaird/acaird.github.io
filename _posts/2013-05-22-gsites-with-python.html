@@ -233,6 +233,29 @@ f.close()
 </pre>
 
 
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">Reading data from Google Sites</h2>
+<div class="outline-text-2" id="text-3">
+
+
+
+
+
+<pre class="example">feed = client.GetSiteFeed()
+print 'Google Sites associated with your account: '
+counter = 0
+for entry in feed.entry:
+  print '       %i   %s (%s)' % (counter,entry.title.text, entry.site_name.text)
+  counter = counter + 1
+print ' --- The End ---'
+</pre>
+
+
 <p>
    This section of code, when run on my account, produces this output:
 </p>
@@ -274,6 +297,15 @@ feed = client.GetContentFeed(uri=uri)
 old=feed.entry[0]
 
 </pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">Writing to a Google Sites Page</h2>
+<div class="outline-text-2" id="text-4">
 
 
 <p>
@@ -349,7 +381,6 @@ client_secret is obviously not treated as a secret."
 
 
 
-</div>
 </div>
 </div>
 
