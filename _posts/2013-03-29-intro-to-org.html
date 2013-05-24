@@ -1,0 +1,425 @@
+---
+layout: page
+title: Org in 4 Sections (plus a demo)
+tagline: civilized text file editing
+categories: computers
+tags: org emacs introduction org-mode
+---
+
+<p>
+Using Emacs org-mode to edit text files (as opposed to its intended purpose
+as a task organizer) makes for very civilized files.
+</p>
+<p>
+First, they are text files and can be emailed, read on any computer without
+much software, <code>grep</code>'d, <code>sed</code>'d, included in a source code revision control
+system (RCS, Hg, Git, SVN, etc.), and compressed a lot.
+</p>
+<p>
+Second, org-mode has excellent support for output formats, dealing especially
+well with HTML and LaTeX.
+</p>
+<p>
+Third, the markup for basic editing can be learned very quickly; that's what
+we'll do here.
+</p>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">Getting Org</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1">Emacs</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>Org is an Emacs mode, so you need Emacs and the Org package.
+</p><dl>
+<dt>Windows</dt><dd>get emacs from <a href="http://ftp.gnu.org/gnu/emacs/windows/">ftp.gnu.org/gnu/emacs/windows/</a>
+</dd>
+<dt>Mac</dt><dd>Use Mac Ports (<a href="http://www.macports.org">macports.org</a>) (<code>port install emacs</code>)
+</dd>
+<dt>Linux</dt><dd>get emacs via your favorite package manager
+</dd>
+</dl>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2">Org-mode</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+<dl>
+<dt>Windows</dt><dd>The Org-mode files come with the Emacs installation from
+              <code>ftp.gnu.org</code>
+</dd>
+<dt>Mac</dt><dd>Use Mac Ports and install the <code>org-mode</code> package (<code>port install org-mode</code>)
+</dd>
+<dt>Linux</dt><dd>Either the Org-mode files will come with the Emacs you install,
+            or you can get them from the package manager
+</dd>
+</dl>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3">Useful configurations</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+<p>
+It's all emacs, so configuration is done in your <code>~/.emacs</code> file.
+</p>
+
+
+
+<pre class="example">(add-to-list 'auto-mode-alist '("\\.\\(org\\|txt\\)$" . org-mode))
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(require 'org-latex)
+</pre>
+
+
+<p>
+Those three lines will:
+</p><ul>
+<li>enter org-mode when you open a file ending in <code>.org</code> or <code>.txt</code>
+</li>
+<li>turn <code>auto-fill-mode</code> on in Emacs when you're in org-mode
+</li>
+<li>import <code>org-latex</code>
+</li>
+</ul>
+
+
+<p>
+You can also enter org-mode by typing <code>Esc-x</code> or <code>Meta-x</code> followed by typing
+<code>org-mode</code>.
+</p>
+<p>
+When typing in emacs, you can re-wrap lines of text with <code>Esc-q</code> or <code>Meta-q</code>.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">Sections, Subsections, Lists, and Formatting</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1">Sections and Lists</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+<ul>
+<li>It is plain text, so a section is set up with an asterisk <code>*</code> at the start
+   of a line, a subsection is two asterisks <code>**</code> at the start of a line, etc.
+
+</li>
+<li>A bulleted list is started with any of a dash <code>-</code>, a plus <code>+</code>, and sublists
+   are just indented.
+
+</li>
+<li>A numbered list is started with numbers.  Sub-lists with numbers are
+   intented one or more spaces.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2">Example</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+
+
+
+<pre class="example">
+* Section Title
+
+  Some text that I would like to add.
+
+  The second paragraph of the text I'd like to add.
+  # this is a comment
+  Here is a list
+   - item one
+   - item two
+     - subitem one
+
+  ** Sub-Section Title
+   1. item one
+   2. item two
+     1. item two-sub-one
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3">Formatting</h3>
+<div class="outline-text-3" id="text-2-3">
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">Format</th><th scope="col" class="left">What to Type</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><b>Bold</b></td><td class="left">* Bold *</td></tr>
+<tr><td class="left"><i>Italic</i></td><td class="left">/ Italic /</td></tr>
+<tr><td class="left"><code>Fixed</code></td><td class="left">= Fixed =</td></tr>
+<tr><td class="left"><span style="text-decoration:underline;">underlined</span></td><td class="left">\_ underlined \_</td></tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">Tables</h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1">Tables</h3>
+<div class="outline-text-3" id="text-3-1">
+
+
+
+
+
+<pre class="example">|--------------------+---------+------+----------|
+| Car Make           | Cost    | City | X-factor |
+| and Model          |         | MPG  |          |
+|--------------------+---------+------+----------|
+| Fiat 500           | $19,000 |   30 |        6 |
+| VW Bug             | $26,390 |   20 |        7 |
+| Volvo C70          | $39,950 |   20 |        5 |
+| Audi A5 Cabrio     | $42,000 |   22 |        9 |
+|--------------------+---------+------+----------|
+
+</pre>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="right" /><col class="right" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">Car Make</th><th scope="col" class="left">Cost</th><th scope="col" class="right">City</th><th scope="col" class="right">X-factor</th></tr>
+<tr><th scope="col" class="left">and Model</th><th scope="col" class="left"></th><th scope="col" class="right">MPG</th><th scope="col" class="right"></th></tr>
+</thead>
+<tbody>
+<tr><td class="left">Fiat 500</td><td class="left">$19,000</td><td class="right">30</td><td class="right">6</td></tr>
+<tr><td class="left">VW Bug</td><td class="left">$26,390</td><td class="right">20</td><td class="right">7</td></tr>
+<tr><td class="left">Volvo C70</td><td class="left">$39,950</td><td class="right">20</td><td class="right">5</td></tr>
+<tr><td class="left">Audi A5 Cabrio</td><td class="left">$42,000</td><td class="right">22</td><td class="right">9</td></tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">Exports</h2>
+<div class="outline-text-2" id="text-4">
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1">Export Template</h3>
+<div class="outline-text-3" id="text-4-1">
+
+<p>Move to the top of your files and type <code>Ctrl-c</code>, <code>Ctrl-e</code> then press
+<code>t</code> to insert an export template that you can edit to create a title,
+author, and set some export options.
+</p>
+<p>
+The export template for the slide version of this document is these
+lines (plus the default lines in the export template):
+</p>
+
+
+<pre class="example">#+TITLE:     Org in 4 Sections (plus a demo)
+#+AUTHOR:    Andrew Caird
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+BEAMER_FRAME_LEVEL: 2
+#+latex_header: \mode&lt;beamer&gt;{\usetheme{Frankfurt}}
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2">PDF</h3>
+<div class="outline-text-3" id="text-4-2">
+
+
+<p>
+Generating PDF requires a LaTeX installation.
+</p><dl>
+<dt>Windows</dt><dd><a href="http://miktex.org/download">http://miktex.org/download</a>
+</dd>
+<dt>Mac</dt><dd><a href="http://www.tug.org/mactex/">http://www.tug.org/mactex/</a>
+</dd>
+<dt>Linux</dt><dd>your favorite package manager
+</dd>
+</dl>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-3" class="outline-3">
+<h3 id="sec-4-3">HTML</h3>
+<div class="outline-text-3" id="text-4-3">
+
+
+<p>
+Type <code>Ctrl-c Ctrl-e</code> to see the export menu and choose from one of these
+options:
+</p>
+
+
+<pre class="example">[h] export as HTML  [H] to temporary buffer
+[R] export region   [b] export as HTML and open in browser
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-4" class="outline-3">
+<h3 id="sec-4-4">ASCII</h3>
+<div class="outline-text-3" id="text-4-4">
+
+
+<p>
+Type <code>Ctrl-c Ctrl-e</code> to see the export menu and choose from one of these
+options:
+</p>
+
+
+<pre class="example">[a/n/u] export as ASCII/Latin-1/UTF-8
+[A/N/U] to temporary buffer
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-5" class="outline-3">
+<h3 id="sec-4-5">Pandoc</h3>
+<div class="outline-text-3" id="text-4-5">
+
+
+<p>
+<b>Pandoc</b> isn't an Emacs or Org-mode tool, but it is a file conversion
+tool that is aware of Org-mode and can convert to and from many, many
+formats.
+</p>
+<p>
+For more information, see <a href="http://johnmacfarlane.net/pandoc/">johnmacfarlane.net/pandoc/</a>.
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">From</th><th scope="col" class="left">To</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">markdown</td><td class="left">HTML formats</td></tr>
+<tr><td class="left">reStructuredText</td><td class="left">ODT, DOCX</td></tr>
+<tr><td class="left">textile</td><td class="left">LaTeX</td></tr>
+<tr><td class="left">HTML</td><td class="left">PDF</td></tr>
+<tr><td class="left">LaTeX</td><td class="left">Markdown, RST, AsciiDoc</td></tr>
+<tr><td class="left">etc.</td><td class="left">etc.</td></tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">Demo and Resources</h2>
+<div class="outline-text-2" id="text-5">
+
+
+</div>
+
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1">Keystrokes</h3>
+<div class="outline-text-3" id="text-5-1">
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">esc-enter</td><td class="left">make another entry at the same level</td></tr>
+<tr><td class="left">tab</td><td class="left">open or close a section</td></tr>
+<tr><td class="left">esc-arrows</td><td class="left">indent or outdent a section</td></tr>
+<tr><td class="left">Ctrl-c Ctrl-e</td><td class="left">export the current file to another format</td></tr>
+<tr><td class="left">Ctrl-g</td><td class="left">cancel the current command</td></tr>
+<tr><td class="left">Ctrl-x Ctrl-f</td><td class="left">open a file</td></tr>
+<tr><td class="left">Ctrl-x Ctrl-s</td><td class="left">save the file</td></tr>
+<tr><td class="left">Ctrl-x Ctrl-c</td><td class="left">quit Emacs</td></tr>
+</tbody>
+</table>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-5-2" class="outline-3">
+<h3 id="sec-5-2">Resources</h3>
+<div class="outline-text-3" id="text-5-2">
+
+
+<p>
+The best resource is <a href="http://orgmode.org">orgmode.org</a>, and from there the most useful
+document is the 39-page document <a href="http://orgmode.org/orgguide.pdf">The compact Org-mode Guide</a>, and you
+likely won't need all 39-pages.  The full Org-mode manual is also
+there, but it can be quite dense.
+</p></div>
+</div>
+</div>
