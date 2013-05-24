@@ -144,7 +144,7 @@ git push origin master
    does not use Org's <code>#TITLE:</code>, <code>#DESCRIPTION:</code>, or other export
    template fields, it uses its own.  However, Org does share that and
    you can reference those fields, by including things like
-   <code>{{{title}} }</code> or <code>{{{keywords}} }</code> (but without the extra space;
+   <code>{ { {title} } }</code> or <code>{ { {keywords} } }</code> (but without the extra space;
    that's there to prevent expansion in my example)<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>. The options
    are described in the <a href="http://jekyllrb.com/docs/frontmatter/">Jekyll documentation</a> and must be exported when
    Org exports as HTML.  At the top of this document is a block that
@@ -154,7 +154,7 @@ git push origin master
  #+BEGIN_HTML
  ---
  layout: page
- title: {{{title}} }
+ title: { { {title} } }
  tagline: Blogging the way you should
  categories: computers
  tags: web org-mode emacs org blog github bitbucket git
