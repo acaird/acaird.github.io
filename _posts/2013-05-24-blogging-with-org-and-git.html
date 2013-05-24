@@ -252,26 +252,26 @@ git push origin master
 
 <pre class="example">(require 'org-publish)
 (setq org-publish-project-alist
-<span id="coderef-name1" class="coderef-off">      '(("org-acaird"</span>
+<span id="coderef-name1" class="coderef-off">      '(("org-acaird"                         (name1)</span>
          ;; Path to your org files.
-<span id="coderef-srcdir" class="coderef-off">         :base-directory "~/Documents/blog"</span>
-<span id="coderef-extension" class="coderef-off">         :base-extension "org"</span>
+<span id="coderef-srcdir" class="coderef-off">         :base-directory "~/Documents/blog"   (srcdir)</span>
+<span id="coderef-extension" class="coderef-off">         :base-extension "org"                (extension)</span>
          ;; Path to your Jekyll project.
-<span id="coderef-destination" class="coderef-off">         :publishing-directory "~/Documents/acaird.github.io/_posts"</span>
+<span id="coderef-destination" class="coderef-off">         :publishing-directory "~/Documents/acaird.github.io/_posts"  (destination)</span>
          :recursive t
          :publishing-function org-publish-org-to-html
          :headline-levels 4
          :html-extension "html"
-<span id="coderef-body-only" class="coderef-off">         :body-only t ;; Only export section between &lt;body&gt; &lt;/body&gt;</span>
+<span id="coderef-body-only" class="coderef-off">         :body-only t ;; Only export section between &lt;body&gt; &lt;/body&gt; (body-only)</span>
          )
-<span id="coderef-name2" class="coderef-off">        ("org-static-acaird"</span>
-<span id="coderef-imgsrc" class="coderef-off">         :base-directory "~/Documents/blog/images"</span>
-<span id="coderef-imgext" class="coderef-off">         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"</span>
-<span id="coderef-imgdest" class="coderef-off">         :publishing-directory "~/Documents/acaird.github.io/assets"</span>
+<span id="coderef-name2" class="coderef-off">        ("org-static-acaird"                                 (name2)</span>
+<span id="coderef-imgsrc" class="coderef-off">         :base-directory "~/Documents/blog/images"           (imgsrc)</span>
+<span id="coderef-imgext" class="coderef-off">         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php" (imgext)</span>
+<span id="coderef-imgdest" class="coderef-off">         :publishing-directory "~/Documents/acaird.github.io/assets" (imgdest)</span>
          :recursive t
          :publishing-function org-publish-attachment)
 
-<span id="coderef-combo" class="coderef-off">        ("blog" :components ("org-acaird" "org-static-acaird"))</span>
+<span id="coderef-combo" class="coderef-off">        ("blog" :components ("org-acaird" "org-static-acaird"))   (combo)</span>
         ))
 </pre>
 
@@ -280,33 +280,33 @@ git push origin master
    While this is mostly readable, there are a few things to point out
    that you might want to edit.
 </p><ul>
-<li>Line <a href="#coderef-name1" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-name1');" onmouseout="CodeHighlightOff(this, 'coderef-name1');">name1</a> defines the name of the rendered section; it doesn't
+<li>Line <a href="#coderef-name1" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-name1');" onmouseout="CodeHighlightOff(this, 'coderef-name1');">(name1)</a> defines the name of the rendered section; it doesn't
       much matter what it is called because it is included in the
-      definition of what you'll usually use (in line <a href="#coderef-combo" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-combo');" onmouseout="CodeHighlightOff(this, 'coderef-combo');">combo</a>)
+      definition of what you'll usually use (in line <a href="#coderef-combo" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-combo');" onmouseout="CodeHighlightOff(this, 'coderef-combo');">(combo)</a>)
 </li>
-<li>Line <a href="#coderef-srcdir" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-srcdir');" onmouseout="CodeHighlightOff(this, 'coderef-srcdir');">srcdir</a> defines the source directory; this is where your
+<li>Line <a href="#coderef-srcdir" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-srcdir');" onmouseout="CodeHighlightOff(this, 'coderef-srcdir');">(srcdir)</a> defines the source directory; this is where your
       <code>.org</code> files go
 </li>
-<li>Line <a href="#coderef-extension" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-extension');" onmouseout="CodeHighlightOff(this, 'coderef-extension');">extension</a> sets the extensions that the export will
+<li>Line <a href="#coderef-extension" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-extension');" onmouseout="CodeHighlightOff(this, 'coderef-extension');">(extension)</a> sets the extensions that the export will
       consider; this is set to only look at files ending in <code>.org</code>, but
-      you can add to it following the pattern in line <a href="#coderef-imgext" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgext');" onmouseout="CodeHighlightOff(this, 'coderef-imgext');">imgext</a> if you
+      you can add to it following the pattern in line <a href="#coderef-imgext" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgext');" onmouseout="CodeHighlightOff(this, 'coderef-imgext');">(imgext)</a> if you
       use files that end in <code>.txt</code> or something else
 </li>
-<li>Line <a href="#coderef-destination" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-destination');" onmouseout="CodeHighlightOff(this, 'coderef-destination');">destination</a> defines where the <code>.html</code> files will be written
+<li>Line <a href="#coderef-destination" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-destination');" onmouseout="CodeHighlightOff(this, 'coderef-destination');">(destination)</a> defines where the <code>.html</code> files will be written
       on export
 </li>
-<li>Line <a href="#coderef-name2" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-name2');" onmouseout="CodeHighlightOff(this, 'coderef-name2');">name2</a> is similar to line <a href="#coderef-name1" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-name1');" onmouseout="CodeHighlightOff(this, 'coderef-name1');">name1</a>, but it defines the name
+<li>Line <a href="#coderef-name2" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-name2');" onmouseout="CodeHighlightOff(this, 'coderef-name2');">(name2)</a> is similar to line <a href="#coderef-name1" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-name1');" onmouseout="CodeHighlightOff(this, 'coderef-name1');">(name1)</a>, but it defines the name
       for the rules that handle static items (images and other things
       not processed by <code>org-mode</code>)
 </li>
-<li>Line <a href="#coderef-imgsrc" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgsrc');" onmouseout="CodeHighlightOff(this, 'coderef-imgsrc');">imgsrc</a> is the directory where the images are; it is the
-      analog of line <a href="#coderef-srcdir" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-srcdir');" onmouseout="CodeHighlightOff(this, 'coderef-srcdir');">srcdir</a>
+<li>Line <a href="#coderef-imgsrc" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgsrc');" onmouseout="CodeHighlightOff(this, 'coderef-imgsrc');">(imgsrc)</a> is the directory where the images are; it is the
+      analog of line <a href="#coderef-srcdir" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-srcdir');" onmouseout="CodeHighlightOff(this, 'coderef-srcdir');">(srcdir)</a>
 </li>
-<li>Line <a href="#coderef-imgext" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgext');" onmouseout="CodeHighlightOff(this, 'coderef-imgext');">imgext</a> defines the extensions of the files that will be
-      moved from the directory defined in line <a href="#coderef-imgsrc" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgsrc');" onmouseout="CodeHighlightOff(this, 'coderef-imgsrc');">imgsrc</a> to the directory
-      defined in line <a href="#coderef-imgdest" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgdest');" onmouseout="CodeHighlightOff(this, 'coderef-imgdest');">imgdest</a>
+<li>Line <a href="#coderef-imgext" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgext');" onmouseout="CodeHighlightOff(this, 'coderef-imgext');">(imgext)</a> defines the extensions of the files that will be
+      moved from the directory defined in line <a href="#coderef-imgsrc" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgsrc');" onmouseout="CodeHighlightOff(this, 'coderef-imgsrc');">(imgsrc)</a> to the directory
+      defined in line <a href="#coderef-imgdest" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgdest');" onmouseout="CodeHighlightOff(this, 'coderef-imgdest');">(imgdest)</a>
 </li>
-<li>Line <a href="#coderef-combo" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-combo');" onmouseout="CodeHighlightOff(this, 'coderef-combo');">combo</a> combines the rendered and static sections into one
+<li>Line <a href="#coderef-combo" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-combo');" onmouseout="CodeHighlightOff(this, 'coderef-combo');">(combo)</a> combines the rendered and static sections into one
       name (in the case, <code>blog</code>) to use for exporting
 </li>
 </ul>
@@ -316,12 +316,12 @@ git push origin master
    Once your <code>.emacs</code> file has those lines in it and they are
    evaluated, you can type <code>C-c C-e</code> to bring up the export menu.
    From the menu, choose <code>X</code> and when prompted, enter the name
-   defined in line <a href="#coderef-combo" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-combo');" onmouseout="CodeHighlightOff(this, 'coderef-combo');">combo</a> above.
+   defined in line <a href="#coderef-combo" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-combo');" onmouseout="CodeHighlightOff(this, 'coderef-combo');">(combo)</a> above.
 </p>
 <p>
    That will export the HTML to the <code>username.github.io/_posts</code>
-   directory (as defined in line <a href="#coderef-destination" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-destination');" onmouseout="CodeHighlightOff(this, 'coderef-destination');">destination</a> above) and copy the
-   images to the destination defined in line <a href="#coderef-imgdest" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgdest');" onmouseout="CodeHighlightOff(this, 'coderef-imgdest');">imgdest</a> above.
+   directory (as defined in line <a href="#coderef-destination" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-destination');" onmouseout="CodeHighlightOff(this, 'coderef-destination');">(destination)</a> above) and copy the
+   images to the destination defined in line <a href="#coderef-imgdest" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-imgdest');" onmouseout="CodeHighlightOff(this, 'coderef-imgdest');">(imgdest)</a> above.
 </p>
 <p>
    Once the files are in the proper locations in the
