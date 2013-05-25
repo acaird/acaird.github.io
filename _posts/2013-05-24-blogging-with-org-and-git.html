@@ -346,6 +346,65 @@ git push origin master
    <a href="http://username.github.io">http://username.github.io</a> and clicking the title will show you the
    full post.
 </p>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">Advanced Topics</h2>
+<div class="outline-text-2" id="text-4">
+
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1">Themes</h3>
+<div class="outline-text-3" id="text-4-1">
+
+<p>   Jekyll supports themes to change the look of your blog pages.
+   There are some sample themes at <a href="http://themes.jekyllbootstrap.com/">http://themes.jekyllbootstrap.com/</a>
+   with installation instructions.
+</p>
+<p>
+   Jekyll themes are installed into your <code>username.github.io</code>
+   directory and repository and when it is pushed to GitHub, the
+   theme you have chosen is applied.
+</p>
+<p>
+   Jekyll uses <code>rake</code> (Ruby mAKE) to install and manage themes;
+   <code>rake</code> comes with MacOS and, likely, with Linux.  For Windows you
+   might have to install Ruby.
+</p>
+<p>
+   To install the theme called <code>the-minimum</code> from
+   <a href="http://themes.jekyllbootstrap.com/">http://themes.jekyllbootstrap.com/</a>, follow these steps
+</p><ol>
+<li><code>cd</code> into your <code>username.github.io</code> directory
+</li>
+<li>type <code>rake theme:install       git</code>"<a href="https://github.com/jekyllbootstrap/theme-the-minimum.git">https://github.com/jekyllbootstrap/theme-the-minimum.git</a>"=
+</li>
+<li>commit the new theme: <code>git commit -a</code>
+</li>
+<li>push the repository to GitHub, wait 5 minutes, and reload your
+      pages to see the new themes.
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2">Comments</h3>
+<div class="outline-text-3" id="text-4-2">
+
+<p>   Jekyll can use <a href="http://www.disqus.com">Disqus</a> to support blog comments.  This is described
+   in the <code>_config.yml</code> file in your <code>username.github.io</code> directory.
+</p>
 <div id="footnotes">
 <h2 class="footnotes">Footnotes: </h2>
 <div id="text-footnotes">
@@ -362,7 +421,6 @@ git push origin master
 <p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> More on the <code>org-mode</code> publishing is at
 <a href="http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html">http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html</a>
 </p>
-
 
 
 </div>
