@@ -263,7 +263,10 @@ one for the static content (usually images).
          ;; Path to your Jekyll project.
 <span id="coderef-destination" class="coderef-off">         :publishing-directory "~/Documents/acaird.github.io/_posts" (destination)</span>
          :recursive t
-         :publishing-function org-publish-org-to-html
+         ;; this was for org-mode pre-version 8
+         ;;:publishing-function org-publish-org-to-html
+         ;; this is for org-mode version 8 and on
+         :publishing-function org-html-publish-to-html
          :headline-levels 4
          :html-extension "html"
 <span id="coderef-body-only" class="coderef-off">         :body-only t ;; Only export section between &lt;body&gt; &lt;/body&gt; (body-only)</span>
@@ -403,6 +406,25 @@ pages to see the new themes.
 Jekyll can use <a href="http://www.disqus.com">Disqus</a> to support blog comments.  This is described
 in the <code>_config.yml</code> file in your <code>username.github.io</code> directory.
 </p>
+</div>
+</div>
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3">Google Analytics</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+At <i>www.google.com/analytics</i> you can set up an analytics page for
+your <code>github.io</code> pages; the end of the set-up results in a
+tracking ID that is a 13 character (at least, mine is) string.
+Add that string to the <code>analytics:</code> section of <code>_config.yml</code>
+and push the changes to GitHub.  After a few days, if anyone looks
+at your blog, you'll see some nice statistics at Google.
+</p>
+<pre class="example">
+analytics :
+  provider : google
+  google :
+      tracking_id : 'AA-12345678-9'
+</pre>
 </div>
 </div>
 </div>
