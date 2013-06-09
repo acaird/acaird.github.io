@@ -135,9 +135,10 @@ Jekyll, which is the formatting engine at GitHub that turns your
 the raw HTML from the <code>org-mode</code> export into formatted web pages,
 does not use Org's <code>#TITLE:</code>, <code>#DESCRIPTION:</code>, or other export
 template fields, it uses its own.  However, Org does share that and
-you can reference those fields, by including things like
-<code>{ { {title} } }</code> or <code>{ { {keywords} } }</code> (but without the extra space;
-that's there to prevent expansion in my example)<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>. The options
+you can reference those fields, by including things like <code>{ {
+   {title} } }</code> or <code>{ { {keywords} } }</code> (but without the extra space;
+that's there to prevent expansion in my example)<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>. <i>NB: This
+expansion doesn't seem to work in Org-Move version 8.</i> The options
 are described in the <a href="http://jekyllrb.com/docs/frontmatter/">Jekyll documentation</a> and must be exported when
 Org exports as HTML.  At the top of this document is a block that
 looks like:
