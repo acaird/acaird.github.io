@@ -261,3 +261,58 @@ CAEN Hadoop pages, this is <a href="http://caen.github.io/hadoop">http://caen.gi
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Working with  Projects that already have Github pages</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+If your organization (in my case, CAEN) has projects that already
+have Github pages set up, you simple <code>clone</code> the project then track
+the <code>gh-pages</code> branch, which will allow you to see it, push the
+<code>gh-pages</code> branch back to generate web content, etc.
+</p>
+
+<p>
+First, identify a project with a <code>gh-pages</code> branch by either asking
+the owner or looking on <code>github.com</code> at the branches for a
+<code>gh-pages</code> branch. Once you find one, these steps will get you the
+web content and Jekyll configuration:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col class="right"/>
+
+<col class="left"/>
+
+<col class="left"/>
+</colgroup>
+<tbody>
+<tr>
+<td class="right">1</td>
+<td class="left"><code>git clone https://github.com/YourOrg/YourProj.git</code></td>
+<td class="left">clone the base project</td>
+</tr>
+
+<tr>
+<td class="right">2</td>
+<td class="left">cd YourProj</td>
+<td class="left">go into the project directory</td>
+</tr>
+
+<tr>
+<td class="right">3</td>
+<td class="left"><code>git checkout &#x2013;track origin/gh-pages</code></td>
+<td class="left">track the <code>gh-pages</code> branch</td>
+</tr>
+</tbody>
+</table>
+<p>
+Now you should see the HTML files in the top directory of the
+<code>gh-pages</code> branch and the posts in the <code>_posts</code> directory.  To
+switch back to the project, check out the master branch with <code>git
+  checkout master</code>.
+</p>
+</div>
+</div>
