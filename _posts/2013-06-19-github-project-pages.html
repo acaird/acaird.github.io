@@ -1,0 +1,263 @@
+---
+layout: post
+title:  Github Project Web Pages
+tagline: every repo in the organization gets a web page!
+categories: computer
+tags: github blog project organization gh-pages web webpages
+---
+<p>
+Github supports the publishing of web pages and blog posts using the
+Jekyll rendering engine by simply including a
+<code>GitHubUserName.github.io</code> repository in your project.  Github also
+supports <a href="https://help.github.com/articles/what-s-the-difference-between-user-and-organization-accounts">organizations</a> that can support git repositories, groups of
+users, and unified management of the two.  Each repository in an
+organization can have its own web pages at a URL like
+<code>http://OrganizationName.github.io/ProjectName</code>.  I'll describe how I
+did this for <a href="http://www.engin.umich.edu/caen">CAEN's</a> Github projects.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Github Pages</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Creating web pages for projects (or repositories) within a Github
+project is documented in many places on the web&#x2014;you can Google
+for it&#x2014;but this is how I created web pages processed by Jekyll
+for CAEN's Github Organization.
+</p>
+
+<p>
+The general steps to create web pages for CAEN's repos, like
+<a href="http://caen.github.io/hadoop">http://caen.github.io/hadoop</a>, are:
+</p>
+<ol class="org-ol">
+<li>Create a special branch of the repository called <code>gh-pages</code>
+that will hold all of the web content and none of the actual
+project content
+</li>
+<li>Add and configure the Jekyll files to this new repository
+</li>
+<li>Add some content, either plain old web pages or blog posting or
+both
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Making a <code>gh-pages</code> branch</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The first step is to create an <a href="http://git-scm.com/docs/git-checkout">orphan branch</a> in your Git repository
+and remove all of your content from it.  The steps to do this are:
+</p>
+<ol class="org-ol">
+<li>First create the orphan branch called <code>gh-pages</code>
+</li>
+</ol>
+<pre class="example">
+git checkout --orphan gh-pages
+</pre>
+<p>
+This will create the branch and switch to it.  You can type
+<code>git status</code> to make sure you are in the newly created branch.
+</p>
+<ol class="org-ol">
+<li>Remove everything from the <code>gh-pages</code> branch in preparation for
+adding your web content.
+</li>
+</ol>
+<pre class="example">
+git rm -rf .
+</pre>
+<ol class="org-ol">
+<li>Commit all of those changes to that branch with <code>git commit</code>.
+You can confirm that your project content still exists by
+switching back to the master branch (<code>git checkout master</code>) and
+typing <code>ls</code>.  After you've satisfied yourself that your <code>git
+      rm</code>'s didn't delete your work, switch back to the <code>gh-pages</code>
+branch (<code>git checkout gh-pages</code>)
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Adding Jekyll to you branch</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Get the Jekyll files</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Now that you have an empty directory, you can add the default
+Jekyll files to it.  The following example:
+</p>
+<ol class="org-ol">
+<li>Clones the Jekyll Bootstrap code into the <code>gh-pages</code> branch
+</li>
+<li>Moves all of the Jekyll files from the Jekyll directory to the
+top level directory of the <code>gh-pages</code> branch of your project
+repository
+</li>
+<li>Removes the (now empty) <code>jekyll-bootstrap</code> directory
+</li>
+<li>Adds all of the Jekyll files to this branch of your Git
+repository
+</li>
+</ol>
+<pre class="example">
+$ git clone https://github.com/plusjade/jekyll-bootstrap.git
+Cloning into 'jekyll-bootstrap'...
+remote: Counting objects: 1813, done.
+remote: Compressing objects: 100% (940/940), done.
+remote: Total 1813 (delta 855), reused 1674 (delta 760)
+Receiving objects: 100% (1813/1813), 524.41 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (855/855), done.
+$ mv jekyll-bootstrap/* .
+$ \rm -rf jekyll-bootstrap/
+$ git add *
+$ git commit -m "Adding Jekyll files to gh-pages branch"
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Configuring Jekyll</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+The configuration for Jekyll pages in <code>_config.yml</code> that are
+project pages within an organization is different from the <a href="http://acaird.github.io/computers/2013/05/24/blogging-with-org-and-git/">user
+configuration for Jekyll</a>.  We'll use CAEN's <code>hadoop</code> Github
+project as our example
+</p>
+
+<p>
+The first set of edits to <code>_config.yml</code> are advised for all Jekyll
+configurations and set the title, author, email fields for use by
+the themes.
+</p>
+<pre class="example">
+# Themes are encouraged to use these universal variables
+# so be sure to set them if your theme uses them.
+title : CAEN Hadoop
+tagline: Big Data, little data by little data
+author :
+  name : CAEN
+  email : hadoop-support@umich.edu
+</pre>
+
+<p>
+The next edit is to set the <code>production_url</code> variable by following
+the instructions in the <code>_config.yml</code> file:
+</p>
+<pre class="example">
+# Finally if you are pushing to a GitHub project page, include the project name at the end.
+#
+production_url : http://caen.github.io/hadoop
+</pre>
+
+<p>
+Continuing to follow the instructions in the <code>_config.yml</code> file,
+the <code>BASE_PATH</code> is set:
+</p>
+<pre class="example">
+#   A GitHub Project site exists in the `gh-pages` branch of one of your repositories.
+#  REQUIRED! Set BASE_PATH to: http://username.github.io/project-name
+BASE_PATH : http://caen.github.io/hadoop
+</pre>
+
+<p>
+I like to turn off comments, analytics, and sharing at the start,
+only turning them back on when their supporting infrastucture is
+prepared:
+</p>
+<pre class="example">
+comments :
+  provider : false
+analytics :
+  provider : false
+sharing :
+  provider : false
+</pre>
+
+<p>
+After all of the edits are made, you should commit the changes to
+<code>_config.yml</code> with
+</p>
+<pre class="example">
+git commit _config.yml -m "local edits to _config.yml"
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Creating and publishing the project pages</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Once you have the configuration set, you should remove the sample
+files that come with Jekyll:
+</p>
+<pre class="example">
+git mv index.md index.md-orig
+git rm core-samples/2011-12-29-jekyll-introduction.md
+git commit -m "removed sample Jekyll files"
+</pre>
+</div>
+
+<div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> HTML Pages</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+Then you can simply add Jekyll+HTML files to that directory; those
+files are of the format:
+</p>
+<pre class="example">
+---
+layout: page
+title: CAEN Hadoop
+tagline: &lt;br&gt;Big Data, little data by little data
+---
+&lt;dl&gt;
+  &lt;dt&gt;&lt;a href=hadoop-user.html&gt;Hadoop User Documentation&lt;/a&gt;&lt;/dt&gt;
+    &lt;dd&gt;This is the documentation for people to use Hadoop and its
+    friends like Hive, Pig, Sqoop, etc.&lt;/dd&gt;
+&lt;/dl&gt;
+</pre>
+<p>
+The HTML following the Jekyll header (between the dashed lines) is
+all of the HTML that would be found between the <code>&lt;body&gt;</code> tags.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Blog Posts</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Creating blog posts is described as part of <a href="http://acaird.github.io/computers/2013/05/24/blogging-with-org-and-git/">Blogging with Emacs
+org-mode and Github Pages</a> and the same process applies here,
+although you'll want to take a look at the original <code>index.md</code>
+file that you off-named above to see the Jekyll code that
+automatically includes blog posts from the <code>_posts</code> directory and
+include that code in your <code>index.html</code> file.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> Pushing pages to Github</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+Once you have your HTML pages and blog posts created, you should add
+them to the repository with <code>git add *.html</code>, commit them with <code>git
+  commit</code>, and push them to github with <code>git push</code>.  The first time
+you push, you have to add the new branch with the command <code>git push
+  origin gh-pages</code>, but after that you can push with a simple <code>git
+  push</code>.
+</p>
+
+<p>
+After giving Github a few minutes to process the Jekyll into pages,
+you can visit your pages at
+<code>http://YourOrganization.github.io/YourRepo</code>, in the case of the
+CAEN Hadoop pages, this is <a href="http://caen.github.io/hadoop">http://caen.github.io/hadoop</a>.
+</p>
+</div>
+</div>
+</div>
