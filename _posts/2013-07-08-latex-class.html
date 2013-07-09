@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  LaTeX in 90 Minutes
+title:  Typesetting in 90 Minutes
 tagline: 40 years of typesetting technology in less than 2 hours
 categories: computer
 tags: latex class notes umich engineering college
@@ -20,7 +20,7 @@ back for updates, instructions, and notes.
 </blockquote>
 
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> LaTeX in 90 minutes</h2>
+<h2 id="sec-1">LaTeX in 90 minutes</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 In 90 minutes in the Johnson Rooms we'll go over how to install
@@ -33,7 +33,343 @@ specific questions about LaTeX.
 
 <p>
 If you have experience with LaTeX, the early part of the talk isn't
-likely to be useful to you, but the later parts might.
+likely to be useful to you, but the later parts might be.
 </p>
+
+<p>
+You should bring a laptop, as this will be a hands-on discussion.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">The Agenda for the Class</h2>
+<div class="outline-text-2" id="text-2">
+<dl class="org-dl">
+<dt> 12:00p&#x2013;12:30p </dt><dd>sorting out the installation of LaTeX and its
+supporting programs on your laptops, and getting
+it installed if you haven't done so already.
+</dd>
+<dt> 12:30p&#x2013;1:00p </dt><dd>writing a first simple document and producing a
+PDF file, then augmenting the document with a
+title, author, equations, figures, tables and
+tables of contents, figures, and tables.
+</dd>
+<dt> 1:00p&#x2013;1:30p </dt><dd>answering particular questions about LaTeX and
+your use of it
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Preparation for the Class</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Before coming to class, please install LaTeX on your laptop and
+download a copy of <a href="http://tobi.oetiker.ch/lshort/lshort-letter.pdf"><i>A Not-so-short Introduction to LaTeX</i></a> and bring
+an electronic or printed copy.
+</p>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1">Installing LaTeX on Microsoft Windows</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+The LaTeX installation for Windows is called MikTeX and can be
+downloaded from <a href="http://www.miktex.org/about">http://www.miktex.org/about</a>.
+</p>
+
+<p>
+The first few FAQ entries at <a href="http://docs.miktex.org/faq/faq.html">http://docs.miktex.org/faq/faq.html</a>
+may be helpful in getting MikTeX installed.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2">Installing LaTeX on Apple OS X</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+The LaTeX installation for Mac OS X is called MacTeX and can be
+downloaded from <a href="http://tug.org/mactex/">http://tug.org/mactex/</a>.
+</p>
+
+<p>
+That same web page (<a href="http://tug.org/mactex/">http://tug.org/mactex/</a>) links to other helpful
+documents about maintaining the MacTeX installation.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3">Installing LaTeX on Ubuntu Linux</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+LaTeX can be installed on Ubuntu through the software center or
+via the command line by typing <code>sudo apt-get install texlive</code> at
+a shell prompt.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Writing a Simple Document</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+To test your LaTeX installation, you should create a simple
+document.
+</p>
+</div>
+
+<div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1">Contents of a simple LaTeX document</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+The contents of a very simple LaTeX document are:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-latex">\documentclass{article}
+\begin{document}
+This is my document.  There isn't much to it.
+
+This is the second paragraph of my document.  This paragraph is longer
+than the first paragraph because I kept typing words in this paragraph,
+and didn't type as many words in the preceding paragraph.
+
+This is my third paragraph, the shortest yet.
+
+\end{document}
+</pre>
+</div>
+<p>
+The first line, <code>\documentclass{article}</code>, is the most common type of
+document you'll write in LaTeX&#x2014;the other common options are
+<code>letter</code> for letter that you would mail to someone and <code>book</code>,
+which adds the option of chapters to your document.  For anything
+beyond <code>article</code> you will probably want to consider packages other
+than <code>letter</code> and <code>book</code>.
+</p>
+
+<p>
+The second and last lines, <code>\begin{document}</code> and <code>\end{document}</code>
+bound your document&#x2014;you always have to have these two lines and
+nearly all of your content will be between those two lines.
+</p>
+
+<p>
+Between the <code>\begin</code> and <code>\end</code> lines is the content for your
+document.  In this example it is three paragraphs.  A paragraph is
+created by leaving a blank line.  You don't have to wrap the lines
+yourself, they will be processed by LaTeX when you process your
+document.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2">Typing the document</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+A LaTeX document is simply a text file&#x2014;this is one of the
+beauties of LaTeX: you'll always be able to read the text file.
+</p>
+
+<p>
+If you are familiar with a text editor for programming, such as
+<code>emacs</code> or <code>vi</code>, you can use that editor to write LaTeX
+documents.  If you prefer a more integrated environment for
+typing your documents, MacTeX comes with TeXworks and TeXshop,
+MikTeX comes with TeXworks, and on Ubuntu there are TeXmaker,
+Kile, <a href="http://gummi.midnightcoding.org/">Gummi</a>, and many others.
+</p>
+
+<p>
+After opening your editor, you should be able to paste in the
+sample document above, or start writing your own short document
+between the <code>\begin{document}</code> and <code>\end{document}</code> lines.
+</p>
+
+<p>
+Save the file as <code>sample.tex</code>.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3">Processing the document</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+When you are done writing, you can process the document to a PDF
+file and see what you've created.
+</p>
+
+<p>
+If you have a <code>.tex</code> file, you can process it from the command
+line in the Windows <code>command</code> shell, the Mac <code>Terminal</code>, or a
+Linux <code>xterm</code> by typing:
+</p>
+<pre class="example">
+pdflatex sample.tex
+</pre>
+<p>
+and you should see several lines of output, the first few and last
+few should be something like:
+</p>
+<pre class="example">
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012)
+ restricted \write18 enabled.
+entering extended mode
+(./sample.tex
+   [... many more lines ...]
+LaTeX2e &lt;2011/06/27&gt;
+Output written on sample.pdf (1 page, 16198 bytes).
+Transcript written on sample.log.
+</pre>
+
+<p>
+The LaTeX editors will have a menu item or button that will do the
+processing for you.
+</p>
+
+<p>
+If there is an error, it isn't always easy to decode, but some of
+the editors will try to set the cursor at the point of the error.
+Otherwise, carefully read the error and check your <code>.tex</code> file for
+missing brackets, a <code>\begin</code> without its matching <code>\end</code>, and
+other typos.
+</p>
+
+<p>
+Once you are able to successfully process <code>sample.tex</code> into
+<code>sample.pdf</code> and open <code>sample.pdf</code> and see it, we can start adding
+to the document.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">Adding to the document</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Once we have a simple document, we can start adding more
+interesting parts to it.
+</p>
+</div>
+
+<div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1">Title and Author</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+Adding a title and author or authors to your document is
+straightforward.
+</p>
+
+<p>
+Between the <code>\documentclass</code> and <code>\begin{document}</code> lines, you
+should add:
+</p>
+<pre class="example">
+\title{My Sample Document}
+\author{Type Your Name Here}
+</pre>
+<p>
+and immediately after the <code>\begin{document}</code> line add the line:
+</p>
+<pre class="example">
+\maketitle
+</pre>
+
+<p>
+After processing the updated <code>.tex</code> file, you will see a title,
+author, and today's date added to the top of your PDF file.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2">Sections and subsections</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+LaTeX supports numbering sections, subsections, and subsubsections
+by simply adding a line that reads <code>\section{My Section Title}</code> (or
+<code>\subsection{My subsection Title}</code> or <code>\subsubsection{My
+   subsubsection Title}</code>) before the section.
+</p>
+
+<p>
+Editing <code>sample.tex</code> and adding <code>\section</code> before the first and
+third paragraphs and <code>\subsection</code> before the second paragraph
+brings us to a source document that looks like:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-latex">\documentclass{article}
+\title{My Sample Document}
+\author{Type Your Name Here}
+\begin{document}
+\maketitle
+
+\section{My first section}
+This is my document.  There isn't much to it.
+
+\subsection{A subsection for fun}
+This is the second paragraph of my document.  This paragraph is longer
+than the first paragraph because I kept typing words in this paragraph,
+and didn't type as many words in the preceding paragraph.
+
+\section{My very short third section}
+This is my third paragraph, the shortest yet.
+
+\end{document}
+</pre>
+</div>
+
+<p>
+Processing that file, assuming I didn't make any errors and you
+didn't introduce any in its transcription, should result in a
+document with a title, author, date, and two sections, one with a
+subsection.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5-3" class="outline-3">
+<h3 id="sec-5-3">Equations and Tables</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+There are two types of basic equations in LaTeX: equations that
+are part of the text, in-line math, and equations that are offset
+from the text and numbered.
+</p>
+
+<p>
+Equations are written in text and the keyboard math symbols.
+Pythagoras might have written:
+</p>
+<pre class="example">
+\begin{equation}
+a^2 + b^2 = c^2
+\end{equation}
+</pre>
+<p>
+to get
+</p>
+<div class="equation">
+<p>
+\(a^2 + b^2 = c^2\)
+</p>
+
+</div>
+
+<p>
+Another example is the equation for the area of a circle:
+</p>
+<pre class="example">
+A = \pi r^2
+</pre>
+<p>
+to get
+</p>
+<div class="equation">
+<p>
+\(A = \pi r^2\)
+</p>
+
+</div>
+</div>
 </div>
 </div>
