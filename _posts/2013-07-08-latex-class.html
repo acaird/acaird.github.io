@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Typesetting in 90 Minutes
-tagline: 40 years of typesetting technology in less than 2 hours
+tagline: 35 years of typesetting technology in less than 2 hours
 categories: computer
 tags: latex class notes umich engineering college
 ---
@@ -330,6 +330,9 @@ subsection.
 <div id="outline-container-sec-5-3" class="outline-3">
 <h3 id="sec-5-3">Equations and Tables</h3>
 <div class="outline-text-3" id="text-5-3">
+</div><div id="outline-container-sec-5-3-1" class="outline-4">
+<h4 id="sec-5-3-1">Equations</h4>
+<div class="outline-text-4" id="text-5-3-1">
 <p>
 There are two types of basic equations in LaTeX: equations that
 are part of the text, in-line math, and equations that are offset
@@ -369,6 +372,107 @@ to get
 \(A = \pi r^2\)
 </p>
 
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5-3-2" class="outline-4">
+<h4 id="sec-5-3-2">Tables</h4>
+<div class="outline-text-4" id="text-5-3-2">
+<p>
+Tables in LaTeX comprise five items that describe a table:
+</p>
+<ul class="org-ul">
+<li>a <code>\begin{table}</code> and matching <code>\end{table}</code> surrounding the
+tablular environment
+</li>
+<li>a <code>\begin{tabular}{&lt;tableadvice&gt;}</code> and matching
+       <code>\end{tabular}</code> around the table data
+</li>
+<li>the <code>&lt;tableadvice&gt;</code> which describes the alignment and vertical
+lines in the table using <code>|</code> to describe vertical lines and
+letters (<code>l</code>,=c=,=r=) to describe alignment
+</li>
+<li>the <code>&amp;</code> character to define columns <code>\\</code> to define rows, and
+       <code>\hline</code> to draw horizontal lines
+</li>
+<li>the caption for the table, using <code>\caption{My Caption}</code> after
+the <code>tabular</code> environment and before the end of the <code>table</code>
+environment.
+</li>
+</ul>
+
+<p>
+Taking the <b>Degrees Granted for Academic Year 2011-12</b> table from
+<a href="http://www.engin.umich.edu/college/about/facts">http://www.engin.umich.edu/college/about/facts</a> we could represent
+that table in LaTeX as:
+</p>
+<pre class="example">
+\begin{table}
+\begin{tabular}{l|r|r|r}
+Degrees Granted for Academic Year 2011-12 &amp; Bachelors &amp; Masters &amp; Doctoral \\ \hline
+Degrees Granted                           &amp;    1,348  &amp;  1,093  &amp;    258   \\
+\% Women                                  &amp;      21\% &amp;    21\% &amp;    21\%  \\
+\% URM                                    &amp;       7\% &amp;     8\% &amp;    14\%  \\ \hline
+\end{tabular}
+\caption{Engineering Degrees Granted for Academic Year 2011-12}
+\end{table}
+</pre>
+<ul class="org-ul">
+<li>The <code>|</code> characters in the <code>tabular</code> line instruct LaTeX to put
+vertical lines between the columns, but not on the left or
+right ends.
+</li>
+<li>The <code>\hline</code> commands at the ends of the lines instruct LaTeX
+to put a horizontal line below the current line.
+</li>
+</ul>
+<p>
+This all produces a table that looks like:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col class="left"/>
+
+<col class="right"/>
+
+<col class="right"/>
+
+<col class="right"/>
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Degrees Granted for Academic Year 2011-12</th>
+<th scope="col" class="right">Bachelors</th>
+<th scope="col" class="right">Masters</th>
+<th scope="col" class="right">Doctoral</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">Degrees Granted</td>
+<td class="right">1,348</td>
+<td class="right">1,093</td>
+<td class="right">258</td>
+</tr>
+
+<tr>
+<td class="left">% Women</td>
+<td class="right">21%</td>
+<td class="right">21%</td>
+<td class="right">21%</td>
+</tr>
+
+<tr>
+<td class="left">% URM</td>
+<td class="right">7%</td>
+<td class="right">8%</td>
+<td class="right">14%</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
