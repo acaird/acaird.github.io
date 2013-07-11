@@ -513,7 +513,7 @@ qplot(wt, mpg, data=mtcars, geom=c("point", "smooth"),
 
 
 <div class="figure">
-<p><img src="/assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
+<p><img src="assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
 <p>Weight vs. MPG</p>
 </div>
 
@@ -522,7 +522,7 @@ qplot(wt, mpg, data=mtcars, geom=c("point", "smooth"),
 This file is included in the LaTeX output by adding the line:
 </p>
 <pre class="example">
-\include{graphicx}
+\usepackage{graphicx}
 </pre>
 <p>
 immediately after the <code>\documentclass{article}</code> line in your
@@ -574,6 +574,12 @@ resolved.
 <p>
 To add a list of figures, insert the line <code>\listoffigures</code> after
 the <code>\maketitle</code> or <code>\tableofcontents</code> lines in your <code>.tex</code> file.
+</p>
+
+<p>
+To include a listing of tables at the front of your document,
+there is the <code>\listoftables</code> command that is analogous to the
+<code>\listoffigures</code> command.
 </p>
 
 <p>
