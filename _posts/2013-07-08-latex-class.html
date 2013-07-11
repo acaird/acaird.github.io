@@ -530,10 +530,21 @@ immediately after the <code>\documentclass{article}</code> line in your
 </p>
 <pre class="example">
 \begin{figure}
-\includegraphics[width=.9\linewidth]{assets/mpg-weight.png}
+\includegraphics[width=.9\linewidth]{mpg-weight.png}
 \caption{Weight vs. MPG}
 \end{figure}
 </pre>
+<p>
+The full path to <code>mpg-weight.png</code> should be specified in the
+<code>\includegraphics</code> line; in this example LaTeX will assume that
+the image file is in the same directory as the <code>.tex</code> file.
+</p>
+
+<p>
+You can download this image for using when processing <code>sample.tex</code>
+by right-clicking on it and saving it to the same folder as
+<code>sample.tex</code>.
+</p>
 
 <p>
 The <code>graphicx</code> package combined with <code>pdflatex</code> can read PDF, PNG,
