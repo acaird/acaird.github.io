@@ -481,4 +481,140 @@ This all produces a table that looks like:
 </div>
 </div>
 </div>
+<div id="outline-container-sec-5-4" class="outline-3">
+<h3 id="sec-5-4">Figures from external files</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+While it is possible to create images in LaTeX directly using it's
+native but limited <code>picture</code> environment or the somewhat
+complicated <a href="http://www.texample.net/tikz/">Tikz</a> package, it is most common to create images in
+another package&#x2014;=gnuplot= or R for plots, Adobe Illustrator or
+another drawing package for diagrams.
+</p>
+
+<p>
+For this example, we'll make a plot using the statistical package
+R and write the plot to a file called <code>mpg-weight.png</code>.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R">library(ggplot2)
+mtcars$gear &lt;- factor(mtcars$gear,levels=c(3,4,5), labels=c("3gears","4gears","5gears"))
+mtcars$am   &lt;- factor(mtcars$am,levels=c(0,1), labels=c("Automatic","Manual"))
+mtcars$cyl  &lt;- factor(mtcars$cyl,levels=c(4,6,8), labels=c("4cyl","6cyl","8cyl"))
+
+qplot(wt, mpg, data=mtcars, geom=c("point", "smooth"),
+     method="lm", formula=y~x, color=cyl,
+     main="Regression of MPG on Weight",
+     xlab="Weight", ylab="Miles per Gallon")
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
+<p>Weight vs. MPG</p>
+</div>
+
+
+<p>
+This file is included in the LaTeX output by adding the line:
+</p>
+<pre class="example">
+\include{graphicx}
+</pre>
+<p>
+immediately after the <code>\documentclass{article}</code> line in your
+<code>.tex</code> file and then including the lines:
+</p>
+<pre class="example">
+\begin{figure}
+\includegraphics[width=.9\linewidth]{assets/mpg-weight.png}
+\caption{Weight vs. MPG}
+\end{figure}
+</pre>
+
+<p>
+The <code>graphicx</code> package combined with <code>pdflatex</code> can read PDF, PNG,
+JPEG, and MetaPost graphic formats.  Other formats should be
+converted to one of these for inclusion.  If you can export
+directly to PDF, that is ideal.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5-5" class="outline-3">
+<h3 id="sec-5-5">Tables of Contents, Tables, and Figures</h3>
+<div class="outline-text-3" id="text-5-5">
+<p>
+Adding tables of contents, tables, and figures to the front matter
+of your document is straight-forward.
+</p>
+
+<p>
+To add a table of contents, add the line <code>\tableofcontents</code> after
+your <code>\maketitle</code> line to generate a table of contents.  Because
+LaTeX is a single-pass processor, it stores some of its
+information in auxilliary files; this means that you may have to
+run <code>pdflatex</code> more than once to get all of the references
+resolved.
+</p>
+
+<p>
+To add a list of figures, insert the line <code>\listoffigures</code> after
+the <code>\maketitle</code> or <code>\tableofcontents</code> lines in your <code>.tex</code> file.
+</p>
+
+<p>
+Our current <code>sample.tex</code> file now looks like:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-latex">\documentclass{article}
+\usepackage{graphicx}
+\title{My Sample Document}
+\author{Type Your Name Here}
+\begin{document}
+\maketitle
+\tableofcontents
+\listoftables
+\listoffigures
+\section{My first section}
+This is my document.  There isn't much to it.
+
+\subsection{A subsection for fun}
+This is the second paragraph of my document.  This paragraph is longer
+than the first paragraph because I kept typing words in this paragraph,
+and didn't type as many words in the preceding paragraph.
+
+\section{My very short third section}
+This is my third paragraph, the shortest yet.
+
+However, this section has a table and a figure.
+
+ \begin{table}
+ \begin{tabular}{l|r|r|r}
+ Degrees Granted for Academic Year 2011-12 &amp; Bachelors &amp; Masters &amp; Doctoral \\ \hline
+ Degrees Granted                           &amp;    1,348  &amp;  1,093  &amp;    258   \\
+ \% Women                                  &amp;      21\% &amp;    21\% &amp;    21\%  \\
+ \% URM                                    &amp;       7\% &amp;     8\% &amp;    14\%  \\ \hline
+ \end{tabular}
+ \caption{Engineering Degrees Granted for Academic Year 2011-12}
+ \end{table}
+
+\begin{figure}
+\includegraphics[width=.9\linewidth]{mpg-weight.png}
+\caption{Weight vs. MPG}
+\end{figure}
+
+\end{document}
+</pre>
+</div>
+
+<p>
+This file demonstates sections, tables, figures, and
+front-matter.
+</p>
+</div>
+</div>
 </div>
