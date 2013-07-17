@@ -488,13 +488,14 @@ This all produces a table that looks like:
 While it is possible to create images in LaTeX directly using it's
 native but limited <code>picture</code> environment or the somewhat
 complicated <a href="http://www.texample.net/tikz/">Tikz</a> package, it is most common to create images in
-another package&#x2014;=gnuplot= or R for plots, Adobe Illustrator or
+another package &#x2014; <code>gnuplot</code> or R for plots, Adobe Illustrator or
 another drawing package for diagrams.
 </p>
 
 <p>
 For this example, we'll make a plot using the statistical package
-R and write the plot to a file called <code>mpg-weight.png</code>.
+R and write the plot to a file called <code>mpg-weight.png</code>.  The R
+code for this is:
 </p>
 
 <div class="org-src-container">
@@ -513,7 +514,7 @@ qplot(wt, mpg, data=mtcars, geom=c("point", "smooth"),
 
 
 <div class="figure">
-<p><img src="/assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
+<p><img src="assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
 <p>Weight vs. MPG</p>
 </div>
 
@@ -631,6 +632,154 @@ However, this section has a table and a figure.
 <p>
 This file demonstates sections, tables, figures, and
 front-matter.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-6" class="outline-3">
+<h3 id="sec-5-6">Lists, Bibliographies, and everything else</h3>
+<div class="outline-text-3" id="text-5-6">
+<p>
+<b>Lists</b>
+</p>
+
+<p>
+Lists in LaTeX are environments similar to other environments
+we've seen, like <code>\begin{figure}</code> &#x2026; <code>\end{figure}</code>; the list
+environment for a bulleted list is <code>itemize</code> and for a numbered
+list is <code>enumerate</code>.
+</p>
+
+<p>
+Lists can be embedded for sub-items.  Example LaTeX that shows
+this is:
+</p>
+<pre class="example">
+\begin{enumerate}
+  \item The first item in my list is this sentence; it's a
+        pretty long sentences that has several properties:
+  \begin{itemize}
+    \item it has 18 words
+    \item it has a semi-colon
+    \item it has one apostrophed word
+  \end{itemize}
+  \item This is the second item in my list
+  \item This is the end of my incredibly boring list
+\end{enumerate}
+</pre>
+<ol class="org-ol">
+<li>The first item in my list is this sentence; it's a pretty long
+sentences that has several properties:
+<ul class="org-ul">
+<li>it has 18 words
+</li>
+<li>it has a semi-colon
+</li>
+<li>it has one apostrophed word
+</li>
+</ul>
+</li>
+<li>This is the second item in my list
+</li>
+<li>This is the end of my incredibly boring list
+</li>
+</ol>
+
+
+<p>
+<b>Bibliographies</b>
+</p>
+
+<p>
+LaTeX can support simple bibliographies within a document using
+the <code>\cite</code> command in the document for citations and the
+<code>\bibitem</code> command in the <code>thebibliography</code> environment.
+</p>
+
+<p>
+For larger projects or areas of study, using <a href="http://www.bibtex.org/">BibTeX</a> to maintain a
+bibliographic database and integrate with the <code>\cite</code> commands in
+several documents.
+</p>
+
+<p>
+<b>Debugging LaTeX documents</b>
+</p>
+
+<p>
+Writing LaTeX documents is similar to writing a computer program,
+with all of the debugging issues that go with computer
+programming.
+</p>
+
+<p>
+The error messages produced by LaTeX can be difficult to decode;
+my preferred method of debugging is to localize the error without
+worrying too much about the error message by processing the
+document often, and especially after making significant additions.
+</p>
+
+<p>
+If processing the document does result in errors that I cannot
+understand from the error, I then start by using the <code>%</code> to
+comment out parts of the LaTeX file and processing it until the
+error is gone, and looking at the commented section for errors.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">Other resources</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+LaTeX has been around for decades and has a lot of documentation
+and support.
+</p>
+</div>
+
+<div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1">Websites</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+The best web site for LateX support is <i>Google</i>, followed by
+<a href="http://tex.stackexchange.com/">StackOverflow</a>.  LaTeX-specific web sites are the website for the
+<a href="http://www.latex-project.org/">LaTeX Project</a>, the <a href="http://www.tug.org">TeX Users Group</a>, and the <a href="http://en.wikibooks.org/wiki/LaTeX">LaTeX WikiBooks</a> site.
+For additional packages for LaTeX, the <a href="http://ctan.org/">Comprehensive TeX Archive
+Network</a> is the definitive source; the <code>[[http://ctan.org/pkg/umthesis][umthesis]]</code> class is
+available here, for example.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2">Books</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+There are 82 books in the search results for <code>latex typesetting</code>
+at <a href="http://www.amazon.com/s/ref=nb_sb_ss_c_0_8?url=search-alias=stripbooks&field-keywords=latex+typesetting">Amazon</a>.  The canonical books, in my opinion, are:
+</p>
+<ul class="org-ul">
+<li><i>LaTeX: A Document Preparation System (2nd Edition)</i> by Leslie Lamport
+</li>
+<li><i>The LaTeX Graphics Companion</i> by Gossens, Mittelbach, Rahtz,
+and Voss
+</li>
+<li><i>The LaTeX Companion (2nd edition)</i> by Mittelbach, Gossens,
+Braams, Carlisle, and Rowley
+</li>
+</ul>
+<p>
+there are also a lot of other execellent books, many of which are
+<a href="http://www.lib.umich.edu/mlibrary/search/mirlyn/latex">available in the U-M libraries</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-6-3" class="outline-3">
+<h3 id="sec-6-3">Resources at the University of Michigan</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+Emailing <a href="mailto:caen@umich.edu">caen@umich.edu</a> will come to me and others at <a href="http://www.engin.umich.edu/caen">CAEN</a> and
+we'll do our best to help you.
 </p>
 </div>
 </div>
