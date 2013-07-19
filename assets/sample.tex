@@ -1,0 +1,40 @@
+
+\documentclass{article}
+\usepackage{graphicx}
+\title{My Sample Document}
+\author{Type Your Name Here}
+\begin{document}
+\maketitle
+\tableofcontents
+\listoftables
+\listoffigures
+\section{My first section}
+This is my document.  There isn't much to it.
+
+\subsection{A subsection for fun}
+This is the second paragraph of my document.  This
+paragraph is longer than the first paragraph because
+I kept typing words in this paragraph, and didn't
+type as many words in the preceding paragraph.
+
+\section{My very short third section}
+This is my third paragraph, the shortest yet.
+
+However, this section has a table and a figure.
+
+ \begin{table}
+ \begin{tabular}{l|r|r|r}
+ Degrees Granted for Academic Year 2011-12 & Bachelors & Masters & Doctoral \\ \hline
+ Degrees Granted                           &    1,348  &  1,093  &    258   \\
+ \% Women                                  &      21\% &    21\% &    21\%  \\
+ \% URM                                    &       7\% &     8\% &    14\%  \\ \hline
+ \end{tabular}
+ \caption{Engineering Degrees Granted for Academic Year 2011-12}
+ \end{table}
+
+\begin{figure}
+\includegraphics[width=.9\linewidth]{mpg-weight.png}
+\caption{Weight vs. MPG}
+\end{figure}
+
+\end{document}
