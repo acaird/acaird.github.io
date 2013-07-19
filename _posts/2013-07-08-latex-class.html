@@ -64,9 +64,10 @@ your use of it
 <h2 id="sec-3">Preparation for the Class</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-Before coming to class, please install LaTeX on your laptop and
-download a copy of <a href="http://tobi.oetiker.ch/lshort/lshort-letter.pdf"><i>A Not-so-short Introduction to LaTeX</i></a> and bring
-an electronic or printed copy.
+Before coming to class, please install LaTeX on your
+laptop<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> and download a copy of <a href="http://tobi.oetiker.ch/lshort/lshort-letter.pdf"><i>The Not So
+Short Introduction to LaTeX</i></a> and bring an electronic or printed
+copy.
 </p>
 </div>
 
@@ -114,7 +115,7 @@ a shell prompt.
 <div class="outline-text-2" id="text-4">
 <p>
 To test your LaTeX installation, you should create a simple
-document.
+document<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>.
 </p>
 </div>
 
@@ -130,9 +131,10 @@ The contents of a very simple LaTeX document are:
 \begin{document}
 This is my document.  There isn't much to it.
 
-This is the second paragraph of my document.  This paragraph is longer
-than the first paragraph because I kept typing words in this paragraph,
-and didn't type as many words in the preceding paragraph.
+This is the second paragraph of my document.  This
+paragraph is longer than the first paragraph because
+I kept typing words in this paragraph, and didn't
+type as many words in the preceding paragraph.
 
 This is my third paragraph, the shortest yet.
 
@@ -145,7 +147,7 @@ document you'll write in LaTeX&#x2014;the other common options are
 <code>letter</code> for letter that you would mail to someone and <code>book</code>,
 which adds the option of chapters to your document.  For anything
 beyond <code>article</code> you will probably want to consider packages other
-than <code>letter</code> and <code>book</code>.
+than <code>letter</code> and =book=<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>.
 </p>
 
 <p>
@@ -196,7 +198,7 @@ Save the file as <code>sample.tex</code>.
 <div class="outline-text-3" id="text-4-3">
 <p>
 When you are done writing, you can process the document to a PDF
-file and see what you've created.
+file and see what you've created<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup>.
 </p>
 
 <p>
@@ -257,7 +259,7 @@ interesting parts to it.
 <div class="outline-text-3" id="text-5-1">
 <p>
 Adding a title and author or authors to your document is
-straightforward.
+straightforward<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup>.
 </p>
 
 <p>
@@ -288,7 +290,7 @@ author, and today's date added to the top of your PDF file.
 LaTeX supports numbering sections, subsections, and sub-subsections
 by simply adding a line that reads <code>\section{My Section Title}</code> (or
 <code>\subsection{My subsection Title}</code> or <code>\subsubsection{My
-   subsubsection Title}</code>) before the section.
+   subsubsection Title}</code>) before the section<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup>.
 </p>
 
 <p>
@@ -308,9 +310,10 @@ brings us to a source document that looks like:
 This is my document.  There isn't much to it.
 
 \subsection{A subsection for fun}
-This is the second paragraph of my document.  This paragraph is longer
-than the first paragraph because I kept typing words in this paragraph,
-and didn't type as many words in the preceding paragraph.
+This is the second paragraph of my document.  This
+paragraph is longer than the first paragraph because
+I kept typing words in this paragraph, and didn't
+type as many words in the preceding paragraph.
 
 \section{My very short third section}
 This is my third paragraph, the shortest yet.
@@ -336,7 +339,7 @@ subsection.
 <p>
 There are two types of basic equations in LaTeX: equations that
 are part of the text, in-line math, and equations that are offset
-from the text and numbered.
+from the text and numbered<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup>.
 </p>
 
 <p>
@@ -384,7 +387,7 @@ Tables in LaTeX comprise five items that describe a table:
 </p>
 <ul class="org-ul">
 <li>a <code>\begin{table}</code> and matching <code>\end{table}</code> surrounding the
-tabular environment
+tabular environment<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup>
 </li>
 <li>a <code>\begin{tabular}{&lt;tableadvice&gt;}</code> and matching
        <code>\end{tabular}</code> around the table data
@@ -487,8 +490,8 @@ This all produces a table that looks like:
 <p>
 While it is possible to create images in LaTeX directly using it's
 native but limited <code>picture</code> environment or the somewhat
-complicated <a href="http://www.texample.net/tikz/">Tikz</a> package, it is most common to create images in
-another package &#x2014; <a href="http://www.gnuplot.info/">gnuplot</a> or <a href="http://www.r-project.org/">R</a> for plots, Adobe Illustrator or
+complicated <a href="http://www.texample.net/tikz/">TikZ</a> package<sup><a id="fnr.9" name="fnr.9" class="footref" href="#fn.9">9</a></sup>, it is most common to create images
+in another package &#x2014; <a href="http://www.gnuplot.info/">gnuplot</a> or <a href="http://www.r-project.org/">R</a> for plots, Adobe Illustrator or
 another drawing package for diagrams.
 </p>
 
@@ -497,6 +500,7 @@ For this example, we'll make a plot using the statistical package
 R and write the plot to a file called <code>mpg-weight.png</code>.  The R
 code for this is:
 </p>
+
 
 <div class="org-src-container">
 
@@ -514,10 +518,9 @@ qplot(wt, mpg, data=mtcars, geom=c("point", "smooth"),
 
 
 <div class="figure">
-<p><img src="/assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
+<p><img src="assets/mpg-weight.png"  alt="mpg-weight.png"/></p>
 <p>Weight vs. MPG</p>
 </div>
-
 
 <p>
 This file is included in the LaTeX output by adding the line:
@@ -527,7 +530,7 @@ This file is included in the LaTeX output by adding the line:
 </pre>
 <p>
 immediately after the <code>\documentclass{article}</code> line in your
-<code>.tex</code> file and then including the lines:
+<code>.tex</code> file and then including the lines<sup><a id="fnr.10" name="fnr.10" class="footref" href="#fn.10">10</a></sup>:
 </p>
 <pre class="example">
 \begin{figure}
@@ -569,7 +572,7 @@ your <code>\maketitle</code> line to generate a table of contents.  Because
 LaTeX is a single-pass processor, it stores some of its
 information in auxiliary files; this means that you may have to
 run <code>pdflatex</code> more than once to get all of the references
-resolved.
+resolved<sup><a id="fnr.11" name="fnr.11" class="footref" href="#fn.11">11</a></sup>.
 </p>
 
 <p>
@@ -601,9 +604,10 @@ Our current <code>sample.tex</code> file now looks like:
 This is my document.  There isn't much to it.
 
 \subsection{A subsection for fun}
-This is the second paragraph of my document.  This paragraph is longer
-than the first paragraph because I kept typing words in this paragraph,
-and didn't type as many words in the preceding paragraph.
+This is the second paragraph of my document.  This
+paragraph is longer than the first paragraph because
+I kept typing words in this paragraph, and didn't
+type as many words in the preceding paragraph.
 
 \section{My very short third section}
 This is my third paragraph, the shortest yet.
@@ -647,7 +651,7 @@ front-matter.
 Lists in LaTeX are environments similar to other environments
 we've seen, like <code>\begin{figure}</code> &#x2026; <code>\end{figure}</code>; the list
 environment for a bulleted list is <code>itemize</code> and for a numbered
-list is <code>enumerate</code>.
+list is =enumerate=<sup><a id="fnr.12" name="fnr.12" class="footref" href="#fn.12">12</a></sup>.
 </p>
 
 <p>
@@ -693,7 +697,7 @@ sentences that has several properties:
 <p>
 LaTeX can support simple bibliographies within a document using
 the <code>\cite</code> command in the document for citations and the
-<code>\bibitem</code> command in the <code>thebibliography</code> environment.
+<code>\bibitem</code> command in the <code>thebibliography</code> environment<sup><a id="fnr.13" name="fnr.13" class="footref" href="#fn.13">13</a></sup>.
 </p>
 
 <p>
@@ -745,9 +749,10 @@ and support.
 The best web site for LateX support is <i>Google</i>, followed by
 <a href="http://tex.stackexchange.com/">StackOverflow</a>.  LaTeX-specific web sites are the website for the
 <a href="http://www.latex-project.org/">LaTeX Project</a>, the <a href="http://www.tug.org">TeX Users Group</a>, and the <a href="http://en.wikibooks.org/wiki/LaTeX">LaTeX WikiBooks</a> site.
-For additional packages for LaTeX, the <a href="http://ctan.org/">Comprehensive TeX Archive
-Network</a> is the definitive source; the <a href="http://ctan.org/pkg/umthesis">umthesis</a> class is available
-here, for example.
+For additional packages for LaTeX, the
+<a href="http://ctan.org/">Comprehensive TeX Archive Network</a> is the
+definitive source; the <a href="http://ctan.org/pkg/umthesis">umthesis</a> class is available here, for
+example<sup><a id="fnr.14" name="fnr.14" class="footref" href="#fn.14">14</a></sup>.
 </p>
 </div>
 </div>
@@ -781,6 +786,91 @@ there are also a lot of other excellent books, many of which are
 Emailing <a href="mailto:caen@umich.edu">caen@umich.edu</a> will come to me and others at <a href="http://www.engin.umich.edu/caen">CAEN</a> and
 we'll do our best to help you.
 </p>
+
+<div id="outline-container-sec-6-1" class="outline-3">
+  <h3 id="sec-6-1">This Document</h3>
+  <div class="outline-text-3" id="text-6-4">
+    <p>
+      This document is also available as a
+      <a href=/assets/2013-07-08-latex-class.pdf>PDF file</a> and a
+      <a href=/assets/latex-in-90minutes.mobi>Kindle-formatted ebook</a>.
+    </p>
+    <p>
+      The <kbd>sample.tex</kbd> file is also
+      <a href=/assets/sample.tex>available for download</a>
+    </p>
+  </div>
 </div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+This is also described in Appendix A of <i>The Not So Short
+Introduction to LATEX</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+See Chapter 1 of <i>The Not So Short Introduction to LaTeX</i>
+(<i>TNSSItL</i>) for more detail
+</p></div>
+
+<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
+See sections 1.3&#x2013;1.4 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
+See section 1.5 of <i>TNSSItL</i>, with the exception that we will
+always use <code>pdflatex</code> instead of the <code>latex</code>, <code>xdvi</code>, and <code>dvips</code>
+commands in <i>TNSSItL</i>; for more on <code>pdflatex</code>, see Section 4.7 of
+<i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
+This is also described briefly in Section 1.5 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
+See Section 2.7 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
+See Chapter 3 of <i>TNSSItL</i> for much more detail
+</p></div>
+
+<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p class="footpara">
+See Sections 2.1.2 and 2.11.6 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.9" name="fn.9" class="footnum" href="#fnr.9">9</a></sup> <p class="footpara">
+See Chapter 5 of <i>TNSSItL</i> for more on the <code>picture</code>
+environment and TikZ
+</p></div>
+
+<div class="footdef"><sup><a id="fn.10" name="fn.10" class="footnum" href="#fnr.10">10</a></sup> <p class="footpara">
+See Section 4.1 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.11" name="fn.11" class="footnum" href="#fnr.11">11</a></sup> <p class="footpara">
+See Sections 2.7 and 2.12 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.12" name="fn.12" class="footnum" href="#fnr.12">12</a></sup> <p class="footpara">
+See Section 2.11.1 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.13" name="fn.13" class="footnum" href="#fnr.13">13</a></sup> <p class="footpara">
+See Section 4.2 of <i>TNSSItL</i>
+</p></div>
+
+<div class="footdef"><sup><a id="fn.14" name="fn.14" class="footnum" href="#fnr.14">14</a></sup> <p class="footpara">
+For an alternative, <code>emacs</code> based input format, take a look at
+<a href="http://orgmode.org">Org-Mode</a>; it can export HTML and LaTeX
+</p></div>
+
+
 </div>
 </div>
