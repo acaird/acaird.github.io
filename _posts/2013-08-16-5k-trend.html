@@ -1,0 +1,337 @@
+---
+layout: post
+title: R is for Running
+tagline: Running, stats, pretty plots and some R learnin'!!
+categories: running computers
+tags: trends R running run plots times
+---
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">5k</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+I recently ran a small 5k race in Ann Arbor, MI called the <a href="http://www.uap-ppubcrawl.com/">UA
+Plumbers and Pipefitters 5k</a>.  It raised money for the <a href="http://semperfifund.org/">Semper Fi
+Fund</a>, which is a great cause.  It also had an amazing logo of a
+running U-shaped trap pipe, and I really wanted the t-shirt and
+medal with that logo on it.
+</p>
+
+<p>
+It was a 6:50pm start, which is unusual, but sort of a nice time, if
+you ask me, and it was a nice evening&#x2014;warm, but not too hot, and
+humid, but not too humid.
+</p>
+
+<p>
+I ended up having a nice race, which prompted me to look up my past
+times:
+</p>
+
+<table id="5ktimes" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption>5k Times</caption>
+
+<colgroup>
+<col class="left"/>
+
+<col class="left"/>
+
+<col class="right"/>
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Event</th>
+<th scope="col" class="left">Date</th>
+<th scope="col" class="right">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">Turkey Trot</td>
+<td class="left">11/25/2010</td>
+<td class="right">23:09</td>
+</tr>
+
+<tr>
+<td class="left">Turkey Trot</td>
+<td class="left">11/24/2011</td>
+<td class="right">22:46</td>
+</tr>
+
+<tr>
+<td class="left">Turkey Trot</td>
+<td class="left">11/22/2012</td>
+<td class="right">21:09</td>
+</tr>
+
+<tr>
+<td class="left">Gallup Gallop</td>
+<td class="left">7/14/2013</td>
+<td class="right">20:37</td>
+</tr>
+
+<tr>
+<td class="left">Plumbers and Pipefitters</td>
+<td class="left">8/12/2013</td>
+<td class="right">19:19</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Noticing that every time was faster, I thought I'd make a plot,
+since it would show a trend&#x2014;a trend that I liked, since I got
+faster every time.  This might be a different blog post if there were
+other trends&#x2014;one with ``sample data''.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/5k-times.svg"  alt="5k-times.svg"/></p>
+<p>5k Times Trend</p>
+</div>
+
+<p>
+That's a nice graph, if I do say so myself.
+</p>
+
+<p>
+And my interpretation of the trend and spread is that I ran faster
+than expected, which means I can run slower in my next 5k and still
+maintain the trend.  Yay for running slower!
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Making Graphs of Running Times with R</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Because I like to make plots with the <a href="http://www.r-project.org">R</a> software for statistical
+computing and graphics, that's what I used to make that plot, and
+because this would be an <i>even more</i> self-centered blog post if I
+didn't share something with you, following are the steps to make
+that plot with your own running times.
+</p>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1">The one non-standard library and our data</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The first step is to get the library we need&#x2014; <code>ggplot2</code> &#x2014;and
+load the data:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="initialize">library(ggplot2)
+r&lt;-read.table("file.txt", header=TRUE, sep="|")
+</pre>
+</div>
+
+<p>
+Representing dates in R is pretty simple, but representing times is
+a little trickier.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2">Getting the data just so</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The next two lines convert the dates in the
+table into dates that R understands and converts the times to
+seconds for the sake of the plot.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R" id="convert-dates-times">r$Date&lt;-as.Date(r$Date,format='%m/%d/%Y')
+r$Times&lt;-(as.numeric(as.POSIXct(strptime(r$Time, format="%M:%OS"))) -
+          as.numeric(as.POSIXct(strptime("0", format="%S")))
+         )
+</pre>
+</div>
+<p>
+The second line is the result of some Google searching and
+StackExchange finding, but in the end it converts the <code>MM:SS</code>
+formatted times into seconds and stores it in <code>Times</code> (note the
+extra <code>s</code> to denote seconds).
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3">Setting up the y-labels</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+We want the y-labels back in our <code>MM:SS</code> format, and it would be
+nice, for a small amount of data, to label the y-axis of every
+point.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R" id="make-y-labels">secs&lt;-c(r$Times,seq(from=18*60, to=max(r$Times)+120, by=60*1))
+labels&lt;-paste((as.integer(secs/60)),
+              formatC(round((secs/60 - as.integer(secs/60)) * 60),
+                      width=2,
+                      flag="0"),
+              sep=":")
+</pre>
+</div>
+
+<p>
+First we make a vector called <code>secs</code> that has my run times,
+converted to seconds, and then some ``normal'' times (19:00,
+20:00, etc) converted to seconds.  The line:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R">seq(from=18*60, to=(max(r$Times)+120, by=60*1))
+</pre>
+</div>
+<p>
+makes a sequence of numbers starts at fifteen minutes (because I'm
+confident I'll never run a 18:00 5k) and ends at two minutes more
+than my slowest time (this leaves room on the plot for labels and
+frames the times).  The labels will be every one minutes
+(<code>by=60*1</code>).  That sequence defines the y-axis points, but would
+make for non-intuitive labels.
+</p>
+
+<p>
+The next line creates a vector called <code>labels</code> that converts the
+seconds into the format <code>MM:SS</code> by <code>paste</code>-ing together minutes
+and seconds separated by a colon (sep=":").  To get minutes, we
+simply take the integer part of <code>secs</code> divided by 60, and that's
+the first half of our paste.  The second half of the paste also
+needs to be padded with leading zeros if it isn't long enough
+(otherwise your time might be 20:9 instead of 20:09), so we use
+the <code>formatC</code> function with the options: our number, width=2 (pad
+to two characters), and flag="0" (pad with 0s).  Our number is the
+decimal part of (<code>secs</code> divided by 60), multiplied by 60 to get
+seconds and rounded to the nearest integer.
+</p>
+
+<p>
+At this point we have two vectors: <code>secs</code> and <code>labels</code> that match
+each other&#x2014;one has seconds and one has <code>MM:SS</code>, each in the same
+location in the vector.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4">Using the data to make a pretty plot</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+At this point, we have all the data we need in the R data frame (a
+data frame is like one sheet in an Excel spreadsheet) called <code>r</code>,
+some labels in <code>secs</code> and <code>labels</code> and all we have left to do is use
+<code>ggplot2</code> to plot it.
+</p>
+
+<p>
+<code>ggplot2</code> builds a plot piece by piece, which is nice for making
+incremental changes, and also nice for explaining, since each piece
+stands on its own.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="plot-data-and-steps">plot = ggplot(r, aes(x=Date,y=Times,label=r$Event)) + geom_step()
+</pre>
+</div>
+
+<p>
+This line creates the <code>plot</code> object (although you can call it
+whatever you want, it's a normal R variable) and starts the
+<code>ggplot</code> process by telling it ``We're using the <code>r</code> data frame and
+aesthetically we are going to use <code>Date</code> for the x-data and <code>Times</code>
+(our Time converted to seconds) for the y-data and we're going to
+label it with the <code>Event</code> name.  To draw a line, we want steps, not
+a series of slopes, so we add <code>geom_step()</code> to the plot.
+</p>
+
+<p>
+Next we add the text for the <code>label=</code> we specified above and set a
+size (3) and a vertical adjustment so they are above the point
+(<code>vjust=-0.5</code>):
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R" id="plot-add-text">plot = plot + geom_text(size=3,vjust=-0.5)
+</pre>
+</div>
+
+<p>
+The x-axis can be a little too short to leave room for the long
+race names in the labels, so we add a little on each end, by
+subtracting from the minimum date (<code>min(r$Date)</code>) and adding to the
+maximum date (<code>max(r$Date)</code>).  The amount added is a guess based on
+the size of the labels of the first and latest races.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R" id="plot-set-xlim">plot = plot + xlim((min(r$Date)-60),max(r$Date)+90)
+</pre>
+</div>
+
+<p>
+Then we add points to each race along the step line and also a
+smoothing range (the gray area in the plot) to get some sort of
+prediction of the range.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R" id="plot-add-points-and-smooth">plot = plot + geom_point() + stat_smooth(method="glm")
+</pre>
+</div>
+
+<p>
+Lastly, we use the <code>secs</code> and <code>labels</code> from above to make y-axis
+labels, and set the range of the y-axis to be between 18 minutes
+(<code>60*18</code>) (since I don't think I'll break an 18-minute 5k) and the
+slowest time (<code>max(r$Times)</code>); turn of the x-axis label, since the
+fact they it is dates is pretty evident, and then call <code>plot</code> to
+draw the plot.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-R" id="plot-xylabels-plot">plot = plot + scale_y_continuous(breaks=secs,
+                                 labels=labels,
+                                 limits=c(60*18,max(r$Times)))
+plot = plot + xlab("")
+plot
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5">The final R script</h3>
+<div class="outline-text-3" id="text-2-5">
+<div class="org-src-container">
+
+<pre class="src src-R">library(ggplot2)
+r&lt;-read.table("file.txt", header=TRUE, sep="|")
+r$Date&lt;-as.Date(r$Date,format='%m/%d/%Y')
+r$Times&lt;-(as.numeric(as.POSIXct(strptime(r$Time, format="%M:%OS"))) -
+	  as.numeric(as.POSIXct(strptime("0", format="%S")))
+	 )
+secs&lt;-c(r$Times,seq(from=18*60, to=max(r$Times)+120, by=60*1))
+labels&lt;-paste((as.integer(secs/60)),
+	      formatC(round((secs/60 - as.integer(secs/60)) * 60),
+		      width=2,
+		      flag="0"),
+	      sep=":")
+plot = ggplot(r, aes(x=Date,y=Times,label=r$Event)) + geom_step()
+plot = plot + geom_text(size=3,vjust=-0.5)
+plot = plot + xlim((min(r$Date)-60),max(r$Date)+90)
+plot = plot + geom_point() + stat_smooth(method="glm")
+plot = plot + scale_y_continuous(breaks=secs,
+				 labels=labels,
+				 limits=c(60*18,max(r$Times)))
+plot = plot + xlab("")
+plot
+</pre>
+</div>
+</div>
+</div>
+</div>
