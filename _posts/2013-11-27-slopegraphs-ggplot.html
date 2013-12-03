@@ -1,0 +1,260 @@
+---
+layout: post
+title: Slopegraphs in R with ggplot2
+tagline: Information density is up and to the right
+categories: computers
+tags: R slopegraph tufte ggplot2 ggplot visualization
+---
+
+<p>
+Slopegraphs have seen some recent attention on <a href="http://www.edwardtufte.com/bboard/q-and-a-fetch-msg?msg_id=0003nk">Edward Tufte's forum</a>
+and in the data visualization community, especially Charlie Park's
+<a href="http://charliepark.org/slopegraphs/">excellent treatment</a> of them.  In this post, I make a simple slopegraph
+using less than 20 lines of R and <code>ggplot2</code>.
+</p>
+
+<p>
+Slopegraphs are very simple&#x2014;there is no (as ET says) chartjunk.
+</p>
+
+<p>
+There are examples of making slopegraphs in ggplot
+(<a href="http://www.jameskeirstead.ca/blog/slopegraphs-in-r/">http://www.jameskeirstead.ca/blog/slopegraphs-in-r/</a>,
+<a href="http://www.r-bloggers.com/slopegraphs-in-r-2/">http://www.r-bloggers.com/slopegraphs-in-r-2/</a>,
+<a href="https://github.com/bobthecat/codebox/blob/master/table.graph.r">https://github.com/bobthecat/codebox/blob/master/table.graph.r</a>) all
+over the web, but what's the web if it doesn't have one more example?
+</p>
+
+<p>
+Plus, mine is simple&#x2014;less than 20 lines of R code if you don't
+include the initialization of the data.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Load the libraries</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+I obviously need the <code>ggplot2</code> library, otherwise I would be lying
+in the title.  I also load the <code>scales</code> library so I can label the
+points nicely by putting commas in the numbers.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="libraries">library(ggplot2)
+library(scales)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Load the data</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Likely you'll load the data from a file into a data frame, and it
+doesn't matter too much what it looks like, as long as each row has
+the start value, the end value, and the label somewhere in it.  Or
+it could be three different variables in other places.
+</p>
+
+<p>
+You'll also need a variable for the x-axis.  In my case, this is 24
+months (see: <code>months&lt;-24</code>)
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="constants">months&lt;-24
+year1&lt;-c(1338229205,5212325386,31725112511)
+year3&lt;-c(1372425378,8836570075,49574919628)
+group&lt;-c("Group C", "Group B", "Group A")
+a&lt;-data.frame(year1,year3,group)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Set the arrays of labels</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+This makes the strings we'll use for the labels by combining the
+<code>group</code> name with the value at each end of our slope line.
+</p>
+
+<p>
+I also use the <code>comma_format()()</code> function from the <code>scales</code>
+library here to make slightly cleaner looking labels.
+</p>
+
+<p>
+If you prefered a more Tufte-esque label, you can omit the newline
+from the <code>sep=</code> option and flip the order of the second set of
+labels.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="labels">l11&lt;-paste(a$group,comma_format()(round(a$year1/(3600*24*30.5))),sep="\n")
+l13&lt;-paste(a$group,comma_format()(round(a$year3/(3600*24*30.5))),sep="\n")
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Draw the slopelines</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+This line is pretty simple but draws the slopelines using the
+<code>geom_segment</code> where the x-range is 0 to <code>months</code> and the y-range
+is from the <code>a</code> data frame values.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="slopelines">p&lt;-ggplot(a) + geom_segment(aes(x=0,xend=months,y=year1,yend=year3),size=.75)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">Set the theme to be nothingness</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+These settings turn off all of the default <code>ggplot2</code> decorations
+(chartjunk?).
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="theme">p&lt;-p + theme(panel.background = element_blank())
+p&lt;-p + theme(panel.grid=element_blank())
+p&lt;-p + theme(axis.ticks=element_blank())
+p&lt;-p + theme(axis.text=element_blank())
+p&lt;-p + theme(panel.border=element_blank())
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">Set the axis labels and limits</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+The x label is empty because we'll use the column headings to
+denote the time span (or whatever x-range you have), the y label is
+still useful, though, although the <code>theme_text(vjust=X)</code> moves the
+label a little closer&#x2014;you'll want to play with this for your own
+plot until it looks correct to you.
+</p>
+
+<p>
+Also, I make the plot area a little bigger by setting <code>xlim</code> and
+<code>ylim</code> to be bigger than the data would imply.  This is also a bit
+of art, so you'll want to look at this for your own chart, too.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="axisLabelsAndLimits">p&lt;-p + xlab("") + ylab("Amount Used")
+p&lt;-p + theme(axis.title.y=theme_text(vjust=3))
+p&lt;-p + xlim((0-12),(months+12))
+p&lt;-p + ylim(0,(1.2*(max(a$year3,a$year1))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7">Label the slopelines</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Here we use the labels we created above in the <code>geom_text()</code>
+function, once for each side of the slopeline.  The first line
+below is for the right side (<code>year3</code>) of the chart and the second
+is for the left side (<code>year1</code>).
+</p>
+
+<p>
+The <code>rep.int</code> command that sets <code>x</code> just repeats the
+number&#x2014;either <code>0</code> or <code>24</code>&#x2014;to make the same number of elements
+in <code>x</code> as there are in <code>y</code>.
+</p>
+
+<p>
+Again, the <code>hjust</code> and <code>size</code> parameters will need some attention
+to get your slopegraph to look just right.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R" id="slopelineLabels">p&lt;-p + geom_text(label=l13, y=a$year3, x=rep.int(months,length(a)),hjust=-0.2,size=3.5)
+p&lt;-p + geom_text(label=l11, y=a$year1, x=rep.int( 0,length(a)),hjust=1.2,size=3.5)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8">Label the columns</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+The columns titles, or labels at the top of each side of the
+slopegraph, are set here using <code>geom_text()</code> and setting <code>y</code> to
+just a bit above the maximum value from the two lists of values
+(<code>year1</code> and <code>year2</code>).  Don't forget to pay attention to <code>hjust</code>
+and <code>size</code> again.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-:exports" id="columnLabels">p&lt;-p + geom_text(label="Year 1", x=0,     y=(1.1*(max(a$year3,a$year1))),hjust= 1.2,size=5)
+p&lt;-p + geom_text(label="Year 3", x=months,y=(1.1*(max(a$year3,a$year1))),hjust=-0.1,size=5)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9">Finally, some graphics</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+In the end, this R code produces this figure:
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/group-slopes.png" alt="group-slopes.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10">The entire script, suitable for copying-and-pasting is here</h2>
+<div class="outline-text-2" id="text-10">
+<div class="org-src-container">
+
+<pre class="src src-R" id="wholeScript">library(ggplot2)
+library(scales)
+months&lt;-24
+year1&lt;-c(1338229205,5212325386,31725112511)
+year3&lt;-c(1372425378,8836570075,49574919628)
+group&lt;-c("Group C", "Group B", "Group A")
+a&lt;-data.frame(year1,year3,group)
+l11&lt;-paste(a$group,comma_format()(round(a$year1/(3600*24*30.5))),sep="\n")
+l13&lt;-paste(a$group,comma_format()(round(a$year3/(3600*24*30.5))),sep="\n")
+p&lt;-ggplot(a) + geom_segment(aes(x=0,xend=months,y=year1,yend=year3),size=.75)
+p&lt;-p + theme(panel.background = element_blank())
+p&lt;-p + theme(panel.grid=element_blank())
+p&lt;-p + theme(axis.ticks=element_blank())
+p&lt;-p + theme(axis.text=element_blank())
+p&lt;-p + theme(panel.border=element_blank())
+p&lt;-p + xlab("") + ylab("Amount Used")
+p&lt;-p + theme(axis.title.y=theme_text(vjust=3))
+p&lt;-p + xlim((0-12),(months+12))
+p&lt;-p + ylim(0,(1.2*(max(a$year3,a$year1))))
+p&lt;-p + geom_text(label=l13, y=a$year3, x=rep.int(months,length(a)),hjust=-0.2,size=3.5)
+p&lt;-p + geom_text(label=l11, y=a$year1, x=rep.int( 0,length(a)),hjust=1.2,size=3.5)
+p&lt;-p + geom_text(label="Year 1", x=0,     y=(1.1*(max(a$year3,a$year1))),hjust= 1.2,size=5)
+p&lt;-p + geom_text(label="Year 3", x=months,y=(1.1*(max(a$year3,a$year1))),hjust=-0.1,size=5)
+p
+</pre>
+</div>
+</div>
+</div>
