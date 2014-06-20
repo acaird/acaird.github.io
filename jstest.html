@@ -1,0 +1,37 @@
+
+<head>
+  <title> Andy's JavaScript Test Page</title>
+</head>
+
+<body>
+
+  <p>
+    This is my web page.
+  </p>
+
+  <form>
+    Select your college:
+    <select id="mySelect" onchange="computeRate()">
+      <option>&nbsp;</option>
+      <option>CoE</option>
+      <option>LSA</option>
+      <option>Med</option>
+      <option>SPH</option>
+      <option>Other</option>
+    </select>
+  </form>
+  <p>
+    <div id="total"></div>
+  </p>
+  <script>
+    function computeRate () {
+      var x = document.getElementById("mySelect").value;
+      if (x == "CoE" || x == "LSA" ) {
+        total = 5;
+      } else {
+        total = 10;
+      }
+      document.getElementById("total").innerHTML = "Total: $"+ total;
+    }
+  </script>
+</body>
