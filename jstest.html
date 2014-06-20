@@ -10,28 +10,50 @@
   </p>
 
   <form>
-    Select your college:
-    <select id="mySelect" onchange="computeRate()">
-      <option>&nbsp;</option>
-      <option>CoE</option>
-      <option>LSA</option>
-      <option>Med</option>
-      <option>SPH</option>
-      <option>Other</option>
-    </select>
+    <p>
+      Select your college:
+      <select id="college" onchange="computeRate()">
+	<option>&nbsp;</option>
+	<option>CoE</option>
+	<option>LSA</option>
+	<option>Med</option>
+	<option>SPH</option>
+	<option>Other</option>
+      </select>
+    </p>
+    <p>
+      Select your Flux product:
+      <select id="fluxprod" onchange="computeRate()">
+	<option>&nbsp;</option>
+	<option value="std">Standard Flux (1 core, 4GB RAM per core)</option>
+	<option value="fluxm">Large-memory Flux (1 core, 25GB RAM per core)</option>
+	<option value="fluxg">GPU Flux (2 cores, 8GB RAM, 1 NVIDIA K20 	GPU)</option>
+	<option value="foe">Flux Operating Environment (1 node)</option>
+      </select>
+    </p>
+    <p id="foe">
+    </p>
   </form>
   <p>
     <div id="total"></div>
   </p>
   <script>
     function computeRate () {
-      var x = document.getElementById("mySelect").value;
-      if (x == "CoE" || x == "LSA" ) {
+      var college = document.getElementById("college").value;
+      var prod    = document.getElementById("fluxprod").value;
+      if (college == "CoE" || college == "LSA" ) {
         total = 5;
+      } else if (college == "Other" ) {
+        total = 20;
       } else {
         total = 10;
       }
-      document.getElementById("total").innerHTML = "Total: $"+ total;
+      document.getElementById("total").innerHTML = "Total: $"+ total + " " + prod ;
+      if (prod == "foe") {
+         document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant?";
+      } else {
+         document.getElementById("foe").innerHTML = "";
+      }
     }
   </script>
 </body>
