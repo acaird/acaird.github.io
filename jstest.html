@@ -48,9 +48,10 @@
       } else {
         total = 10;
       }
-      document.getElementById("total").innerHTML = "Total: $"+ total + " " + prod ;
+      document.getElementById("total").innerHTML = "Total: $"+ total + " " + prod + " " + foeGrant;
       if (prod == "foe") {
-         document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant?";
+         document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"computeRate()\" value=1>";
+         var foeGrant= document.getElementById("foeGrant").value;
       } else {
          document.getElementById("foe").innerHTML = "";
       }
