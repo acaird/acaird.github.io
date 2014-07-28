@@ -37,10 +37,16 @@
   <p>
     <div id="total"></div>
   </p>
+  <p>
+    <div id="foeWTF"></div>
+  </p>
   <script>
     function computeRate () {
-      var college = document.getElementById("college").value;
-      var prod    = document.getElementById("fluxprod").value;
+      var college, prod, foeGrant;
+      college = document.getElementById("college").value;
+      prod    = document.getElementById("fluxprod").value;
+      foeGrant=0;
+
       if (college == "CoE" || college == "LSA" ) {
         total = 5;
       } else if (college == "Other" ) {
@@ -48,13 +54,26 @@
       } else {
         total = 10;
       }
-      document.getElementById("total").innerHTML = "Total: $"+ total + " " + prod + " " + foeGrant;
-      if (prod == "foe") {
-         document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"computeRate()\" value=1>";
-         var foeGrant= document.getElementById("foeGrant").value;
+
+      totalUpdate (total,prod,0);
+
+      if (prod === "foe") {
+         document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"totalUpdate(total,999,1)\" value=1></input>";
+         document.getElementById("foeWTF").innerHTML = "wtf from prod=foe";
       } else {
          document.getElementById("foe").innerHTML = "";
+         document.getElementById("foeWTF").innerHTML = "";
       }
     }
+  function totalUpdate (t,p,f) {
+         if (f == 0) {
+             document.getElementById("total").innerHTML = "Total: $"+ t + " " + p;
+             document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"totalUpdate(total,999,1)\" value=1></input>";
+         } else {
+             document.getElementById("total").innerHTML = "Total: $"+ t + " " + p + "   value: "+f;
+             document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"totalUpdate(total,999,0)\" value=0></input>";
+         }
+         document.getElementById("foeWTF").innerHTML = "wtf, indeed";
+  }
   </script>
 </body>
