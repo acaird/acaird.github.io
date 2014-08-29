@@ -1,0 +1,283 @@
+---
+layout: post
+title: Scalable Signature Images for Electronic Documents
+tagline: so your PDF letters look nice
+categories: computers
+tags: latex signature image pdf potrace png file
+---
+
+<p>
+Many people include an image of their signature in electronic
+documents to make them look traditional, and because putting a PGP
+signature block in a PDF file would be weird and not really that
+useful.  Most of these images don't look much like signatures&#x2014;they
+are bitmaps that don't scale well and look blocky and not really like
+a signature at all.  We can do better.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">The Bitmap to Vector Miracle called <code>potrace</code></h2>
+<div class="outline-text-2" id="text-1">
+<p>
+A while ago Alec Ten Harmsel and I were talking about how cool it
+would be if you could take a bitmap (a PNG or JPG file) and convert
+it into a vector file (SVG or PostScript or PDF), and also how hard
+it would be do to that.  A little Google'ing turned up a program
+that magically does this.
+</p>
+
+<p>
+Peter Selinger's <a href="http://potrace.sourceforge.net">potrace</a> (<i>polygon trace</i>) takes a bitmap (a file in
+PBM, PGM, PPM, or BMP format), applies a lot of <a href="http://potrace.sourceforge.net/potrace.pdf">math</a>, and writes out
+a file in one of several formats (the most useful of which, for our
+purposes, are Encapsulated PostScript (EPS) and PDF).
+</p>
+
+<p>
+You will need to <a href="http://potrace.sourceforge.net/#downloading">download potrace</a> (any maybe some other tools) to
+follow along, but the results will be worth it.  If you are using an
+Apple computer running OS X, you can use Mac Ports or Brew to
+install <code>potrace</code> and its dependancies.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Making an image file of your signature</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+There are three big steps to getting a scalable image file with your
+signature in it.
+</p>
+
+<ol class="org-ol">
+<li>Get a digital copy of your signature.
+</li>
+
+<li>Convert the file to one of <code>potrace</code>'s input formats.
+</li>
+
+<li>Use <code>potrace</code> to make an EPS or PDF file of your signature.
+</li>
+</ol>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1">Getting a digital copy of your signature</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+There are countless ways to do this, but the four easiest ways are:
+</p>
+
+<ol class="org-ol">
+<li>sign your name in a drawing app on a tablet, and email yourself
+the image file.
+</li>
+<li>draw your signature in a drawing program on your computer, and
+save the image file.
+</li>
+<li>sign your name on a piece of plain white paper and take a photo
+of it with your camera phone and email the photo to yourself.
+If you choose this way, make sure your signature is as dark as
+possible and the paper is a white as possible; put the paper by
+a window or other bright light source to take the photo.
+</li>
+<li>sign your name on a piece of white paper, scan it with a
+document scanner, and email it to yourself.  Even though the
+scanner may send you a PDF, it isn't a scalable PDF, but a
+bitmap wrapped in a PDF file.
+</li>
+</ol>
+
+<p>
+At the end of this process, you should have a file in PDF, JPG (or
+JPEG), or PNG format that has your signature in it.
+</p>
+
+<p>
+Once you have that file, you should crop it so that your signature
+has a tight box around it.  On a Mac, you can do this using
+Preview.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2">Converting the file to one of <code>potrace</code>'s input format</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+<code>potrace</code> takes a limited number of input formats (for the good
+reason why, see the <code>potrace</code> FAQ list), so the next step is to
+convert your signature file into one of them.  On a Mac, you can
+use the appropriate command line tool:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">If your file is</th>
+<th scope="col" class="left">Convert it to</th>
+<th scope="col" class="left">&#xa0;</th>
+</tr>
+
+<tr>
+<th scope="col" class="left">in this format</th>
+<th scope="col" class="left">this format</th>
+<th scope="col" class="left">By typing this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">PNG</td>
+<td class="left">PNM</td>
+<td class="left"><code>pgntopnm file.png &gt; file.pnm</code></td>
+</tr>
+
+<tr>
+<td class="left">JPG / JPEG</td>
+<td class="left">PNM</td>
+<td class="left"><code>jpegtopnm file.jpg &gt; file.pnm</code></td>
+</tr>
+
+<tr>
+<td class="left">PDF</td>
+<td class="left">PPM</td>
+<td class="left"><code>pdftoppm file.pdf &gt; file.ppm</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>
+these tools are available on Macs via MacPorts or Brew, on Linux
+via your preferred package manager, and probably also on Windows.
+</p>
+
+<p>
+At the end of this step, you should have a PNM or PPM version of
+the file with the image of your signature in it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3">Use <code>potrace</code> to get a PDF file</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+<code>potrace</code> is a command-line tool (although graphical interfaces are
+available) that takes many parameters; the two that matter for our
+purposes are:
+</p>
+<ul class="org-ul">
+<li><code>-b pdf</code> to specify that the output is to be in PDF format
+</li>
+<li><code>-o signature.pdf</code> to specify that the output file is to be
+called <code>signature.pdf</code>; you can change that to anything you
+want
+</li>
+</ul>
+
+<p>
+The complete command, assuming you have a PNM file called
+<code>signature.pnm</code> and you want your output file to be called
+<code>signature.pdf</code> is:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-bash">potrace -b pdf -o signature.pdf signature.pnm
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Results</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+You should now have a PDF file with a scalable version of your
+signature in it.  If you open the original PNG file and the
+resulting PDF file and zoom in on them, you should see a big
+difference:
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/sig-png-pdf-potrace.png" alt="sig-png-pdf-potrace.png" />
+</p>
+<p><span class="figure-number">Figure 1:</span> Comparing PNG input (top) and PDF output (bottom) files</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Extra Bonus</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1">All in one command line</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+The command below will skip the generation of the PNM file and go
+straight from the PNG file to the PDF file.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-bash">pngtopnm signature.png | potrace -b pdf -o signature.pdf
+</pre>
+</div>
+
+<p>
+On my system, this generates the warning
+</p>
+<pre class="example">
+libpng warning: iCCP: known incorrect sRGB profile
+</pre>
+<p>
+but that doesn't seem to have any effect on the output, so if you
+see it, don't panic.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2">Using this signature in a LaTeX letter</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+If you are using a standard LaTeX letter format and pdflatex, you
+should include the <code>graphicx</code> package and your signature line
+should look like:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-latex"><span style="color: #a020f0;">\signature</span>{<span style="color: #a020f0;">\vspace</span>{-3em}<span style="color: #a020f0;">\includegraphics</span>[width=10em]{<span style="color: #483d8b;">sig.pdf</span>}<span style="color: #ff0000; font-weight: bold;">\\</span>Your Name}
+</pre>
+</div>
+<p>
+where <code>sig.pdf</code> is the PDF file containing the image of your
+signature.  You may have to adjust the <code>vspace</code> and the <code>width</code>
+depending on the size of your signature and how you want it to
+look.
+</p>
+
+<p>
+If you are using the NewLFM LaTeX package and pdflatex for your
+letters, you also need the <code>graphicx</code> package and your signature
+line looks the same as above, but without the negative <code>vspace</code>:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-latex"><span style="color: #a020f0;">\signature</span>{<span style="color: #a020f0;">\includegraphics</span>[width=10em]{<span style="color: #483d8b;">sig.pdf</span>} <span style="color: #ff0000; font-weight: bold;">\\</span> Your Name}
+</pre>
+</div>
+</div>
+</div>
+</div>
