@@ -2,13 +2,10 @@
 layout: post
 title: R is for Running
 tagline: Running, stats, pretty plots and some R learnin'!!
-categories: running computers R
+categories: running computers
 tags: trends R running run plots times
 ---
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">5k</h2>
-<div class="outline-text-2" id="text-1">
 <p>
 I recently ran a small 5k race in Ann Arbor, MI called the <a href="http://www.uap-ppubcrawl.com/">UA
 Plumbers and Pipefitters 5k</a>.  It raised money for the <a href="http://semperfifund.org/">Semper Fi
@@ -17,10 +14,14 @@ running U-shaped trap pipe, and I really wanted the t-shirt and
 medal with that logo on it.
 </p>
 
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">5k</h2>
+<div class="outline-text-2" id="text-1">
 <p>
-It was a 6:50pm start, which is unusual, but sort of a nice time, if
-you ask me, and it was a nice evening&#x2014;warm, but not too hot, and
-humid, but not too humid.
+This race had a 6:50pm start, which is unusual, but sort of a nice
+time, if you ask me, and it was a nice evening&#x2014;warm, but not too
+hot, and humid, but not too humid.
 </p>
 
 <p>
@@ -29,14 +30,14 @@ times:
 </p>
 
 <table id="5ktimes" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<caption>5k Times</caption>
+<caption class="t-above"><span class="table-number">Table 1:</span> 5k Times</caption>
 
 <colgroup>
-<col class="left"/>
+<col  class="left" />
 
-<col class="left"/>
+<col  class="left" />
 
-<col class="right"/>
+<col  class="right" />
 </colgroup>
 <thead>
 <tr>
@@ -87,8 +88,9 @@ other trends&#x2014;one with ``sample data''.
 
 
 <div class="figure">
-<p><img src="/assets/5k-times.svg"  alt="5k-times.svg"/></p>
-<p>5k Times Trend</p>
+<p><img src="/assets/5k-times.svg" alt="5k-times.svg" />
+</p>
+<p><span class="figure-number">Figure 1:</span> 5k Times Trend</p>
 </div>
 
 <p>
@@ -102,6 +104,7 @@ maintain the trend.  Yay for running slower!
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2">Making Graphs of Running Times with R</h2>
 <div class="outline-text-2" id="text-2">
@@ -135,6 +138,7 @@ a little trickier.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2">Getting the data just so</h3>
 <div class="outline-text-3" id="text-2-2">
@@ -159,6 +163,7 @@ extra <code>s</code> to denote seconds).
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-3" class="outline-3">
 <h3 id="sec-2-3">Setting up the y-labels</h3>
 <div class="outline-text-3" id="text-2-3">
@@ -218,6 +223,7 @@ location in the vector.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-4" class="outline-3">
 <h3 id="sec-2-4">Using the data to make a pretty plot</h3>
 <div class="outline-text-3" id="text-2-4">
@@ -304,6 +310,7 @@ plot
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-5" class="outline-3">
 <h3 id="sec-2-5">The final R script</h3>
 <div class="outline-text-3" id="text-2-5">
