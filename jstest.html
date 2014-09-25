@@ -1,0 +1,79 @@
+
+<head>
+  <title> Andy's JavaScript Test Page</title>
+</head>
+
+<body>
+
+  <p>
+    This is my web page.
+  </p>
+
+  <form>
+    <p>
+      Select your college:
+      <select id="college" onchange="computeRate()">
+	<option>&nbsp;</option>
+	<option>CoE</option>
+	<option>LSA</option>
+	<option>Med</option>
+	<option>SPH</option>
+	<option>Other</option>
+      </select>
+    </p>
+    <p>
+      Select your Flux product:
+      <select id="fluxprod" onchange="computeRate()">
+	<option>&nbsp;</option>
+	<option value="std">Standard Flux (1 core, 4GB RAM per core)</option>
+	<option value="fluxm">Large-memory Flux (1 core, 25GB RAM per core)</option>
+	<option value="fluxg">GPU Flux (2 cores, 8GB RAM, 1 NVIDIA K20 	GPU)</option>
+	<option value="foe">Flux Operating Environment (1 node)</option>
+      </select>
+    </p>
+    <p id="foe">
+    </p>
+  </form>
+  <p>
+    <div id="total"></div>
+  </p>
+  <p>
+    <div id="foeWTF"></div>
+  </p>
+  <script>
+    function computeRate () {
+      var college, prod, foeGrant;
+      college = document.getElementById("college").value;
+      prod    = document.getElementById("fluxprod").value;
+      foeGrant=0;
+
+      if (college == "CoE" || college == "LSA" ) {
+        total = 5;
+      } else if (college == "Other" ) {
+        total = 20;
+      } else {
+        total = 10;
+      }
+
+      totalUpdate (total,prod,0);
+
+      if (prod === "foe") {
+         document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"totalUpdate(total,999,1)\" value=1></input>";
+         document.getElementById("foeWTF").innerHTML = "wtf from prod=foe";
+      } else {
+         document.getElementById("foe").innerHTML = "";
+         document.getElementById("foeWTF").innerHTML = "";
+      }
+    }
+  function totalUpdate (t,p,f) {
+         if (f == 0) {
+             document.getElementById("total").innerHTML = "Total: $"+ t + " " + p;
+             document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"totalUpdate(total,999,1)\" value=1></input>";
+         } else {
+             document.getElementById("total").innerHTML = "Total: $"+ t + " " + p + "   value: "+f;
+             document.getElementById("foe").innerHTML = "Was this hardware purchased on a grant? <input type=\"checkbox\" name=\"foeGrant\" onchange=\"totalUpdate(total,999,0)\" value=0></input>";
+         }
+         document.getElementById("foeWTF").innerHTML = "wtf, indeed";
+  }
+  </script>
+</body>

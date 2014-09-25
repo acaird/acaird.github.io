@@ -1,0 +1,143 @@
+---
+layout: post
+title: Org-Mode, MailMate, and Tables
+tagline: something no one does, but even so, it's my blog
+categories: computers
+tags: org mailmate markdown table
+---
+
+<p>
+MailMate supports writing emails in MarkDown and also offers an
+extension to render tables; these get sent as a multi-part message
+that is MarkDown and HTML, so other mail readers can render them,
+too.
+</p>
+
+<p>
+Org-Mode has, arguably, the best ASCII table editing environment, and
+those tables can be written by hand or generated from SQL, R, Python,
+etc. from within org-mode.  Those tables can be rendered by org-mode
+as HTML, LaTeX, plain text, markdown, and other formats.
+</p>
+
+<p>
+Getting the org-mode tables rendered as an appropriate MarkDown table
+that is suitable for insertion into MailMate is a great time saver for
+the three people I know who might do that (Paul K. and Matt B., I&rsquo;m
+counting myself; if there is a fourth person, contact me, we can be
+friends).
+</p>
+
+<p>
+For example, this table looks pretty nice in HTML on this blog
+(iidssm).
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Name</th>
+<th scope="col" class="right">Age</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">Andy</td>
+<td class="right">43</td>
+</tr>
+
+<tr>
+<td class="left">Michelle</td>
+<td class="right">43</td>
+</tr>
+
+<tr>
+<td class="left">Don</td>
+<td class="right">69</td>
+</tr>
+
+<tr>
+<td class="left">Maddie</td>
+<td class="right">7</td>
+</tr>
+
+<tr>
+<td class="left">Megan</td>
+<td class="right">39</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+and what I typed was:
+</p>
+<pre class="example">
+#+ORGTBL: SEND ages orgtbl-to-gfm
+  | Name     | Age |
+  |----------+-----|
+  | Andy     |  43 |
+  | Michelle |  43 |
+  | Don      |  69 |
+  | Maddie   |   7 |
+  | Megan    |  39 |
+</pre>
+
+<p>
+To go from the org table to the MarkDown table, these are the steps:
+</p>
+
+<ol class="org-ol">
+<li>Paste the contents of <a href="https://gist.github.com/grafov/8244792">this Gist</a> into your <code>.emacs</code> file:
+<script src="https://gist.github.com/grafov/8244792.js"></script>
+</li>
+<li>Type or generate your table in org-mode, including the &ldquo;<code>#ORGTBL:
+    SEND</code>&rdquo; line.
+</li>
+<li>Create a place for the MarkDown table to go, perhaps into a
+<code>#+BEGIN/END COMMENT</code> block, using the <code>BEGIN/END RECEIVE...</code>
+lines.
+</li>
+<li>Switch from Org-mode to text mode: <code>M-x text-mode</code>
+</li>
+<li>Enter the orgtbl minor mode: <code>M-x orgtbl-mode</code>
+</li>
+<li>Move the point (cursor) to the <code>ORGTBL: SEND</code> line and press
+<code>C-c C-c</code> to generate the markdown table
+</li>
+<li>Switch back to Org-mode: <code>M-x org-mode</code>
+</li>
+</ol>
+
+<p>
+That will produce this output
+</p>
+
+<pre class="example">
+# BEGIN RECEIVE ORGTBL ages
+| Name | Age |
+|---|--:|
+| Andy | 43 |
+| Michelle | 43 |
+| Don | 69 |
+| Maddie | 7 |
+| Megan | 39 |
+# END RECEIVE ORGTBL ages
+</pre>
+
+<p>
+Now you can copy the MarkDown table to your MailMate message and it
+will render as a table.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/mailmate-table.png" alt="mailmate-table.png" />
+</p>
+</div>
