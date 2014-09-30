@@ -1,0 +1,110 @@
+---
+layout: post
+title: Salty vagrants, masters, and minions
+tagline: it's way less gross than it sounds
+categories: computers
+tags: salt vagrant virtualbox cloud provisioning example simple
+---
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">This file</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This org-mode file exists on a pretend computer, called <i>minion</i>,
+that is controlled by another pretend computer called <i>master</i>.
+These two pretend computers are both running Linux.  The two
+pretend computers are running on a real MacBook Air and are managed
+by Vagrant.   The minion is controlled by the master via Salt.
+</p>
+
+<p>
+There are literally billions of people in the world to whom the
+previous paragraph makes no sense.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Making pretend masters and minions</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>Install <a href="https://www.virtualbox.org/">VirtualBox</a>
+</li>
+
+<li>Install <a href="https://www.vagrantup.com/">Vagrant</a>
+</li>
+
+<li>Install <a href="https://developer.apple.com/xcode/downloads/">XCode</a>
+</li>
+
+<li>Follow the instructions at
+<a href="https://github.com/dotless-de/vagrant-vbguest">https://github.com/dotless-de/vagrant-vbguest</a> to make sure your
+VirtualBox guest additions match&#x2014;this is important to make the
+directory that is shared with the guests (<i>master</i> and <i>minion</i>)
+work with the host.  If you have XCode and some luck on your
+side, the command:
+<pre class="example">
+vagrant plugin install vagrant-vbguest
+</pre>
+<p>
+will do the trick.
+</p>
+</li>
+
+<li>Follow the instructions at
+<a href="http://humankeyboard.com/saltstack/2014/saltstack-virtualbox-vagrant.html">http://humankeyboard.com/saltstack/2014/saltstack-virtualbox-vagrant.html</a>
+but add <code>sudo</code> where needed, because they aren&rsquo;t in the document
+everywhere I expected them to be.
+</li>
+
+<li>Don&rsquo;t worry about the bunch of Salt errors from the minion
+provisioning, Salt still works.  What matters is that <code>test.ping</code>
+works from the master:
+<pre class="example">
+You@Your-Computer$ vagrant ssh master
+[...]
+vagrant@master:~$ sudo salt minion test.ping
+minion:
+    True
+</pre>
+<p>
+If you see that, Salt commands will work.  I think if you had a
+state tree, you wouldn&rsquo;t see those errors, but I haven&rsquo;t tested
+that yet.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Salting the minion</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Obviously, you want to install Emacs and Org-mode on the minion.  To
+do that, create a file on the master called <code>/srv/salt/emacs.sls</code>
+that contains:
+</p>
+<pre class="example">
+emacs:
+   pkg.installed
+org-mode:
+   pkg.installed
+</pre>
+
+<p>
+Then type: <code>vagrant@master:~$ sudo salt minion state.sls emacs</code> and
+wait.  When it&rsquo;s done, you&rsquo;ll get a report of all of the things that
+were installed (there are a lot of them), but then you can log into
+the minion and run the Proper Command.
+</p>
+<pre class="example">
+You@Your-Computer$ vagrant ssh minion
+[...]
+vagrant@minion:~$ emacs -f org-mode
+</pre>
+<p>
+and you&rsquo;ll be so happy.
+</p>
+</div>
+</div>
