@@ -1,0 +1,130 @@
+---
+layout: post
+title: Using a Force Sensitive Resistor with a Raspberry Pi
+tagline: which I couldn't find anywhere else on the Internets, so I had to write this
+categories: computers
+tags: raspberry pi fsr breadboard force sensitive resistor
+---
+
+<p>
+Using a force sensitive resistor with a Raspberry Pi isn&rsquo;t terribly
+complicated, but I didn&rsquo;t see it documented elsewhere on the Internet,
+so here are my notes.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Ingredients</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Assuming you have a <a href="http://www.adafruit.com/category/105">Raspberry Pi</a> and the desire to measure the
+existence of some pressure, this is what else you&rsquo;ll need:
+</p>
+
+<ul class="org-ul">
+<li>a <a href="https://www.adafruit.com/products/2029">Pi Cobbler</a> that will let you attach the Pi to a breadboard with
+a <a href="http://www.adafruit.com/products/1988">ribbon cable</a>
+</li>
+
+<li>a <a href="http://www.adafruit.com/products/239">breadboard</a> so you can plug everything in
+</li>
+
+<li>a <a href="http://www.adafruit.com/products/166">force sensitive resistor</a> (really, without this you can skip the
+rest of this blog post)
+</li>
+
+<li>a MCP3008 <a href="http://www.adafruit.com/products/856">analog to digital converter</a> to convert the analog signals from
+the FSR to digital signals that the Raspberry Pi can read
+
+<p>
+You can get a different ADC, but then these instructions will need
+some interpretation.
+</p>
+</li>
+
+<li>some <a href="http://www.adafruit.com/products/758">wires</a> to make connections on the breadboard
+</li>
+
+<li>a <a href="http://www.radioshack.com/10k-ohm-1-4-watt-carbon-film-resistor-5-pack/2711335.html">10k Ohm</a> resistor
+</li>
+</ul>
+
+
+<p>
+I&rsquo;ve linked these to AdaFruit and RadioShack, but that&rsquo;s just
+because that&rsquo;s what Google told me first, and that&rsquo;s where I&rsquo;ve
+ordered most of my components; I have no affiliation with either of
+them.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Wiring</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Most of the wiring information I got was from AdaFruit&rsquo;s
+instructions at <a href="https://learn.adafruit.com/reading-a-analog-in-and-controlling-audio-volume-with-the-raspberry-pi/connecting-the-cobbler-to-a-mcp3008">Reading a Analog Input&#x2026;</a>, which I&rsquo;ll gratefully
+paraphrase here.
+</p>
+
+<p>
+First, attach the Pi Cobbler and th MCP3008 to the breadboard along
+the center (see the diagram below).
+</p>
+
+<p>
+Next, wire the Pi Cobbler to the MCP3008 following these
+instructions:
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/mcp3008-cobbler.png" alt="mcp3008-cobbler.png" />
+</p>
+</div>
+
+<p>
+On the same unused location on the breadboard where Channel 0 is
+connected, connect one of the leads from the FSR and connect that
+same row on the breadboard connect the 10kOhm resistor to ground.
+If you leave this &ldquo;pull-down resistor&rdquo; out, the readings from the
+FSR will just flap all around and be useless (at least, so says a
+friend of mine who did that; you wouldn&rsquo;t know him).
+</p>
+
+<p>
+Finally, attached the <code>3v3</code> from the Pi Cobbler to the power rail of
+the breadboard to deliver power to everything.
+</p>
+
+<p>
+The end result should look something like this:
+</p>
+
+
+<div class="figure">
+<p><a href="/assets/lamescale_bb.pdf" width="50%"><img src="images/lamescale_bb.png" alt="lamescale_bb.png" width="50%" /></a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Reading values from the FSR</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Again, most of the script I use for this came from AdaFruit,
+specifically from the <a href="https://learn.adafruit.com/reading-a-analog-in-and-controlling-audio-volume-with-the-raspberry-pi/script">Python script page</a> in the instructions for
+<a href="https://learn.adafruit.com/reading-a-analog-in-and-controlling-audio-volume-with-the-raspberry-pi/connecting-the-cobbler-to-a-mcp3008">Reading a Analog Input&#x2026;</a> that I mentioned above, although I did
+make some changes.  My script is available at
+<a href="https://github.com/acaird/raspi-scale">https://github.com/acaird/raspi-scale</a>.
+</p>
+
+<p>
+Running that script just prints out values between 0 and 1023,
+depending on how hard you squeeze the FSR.  What you do with that
+data is up to you now.  I plan to <a href="https://github.com/acaird/raspi-scale/blob/master/README.org">monitor my can of coffee beans</a>,
+but you&rsquo;ll have to check back later for the rest of that.
+</p>
+</div>
+</div>
