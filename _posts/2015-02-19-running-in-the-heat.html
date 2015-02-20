@@ -1,0 +1,453 @@
+---
+layout: post
+title: Running in the Heat
+tagline: good thing I live where it is almost always too cold to breathe
+categories: running
+tags: running heat heartrate michigan puertorico python runkeeper matplotlib orgmode gpx xml
+---
+
+<p>
+This month (February, 2015) I had the very good fortune to be able to
+spend 5 days in San Juan, Puerto Rico, and I went for a run there
+each of the 5 days.  Part of the reason this was good fortune is that
+my home town of Ann Arbor, Michigan is in the depths of some really
+cold weather, although I had recently run 5 days there, too.  The
+running in San Juan seemed much more difficult, which I attributed to
+the heat.  I thought I&rsquo;d look at my average heart rate over the runs
+and see if there was anything noticeable.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Getting the Data</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+I use RunKeeper (<a href="http://www.runkeeper.com">http://www.runkeeper.com</a>) to track most of my
+fitness activities, and they offer the most excellent feature of
+allowing you to export your data.
+</p>
+
+<p>
+To download your runs, log in to RunKeeper, click the settings gears
+in the upper-right corner, and on the left-hand list of options
+you&rsquo;ll see &ldquo;Export Data&rdquo;, choose your date range and click the
+&ldquo;Export Data&rdquo; button.  After a few seconds or minutes you&rsquo;ll get a
+button that says &ldquo;Download Now!&rdquo;, click it and you&rsquo;ll get a Zip file
+of your data; the XML GPX files that this Python script reads and a
+few CSV files with summary data.
+</p>
+
+<p>
+I picked dates that let&rsquo;s me make Table <a href="#runtimes">1</a>, and then I did a
+little arithmetic by hand to come up with some average paces for
+each location (Table <a href="#averagepace">2</a>).
+</p>
+
+<table id="runtimes" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Runs</caption>
+
+<colgroup>
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="left" />
+
+<col  class="right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="right">Date</th>
+<th scope="col" class="right">Time</th>
+<th scope="col" class="left">Location</th>
+<th scope="col" class="right">Pace</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="right">2015-01-31</td>
+<td class="right">13:00</td>
+<td class="left">AA</td>
+<td class="right">8:12</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-03</td>
+<td class="right">15:27</td>
+<td class="left">AA</td>
+<td class="right">8:33</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-07</td>
+<td class="right">14:16</td>
+<td class="left">AA</td>
+<td class="right">8:07</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-08</td>
+<td class="right">13:32</td>
+<td class="left">AA</td>
+<td class="right">8:09</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-10</td>
+<td class="right">14:48</td>
+<td class="left">AA</td>
+<td class="right">8:34</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-15</td>
+<td class="right">10:58</td>
+<td class="left">SJ</td>
+<td class="right">8:35</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-16</td>
+<td class="right">09:40</td>
+<td class="left">SJ</td>
+<td class="right">9:06</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-17</td>
+<td class="right">16:50</td>
+<td class="left">SJ</td>
+<td class="right">8:13</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-18</td>
+<td class="right">15:50</td>
+<td class="left">SJ</td>
+<td class="right">8:29</td>
+</tr>
+
+<tr>
+<td class="right">2015-02-19</td>
+<td class="right">08:53</td>
+<td class="left">SJ</td>
+<td class="right">8:54</td>
+</tr>
+</tbody>
+</table>
+
+<table id="averagepace" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> Average Pace</caption>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Location</th>
+<th scope="col" class="right">Average Pace (min/mile)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">Ann Arbor, MI</td>
+<td class="right">8:19</td>
+</tr>
+
+<tr>
+<td class="left">San Juan, PR</td>
+<td class="right">8:39</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+The data I&rsquo;m interested in, heart rate at each measurement, is
+embedded in the GPX (<a href="http://en.wikipedia.org/wiki/GPS_Exchange_Format">GPS Exchange format</a>) files that RunKeeper
+delivers.  A GPX file from RunKeeper looks like:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-xml">&lt;?<span style="color: #a020f0;">xml</span> <span style="color: #a0522d;">version</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">1.0</span><span style="color: #8b2252;">"</span> <span style="color: #a0522d;">encoding</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">UTF-8</span><span style="color: #8b2252;">"</span>?&gt;
+&lt;<span style="color: #0000ff;">gpx</span>
+  <span style="color: #a0522d;">version</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">1.1</span><span style="color: #8b2252;">"</span>
+  <span style="color: #a0522d;">creator</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">RunKeeper - http://www.runkeeper.com</span><span style="color: #8b2252;">"</span>
+  <span style="color: #483d8b;">xmlns</span>:<span style="color: #a0522d;">xsi</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">http://www.w3.org/2001/XMLSchema-instance</span><span style="color: #8b2252;">"</span>
+  <span style="color: #483d8b;">xmlns</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">http://www.topografix.com/GPX/1/1</span><span style="color: #8b2252;">"</span>
+  <span style="color: #483d8b;">xsi</span>:<span style="color: #a0522d;">schemaLocation</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd</span><span style="color: #8b2252;">"</span>
+  <span style="color: #483d8b;">xmlns</span>:<span style="color: #a0522d;">gpxtpx</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">http://www.garmin.com/xmlschemas/TrackPointExtension/v1</span><span style="color: #8b2252;">"</span>&gt;
+&lt;<span style="color: #0000ff;">trk</span>&gt;
+  &lt;<span style="color: #0000ff;">name</span>&gt;&lt;![<span style="color: #483d8b;">CDATA</span>[Running 2/19/15 8:53 am]]&gt;&lt;/<span style="color: #0000ff;">name</span>&gt;
+  &lt;<span style="color: #0000ff;">time</span>&gt;2015-02-19T12:53:06Z&lt;/<span style="color: #0000ff;">time</span>&gt;
+&lt;<span style="color: #0000ff;">trkseg</span>&gt;
+&lt;<span style="color: #0000ff;">trkpt</span> <span style="color: #a0522d;">lat</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">18.441757000</span><span style="color: #8b2252;">"</span> <span style="color: #a0522d;">lon</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">-66.018932000</span><span style="color: #8b2252;">"</span>&gt;&lt;<span style="color: #0000ff;">ele</span>&gt;9.0&lt;/<span style="color: #0000ff;">ele</span>&gt;&lt;<span style="color: #0000ff;">time</span>&gt;2015-02-19T12:53:06Z&lt;/<span style="color: #0000ff;">time</span>&gt;&lt;<span style="color: #0000ff;">extensions</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;85&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;/<span style="color: #0000ff;">extensions</span>&gt;&lt;/<span style="color: #0000ff;">trkpt</span>&gt;
+&lt;<span style="color: #0000ff;">trkpt</span> <span style="color: #a0522d;">lat</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">18.441755000</span><span style="color: #8b2252;">"</span> <span style="color: #a0522d;">lon</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">-66.018906000</span><span style="color: #8b2252;">"</span>&gt;&lt;<span style="color: #0000ff;">ele</span>&gt;9.1&lt;/<span style="color: #0000ff;">ele</span>&gt;&lt;<span style="color: #0000ff;">time</span>&gt;2015-02-19T12:53:07Z&lt;/<span style="color: #0000ff;">time</span>&gt;&lt;<span style="color: #0000ff;">extensions</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;86&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;/<span style="color: #0000ff;">extensions</span>&gt;&lt;/<span style="color: #0000ff;">trkpt</span>&gt;
+&lt;<span style="color: #0000ff;">trkpt</span> <span style="color: #a0522d;">lat</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">18.441735000</span><span style="color: #8b2252;">"</span> <span style="color: #a0522d;">lon</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">-66.018741000</span><span style="color: #8b2252;">"</span>&gt;&lt;<span style="color: #0000ff;">ele</span>&gt;9.2&lt;/<span style="color: #0000ff;">ele</span>&gt;&lt;<span style="color: #0000ff;">time</span>&gt;2015-02-19T12:53:13Z&lt;/<span style="color: #0000ff;">time</span>&gt;&lt;<span style="color: #0000ff;">extensions</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;90&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;/<span style="color: #0000ff;">extensions</span>&gt;&lt;/<span style="color: #0000ff;">trkpt</span>&gt;
+   [ ... ]
+&lt;<span style="color: #0000ff;">trkpt</span> <span style="color: #a0522d;">lat</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">18.442442000</span><span style="color: #8b2252;">"</span> <span style="color: #a0522d;">lon</span>=<span style="color: #8b2252;">"</span><span style="color: #8b2252;">-66.018407000</span><span style="color: #8b2252;">"</span>&gt;&lt;<span style="color: #0000ff;">ele</span>&gt;8.8&lt;/<span style="color: #0000ff;">ele</span>&gt;&lt;<span style="color: #0000ff;">time</span>&gt;2015-02-19T13:38:23Z&lt;/<span style="color: #0000ff;">time</span>&gt;&lt;<span style="color: #0000ff;">extensions</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;165&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">hr</span>&gt;&lt;/<span style="color: #483d8b;">gpxtpx</span>:<span style="color: #0000ff;">TrackPointExtension</span>&gt;&lt;/<span style="color: #0000ff;">extensions</span>&gt;&lt;/<span style="color: #0000ff;">trkpt</span>&gt;
+&lt;/<span style="color: #0000ff;">trkseg</span>&gt;
+&lt;/<span style="color: #0000ff;">trk</span>&gt;
+&lt;/<span style="color: #0000ff;">gpx</span>&gt;
+</pre>
+</div>
+<p>
+and you can see the heart rate data embedded in the <code>gpxtpx</code> XML
+name space.
+</p>
+
+<p>
+In addition, RunKeeper names the GPX files like
+<code>YYYY-MM-DD-HHMM.gpx</code>.
+</p>
+
+<p>
+Now that I have a table of <a href="#runtimes">run times</a> and some GPX files with heart
+rate data, the only thing left is to make a plot of it and look for
+a trend.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Looking for trends</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Jumping straight to the plot, there is nothing that strongly bears
+out my theory that I was working harder in the heat.
+</p>
+
+
+<div id="hrplot" class="figure">
+<p><img src="assets/running-hr-warm-cold.png" alt="running-hr-warm-cold.png" />
+</p>
+</div>
+
+<p>
+The slope of my heart rate increases slightly faster in the heat,
+but probably isn&rsquo;t significant enough given only five samples in
+each location.  My average pace (in Table <a href="#averagepace">2</a>) was a fair
+bit slower in the heat, so that combined with the faster increase in
+heart rate looks like the heat has an effect, but it&rsquo;s not shown as
+powerfully as I felt it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Conclusions and Next Steps</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The heart rate data that wasn&rsquo;t normalized for pace doesn&rsquo;t show a
+terribly powerful effect from the heat.  Thinking about heart rate
+increases over time and pace (or, better, pace over time) in each
+climate might demonstrate a clearer impact of temperature on my
+running.
+</p>
+
+<p>
+I could try to look at the data again with more factors, but that
+seems like more work than it&rsquo;s worth to me.
+</p>
+
+<p>
+I think collecting more data would be useful, but I wouldn&rsquo;t want to
+do it over a long period of time so I could minimize effects like
+changes in fitness, injuries, conditions, etc., so I think
+alternating weeks of running in Ann Arbor and San Juan for the
+months of January and February is the best way to do this.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Python source</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+The Python program that does this is below; I run it from within
+Emacs <a href="http://orgmode.org/">Org mode</a>, so the data in Table <a href="#runtimes">1</a> is automatically
+passed in as a variable; you would need to get it from the command
+line or something if you extracted this script from Org mode.
+</p>
+
+<p>
+There are three parts to this program: main, getHRs and plotHRs.
+</p>
+</div>
+
+<div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> <code>main</code></h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+<code>main</code> imports some libraries and does a little data processing but
+mostly calls the <code>getHRs</code> and <code>plotHRs</code> routines.  It gets back a
+<a href="http://matplotlib.org">Matplotlib</a> <code>fig</code> object and writes it to a file.  The <code>return
+   (filename)</code> is an Org mode thing where it needs to get back the
+string of the file name to put insert into itself (yes, it&rsquo;s weird;
+see
+<a href="http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-python.html">http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-python.html</a>
+for more information)
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> <code>getHRs</code></h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+<code>getHRs</code> takes the information from Table <a href="#runtimes">1</a> and turns that
+into RunKeeper GPX filenames, reads each file and uses <code>xml.etree</code>
+to parse out the heart rate data.  It uses the (hard-coded<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>)
+location information from Table <a href="#runtimes">1</a> to determine whether I was
+running in the cold or in the warm, then computes averages<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup> for each
+point.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> <code>plotHRs</code></h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+<code>plotHRs</code> uses Python&rsquo;s <a href="http://matplotlib.org">Matplotlib</a> to plot the heart rate data and
+linear fit data computed using <a href="http://www.numpy.org/">NumPy</a>.  Basic plotting isn&rsquo;t
+difficult, but all plotting is fussy (although Wilkinson&rsquo;s <a href="http://www.springer.com/us/book/9780387245447">Grammer
+of Graphics</a> helps, making R&rsquo;s <a href="http://ggplot2.org/">ggplot2</a> nicer than Matplotlib, in my
+opinion), so there are a bunch of lines of code to make the plot
+look OK (and even so&#x2026;)
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> Python Source</h3>
+<div class="outline-text-3" id="text-4-4">
+<div class="org-src-container">
+
+<pre class="src src-python" id="hranalysis"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">getHRs</span>(runtimes):
+    <span style="color: #a0522d;">coldHR</span>=[]
+    <span style="color: #a0522d;">warmHR</span>=[]
+    <span style="color: #a0522d;">coldTot</span>=[]
+    <span style="color: #a0522d;">warmTot</span>=[]
+
+    <span style="color: #a020f0;">for</span> t <span style="color: #a020f0;">in</span> runtimes:             <span style="color: #b22222;"># </span><span style="color: #b22222;">go through the elements in the table</span>
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">construct the path from the elements in the table</span>
+        <span style="color: #a0522d;">path</span> = <span style="color: #8b2252;">"hr-heat/"</span>+t[0]+<span style="color: #8b2252;">"-"</span>+t[1].replace(<span style="color: #8b2252;">":"</span>,<span style="color: #8b2252;">""</span>)+<span style="color: #8b2252;">".gpx"</span>
+
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">open the GPX files and parse the XML</span>
+        <span style="color: #a020f0;">with</span> <span style="color: #483d8b;">open</span>(path) <span style="color: #a020f0;">as</span> f:
+            <span style="color: #a0522d;">tree</span> = ElementTree.parse(f)
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">extract the heart rate values from the XML tree into a list</span>
+        <span style="color: #a0522d;">a</span> = [<span style="color: #483d8b;">int</span>(node.text) <span style="color: #a020f0;">for</span> node <span style="color: #a020f0;">in</span>
+             <span style="color: #483d8b;">list</span>( tree.<span style="color: #483d8b;">iter</span>(<span style="color: #8b2252;">"{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr"</span>) )]
+
+        <span style="color: #a020f0;">if</span> t[2] == <span style="color: #8b2252;">"AA"</span>:   <span style="color: #b22222;"># </span><span style="color: #b22222;">if we're in Ann Arbor where it's cold</span>
+            <span style="color: #a020f0;">if</span> <span style="color: #a020f0;">not</span> coldHR:
+                <span style="color: #a0522d;">coldHR</span> = a
+                <span style="color: #a0522d;">coldTot</span> = [1 <span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> coldHR]  <span style="color: #b22222;"># </span><span style="color: #b22222;">make the count '1' for all of the values</span>
+            <span style="color: #a020f0;">else</span>:
+                <span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">min</span>(<span style="color: #483d8b;">len</span>(coldHR),<span style="color: #483d8b;">len</span>(a))):
+                    <span style="color: #a0522d;">coldHR</span>[m] = (coldHR[m] + a[m])
+                    <span style="color: #a020f0;">if</span> coldTot[m] == <span style="color: #008b8b;">None</span>:
+                        <span style="color: #a0522d;">coldTot</span>[m] = 1  <span style="color: #b22222;"># </span><span style="color: #b22222;">extend the array (this might not actually work)</span>
+                    <span style="color: #a020f0;">else</span>:
+                        <span style="color: #a0522d;">coldTot</span>[m] += 1 <span style="color: #b22222;"># </span><span style="color: #b22222;">increment the count for averaging later</span>
+
+        <span style="color: #a020f0;">elif</span> t[2] == <span style="color: #8b2252;">"SJ"</span>:  <span style="color: #b22222;"># </span><span style="color: #b22222;">if we're in San Juan where it's warm, do all the same stuff</span>
+            <span style="color: #a020f0;">if</span> <span style="color: #a020f0;">not</span> warmHR:
+                <span style="color: #a0522d;">warmHR</span> = a
+                <span style="color: #a0522d;">warmTot</span> = [1 <span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> warmHR]
+            <span style="color: #a020f0;">else</span>:
+                <span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">min</span>(<span style="color: #483d8b;">len</span>(warmHR),<span style="color: #483d8b;">len</span>(a))):
+                    <span style="color: #a0522d;">warmHR</span>[m] = (warmHR[m] + a[m])
+                    <span style="color: #a020f0;">if</span> warmTot[m] == <span style="color: #008b8b;">None</span>:
+                        <span style="color: #a0522d;">warmTot</span>[m] = 1
+                    <span style="color: #a020f0;">else</span>:
+                        <span style="color: #a0522d;">warmTot</span>[m] += 1
+
+        <span style="color: #a020f0;">else</span>:    <span style="color: #b22222;"># </span><span style="color: #b22222;">we don't know where we are</span>
+            <span style="color: #a020f0;">pass</span>
+
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">apply all of our averages</span>
+    <span style="color: #a0522d;">coldHR</span> = [coldHR[m]/coldTot[m] <span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(coldTot))]
+    <span style="color: #a0522d;">warmHR</span> = [warmHR[m]/warmTot[m] <span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(warmTot))]
+
+    <span style="color: #a020f0;">return</span> (warmHR, coldHR)
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">plotHRs</span>(HRs):
+
+    <span style="color: #a0522d;">cold</span>=[HRs[x][0] <span style="color: #a020f0;">for</span> x <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(HRs))]
+    <span style="color: #a0522d;">warm</span>=[HRs[x][1] <span style="color: #a020f0;">for</span> x <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(HRs))]
+    <span style="color: #a0522d;">x</span> = <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(cold))
+
+    <span style="color: #a0522d;">fig</span> = plt.figure()
+    fig.suptitle(<span style="color: #8b2252;">"Heart Rate in Warm and Cold Weather"</span>, fontsize=14, fontweight=<span style="color: #8b2252;">'bold'</span>)
+    <span style="color: #a0522d;">ax</span> = plt.subplot(111)
+    ax.set_ylim(0,180)  <span style="color: #b22222;"># </span><span style="color: #b22222;">don't let autoscaling lie with plots</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off a bunch of chartjunk</span>
+    ax.set_xticklabels(<span style="color: #8b2252;">''</span>*<span style="color: #483d8b;">len</span>(x)) <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off the xticklabels, since they don't mean anything</span>
+    ax.spines[<span style="color: #8b2252;">'top'</span>].set_visible(<span style="color: #008b8b;">False</span>)   <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off top part of box (top spine)</span>
+    ax.spines[<span style="color: #8b2252;">'right'</span>].set_visible(<span style="color: #008b8b;">False</span>) <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off right part of box (right spine)</span>
+    ax.yaxis.set_ticks_position(<span style="color: #8b2252;">'left'</span>)   <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off tick marks on right</span>
+    ax.xaxis.set_ticks_position(<span style="color: #8b2252;">'none'</span>)   <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off tick marks on top and bottom</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">http://matplotlib.org/examples/ticks_and_spines/spines_demo.html</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">http://matplotlib.org/api/axis_api.html</span>
+
+    <span style="color: #a0522d;">startSlopeCalc</span> = 75   <span style="color: #b22222;"># </span><span style="color: #b22222;">heuristically skip the ramp-up period when calculating slope</span>
+    <span style="color: #a0522d;">mC</span>, <span style="color: #a0522d;">bC</span> = np.polyfit(x[startSlopeCalc:], cold[startSlopeCalc:], 1)
+    <span style="color: #a0522d;">mW</span>, <span style="color: #a0522d;">bW</span> = np.polyfit(x[startSlopeCalc:], warm[startSlopeCalc:], 1)
+
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">overlay the fit lines</span>
+    plt.plot(cold,<span style="color: #8b2252;">'b'</span>,label=<span style="color: #8b2252;">"Cold Weather, slope:"</span>+<span style="color: #483d8b;">str</span>(<span style="color: #483d8b;">round</span>(mC,2)))
+    plt.plot(warm,<span style="color: #8b2252;">'r'</span>,label=<span style="color: #8b2252;">"Warm Weather, slope:"</span>+<span style="color: #483d8b;">str</span>(<span style="color: #483d8b;">round</span>(mW,2)))
+
+    plt.legend(loc=3) <span style="color: #b22222;"># </span><span style="color: #b22222;">3=lower-left (see pydoc matplotlib.pyplot.legend)</span>
+    plt.xlabel(<span style="color: #8b2252;">''</span>)
+    plt.ylabel(<span style="color: #8b2252;">'heart rate (bpm)'</span>)
+
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">generate and plot y-values for fit lines</span>
+    <span style="color: #a0522d;">yfitC</span>=[x*mC + bC <span style="color: #a020f0;">for</span> x <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(cold))]
+    <span style="color: #a0522d;">yfitW</span>=[x*mW + bW <span style="color: #a020f0;">for</span> x <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(cold))]
+    plt.plot(yfitC,<span style="color: #8b2252;">'b'</span>)
+    plt.plot(yfitW,<span style="color: #8b2252;">'r'</span>)
+
+    <span style="color: #a020f0;">return</span>(fig)
+
+<span style="color: #a020f0;">if</span> <span style="color: #483d8b;">__name__</span> == <span style="color: #8b2252;">"__main__"</span>:
+
+    <span style="color: #a020f0;">import</span> numpy <span style="color: #a020f0;">as</span> np
+    <span style="color: #a020f0;">import</span> matplotlib
+    <span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
+    <span style="color: #a020f0;">from</span> xml.etree <span style="color: #a020f0;">import</span> ElementTree
+
+    (w,c) = getHRs(runtimes)
+    <span style="color: #a0522d;">HRs</span> = <span style="color: #483d8b;">zip</span>(c,w)    <span style="color: #b22222;"># </span><span style="color: #b22222;">put the cold and hot HR lists together, truncating to the shortest</span>
+
+    <span style="color: #a0522d;">fig</span> = plotHRs(HRs)
+    <span style="color: #a0522d;">filename</span> = <span style="color: #8b2252;">"assets/running-hr-warm-cold.png"</span>
+    fig.savefig(filename, <span style="color: #483d8b;">format</span>=<span style="color: #8b2252;">'png'</span>)
+    <span style="color: #a020f0;">return</span>(filename)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+Because the GPX files have latitude data in them, it wouldn&rsquo;t
+be totally difficult to figure this out from the data, but hardcoding
+it was suitable for me this time.
+</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p class="footpara">
+The points don&rsquo;t all line up an equal \(\Delta t\) away from each
+other, but this whole thing is unscientific enough that I don&rsquo;t think
+that matters.
+</p></div>
+
+
+</div>
+</div>
