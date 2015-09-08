@@ -1,0 +1,284 @@
+---
+layout: post
+title: Plotting Data in Org-Mode Tables with Python
+tagline: I wouldn't call it data visualization, but...
+categories:
+tags: emacs org-mode org table plot python matplotlib data visualization
+---
+<p>
+Among the huge number of great things about Emacs&rsquo; Org-Mode is its
+table editing and spreadsheet capabilities.  Combined with OrgBabel
+and Python, Org-Mode has a light-weight but capable data visualization
+tool.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Org-Mode Tables and Spreadsheets</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The <a href="http://orgmode.org/worg/org-tutorials/tables.html">table editing feature</a> of <a href="http://orgmode.org/">Org-Mode</a> is an amazing feat of
+text-based formatting and managing, making tables in a text editor
+not only possible, but, in many cases, better than the table editing
+and display capabilities of graphical editors (I&rsquo;m looking at you,
+Microsoft Word and Google Docs).
+</p>
+
+<p>
+In addition to the table editing, Org-Mode has a <a href="http://orgmode.org/worg/org-tutorials/org-spreadsheet-intro.html">simple spreadsheet</a>
+built in, so taking sums or averages of columns, or applying
+mathematical operations to two columns and putting the results in a
+third is straightforward.
+</p>
+
+<p>
+For more complicated spreadsheet-like operations, Org-Mode tables
+can easily become data frames in R or lists (or lists of lists) in
+Python (or a data structure in other languages) and those data
+structures can be turned into tables in Org-Mode for export or
+publication.  This is the key to making plots.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Plottable data from table to image</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Plotting in <a href="https://www.python.org/">Python</a> isn&rsquo;t always straightforward, but <a href="http://matplotlib.org/">matplotlib</a>&rsquo;s
+<a href="http://matplotlib.org/api/pyplot_api.html">pyplot</a> makes it workable, so you&rsquo;ll need Python and matplotlib
+installed in addition to Emacs and Org-Mode.  If you&rsquo;re reading
+this, that last sentence might have been insulting: I&rsquo;m sorry.
+</p>
+
+<p>
+For example, you have a table in Org-Mode that has four columns of
+numbers:
+</p>
+
+<table id="mySweetTable" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+
+<col  class="right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="right">One</th>
+<th scope="col" class="right">Two</th>
+<th scope="col" class="right">Three</th>
+<th scope="col" class="right">Four</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="right">1</td>
+<td class="right">2</td>
+<td class="right">3</td>
+<td class="right">4</td>
+</tr>
+
+<tr>
+<td class="right">5</td>
+<td class="right">6</td>
+<td class="right">7</td>
+<td class="right">8</td>
+</tr>
+
+<tr>
+<td class="right">9</td>
+<td class="right">10</td>
+<td class="right">11</td>
+<td class="right">12</td>
+</tr>
+
+<tr>
+<td class="right">13</td>
+<td class="right">14</td>
+<td class="right">15</td>
+<td class="right">16</td>
+</tr>
+
+<tr>
+<td class="right">17</td>
+<td class="right">18</td>
+<td class="right">19</td>
+<td class="right">20</td>
+</tr>
+
+<tr>
+<td class="right">21</td>
+<td class="right">22</td>
+<td class="right">23</td>
+<td class="right">24</td>
+</tr>
+
+<tr>
+<td class="right">25</td>
+<td class="right">26</td>
+<td class="right">27</td>
+<td class="right">28</td>
+</tr>
+
+<tr>
+<td class="right">29</td>
+<td class="right">30</td>
+<td class="right">31</td>
+<td class="right">32</td>
+</tr>
+
+<tr>
+<td class="right">33</td>
+<td class="right">34</td>
+<td class="right">35</td>
+<td class="right">36</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+First, you have to give it a name, putting the line (that won&rsquo;t be
+exported) <code>#+NAME: mySweetTable</code> immediately before the table.  This
+will allow you to refer to the table data in the Babel script that
+will plot (or otherwise manipulate) the data.
+</p>
+
+<p>
+The key to the plot is the very simple Python script:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
+
+<span style="color: #8b2252;">'''If you have formatting lines on your table</span>
+<span style="color: #8b2252;">(http://orgmode.org/manual/Column-groups.html) you need to remove them</span>
+<span style="color: #8b2252;">"by hand" with a line like:</span>
+
+<span style="color: #8b2252;">data = data[2:]</span>
+<span style="color: #8b2252;">'''</span>
+
+<span style="color: #8b2252;">'''Turn the table data into x and y data'''</span>
+<span style="color: #a0522d;">x</span> = [a[0] <span style="color: #a020f0;">for</span> a <span style="color: #a020f0;">in</span> data]
+<span style="color: #a0522d;">y1</span> = [a[1] <span style="color: #a020f0;">for</span> a <span style="color: #a020f0;">in</span> data]
+<span style="color: #a0522d;">y2</span> = [a[2] <span style="color: #a020f0;">for</span> a <span style="color: #a020f0;">in</span> data]
+<span style="color: #a0522d;">y3</span> = [a[3] <span style="color: #a020f0;">for</span> a <span style="color: #a020f0;">in</span> data]
+
+<span style="color: #8b2252;">''' Plot the x and y data'''</span>
+a, = plt.plot(x, y1, label=<span style="color: #8b2252;">"y1"</span>, marker=<span style="color: #8b2252;">'v'</span>)
+b, = plt.plot(x, y2, label=<span style="color: #8b2252;">"y2"</span>, marker=<span style="color: #8b2252;">'o'</span>)
+c, = plt.plot(x, y3, label=<span style="color: #8b2252;">"y3"</span>, marker=<span style="color: #8b2252;">'x'</span>)
+
+<span style="color: #8b2252;">''' Set the x and y labels on the graph '''</span>
+plt.xlabel(<span style="color: #8b2252;">"x axis label"</span>)
+plt.ylabel(<span style="color: #8b2252;">"y axis label"</span>)
+
+<span style="color: #8b2252;">''' Create the legend '''</span>
+plt.legend(handles=[a,b,c],loc=<span style="color: #8b2252;">"upper left"</span>)
+
+<span style="color: #8b2252;">''' Save the PNG file '''</span>
+<span style="color: #a0522d;">filename</span> = <span style="color: #8b2252;">"mySweetPlot.png"</span>
+plt.savefig(filename)
+
+<span style="color: #8b2252;">''' Return the PNG file path to OrgMode '''</span>
+<span style="color: #a020f0;">return</span>(filename)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="mySweetPlot.png" alt="mySweetPlot.png" />
+</p>
+</div>
+
+<p>
+The <code>#+BEGIN_SRC</code> line that starts the OrgBabel section for the
+script looks like:
+</p>
+<pre class="example">
+#+BEGIN_SRC python :results file :exports results :var data=mySweetTable
+</pre>
+
+<p>
+The data is imported into the Python script by referring to the
+table name (<code>mySweetTable</code>) in the <code>#+BEGIN_SRC</code> line&rsquo;s <code>:var</code>
+option as the variable that will be in the Python script (in this
+case, the cleverly named <code>data</code> variable).  And, as you can see, the
+columns in the table show up in the Python script as <code>a[0]</code> through
+<code>a[3]</code>.  If you have more than one table, you can have more than one
+<code>:var pythonVar=tableName</code> option on the <code>#+BEGIN_SRC</code> line.
+</p>
+
+<p>
+Most of the Python is plotting code, so when you type <code>C-c C-c</code> with
+the cursor (point) in the Python code, Org-Mode will run it and put
+a link into the document.  Moving the cursor (point) onto the link
+and pressing <code>C-c C-o</code> the image will open in either Emacs or the
+program you have defined to open that file type. If you prefer
+another file type, simply change the extension on the file name and
+pyplot will save that file type; for details on the available types,
+see the pyplot documentation.
+</p>
+
+<p>
+While matplotlib can make publication quality plots, these are not
+those; these plots are simply to quickly see relationships between
+the data in your tables.  For higher quality plots, see
+<a href="https://github.com/olgabot/prettyplotlib">prettyplotlib</a>, <a href="https://github.com/jbmouret/matplotlib_for_papers">matplotlib for papers</a>, or any of the many other
+<a href="http://bfy.tw/1gGD">resources on the Internet</a> on this topic.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">15 lines</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The 15 lines of Python code (not counting comments) will let you
+make plots of the data in a 4-column Org-Mode table.  Using
+Org-Mode&rsquo;s <a href="http://orgmode.org/manual/Noweb-reference-syntax.html">noweb</a> options, you can include this code once in your
+Org-Mode document and re-use it with different inputs throughout
+your document for a quick look at the data you have in the tables.
+</p>
+
+<p>
+For example, if you name the Python code above <code>plottingcode</code> by
+putting the line <code>#+NAME: plottingcode</code> immediately before the
+<code>#+BEGIN_SRC</code> line and then add <code>:noweb yes</code> to the end of the
+<code>#+BEGIN_SRC</code> line, you can then later refer to that code in a code
+block like:
+</p>
+<pre class="example">
+#+BEGIN_SRC python :results file :exports both :var data=myOtherTable
+&lt;&lt;plottingcode&gt;&gt;
+#+END_SRC
+</pre>
+<p>
+and running that by pressing <code>C-c C-c</code> with the point on or between
+the <code>BEGIN</code> and <code>END</code> lines will evaluate the code from the other
+location but with the new input&#x2014;in this case using <code>myOtherTable</code>
+as the <code>data</code> variable instead of the original <code>mySweetTable</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">And there&rsquo;s your in-Org-Mode data visualization</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+With 15 lines of re-usable Python, one useful Python package, you
+can make simple plots out of your Org-Mode tables that you can see
+in Emacs.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/emacs-plot.png" alt="emacs-plot.png" width="60%" />
+</p>
+</div>
+</div>
+</div>
