@@ -1,0 +1,554 @@
+---
+layout: post
+title: A Simple GUI and Command-line Python Program
+tagline: with a file browser! and an exit button!!  zomg!!!
+categories:
+tags: python Tkinter tkFileDialog gui commandline simple
+---
+
+<p>
+I needed to make a simple GUI for translating comma-separated value
+input into a reStructuredText table, and ended up writing a simple
+Python program that might be a useful example for you of Tkinter,
+<code>tkFileDialog</code>, and a combination command line and GUI program.
+</p>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1">What is this for?</h2>
+<div class="outline-text-2" id="text-orgheadline1">
+<p>
+I needed a simple program to convert CSV files into <a href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>
+tables for a group of people who write in RST and don't want to be
+bothered to create <a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html#tables">RST tables</a> by hand (which really is a pain unless
+you&rsquo;re using Emacs and its <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Text-Based-Tables.html">text-based tables</a> package.
+</p>
+
+<p>
+I started with the command-line version to get the functionality
+then added the GUI elements.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">write_table</span>(outputfile, table_contents):
+    <span style="color: #8b2252;">""" Write out the .rst file with the table in it</span>
+<span style="color: #8b2252;">    """</span>
+    <span style="color: #a020f0;">with</span> <span style="color: #483d8b;">open</span>(outputfile, <span style="color: #8b2252;">"wb"</span>) <span style="color: #a020f0;">as</span> output_file:
+        <span style="color: #a020f0;">try</span>:
+            output_file.write(tabulate(table_contents,
+                                       tablefmt=<span style="color: #8b2252;">"grid"</span>,
+                                       headers=<span style="color: #8b2252;">"firstrow"</span>))
+        <span style="color: #a020f0;">except</span>:
+            <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">False</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">True</span>
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">command_line</span>(args):
+    <span style="color: #8b2252;">""" Run the command-line version</span>
+<span style="color: #8b2252;">    """</span>
+    <span style="color: #a020f0;">if</span> args.output <span style="color: #a020f0;">is</span> <span style="color: #008b8b;">None</span>:
+        <span style="color: #a0522d;">args.output</span> = get_output_filename(args.<span style="color: #483d8b;">input</span>)
+
+    <span style="color: #a0522d;">table_contents</span> = read_csv(args.<span style="color: #483d8b;">input</span>)
+
+    <span style="color: #a020f0;">if</span> write_table(args.output, table_contents):
+        <span style="color: #a020f0;">print</span> <span style="color: #8b2252;">"rst table is in file `{}'"</span>.<span style="color: #483d8b;">format</span>(args.output)
+    <span style="color: #a020f0;">else</span>:
+        <span style="color: #a020f0;">print</span> <span style="color: #8b2252;">"Writing file `{}' did not succeed."</span>.<span style="color: #483d8b;">format</span>(args.output)
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">read_csv</span>(filename):
+    <span style="color: #8b2252;">""" Read the CSV file</span>
+
+<span style="color: #8b2252;">    This fails pretty silently on any exception at all</span>
+<span style="color: #8b2252;">    """</span>
+    <span style="color: #a020f0;">try</span>:
+        <span style="color: #a020f0;">with</span> <span style="color: #483d8b;">open</span>(filename, <span style="color: #8b2252;">'rb'</span>) <span style="color: #a020f0;">as</span> csvfile:
+            <span style="color: #a0522d;">dialect</span> = csv.Sniffer().sniff(csvfile.read(1024))
+            csvfile.seek(0)
+            <span style="color: #a0522d;">reader</span> = csv.reader(csvfile, dialect)
+            <span style="color: #a0522d;">r</span> = []
+            <span style="color: #a020f0;">for</span> row <span style="color: #a020f0;">in</span> reader:
+                r.append(row)
+    <span style="color: #a020f0;">except</span>:
+        <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">None</span>
+
+    <span style="color: #a020f0;">return</span> r
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">get_parser</span>():
+    <span style="color: #8b2252;">""" The argument parser of the command-line version """</span>
+    <span style="color: #a0522d;">parser</span> = argparse.ArgumentParser(description=(<span style="color: #8b2252;">'convert csv to rst table'</span>))
+
+    parser.add_argument(<span style="color: #8b2252;">'--input'</span>, <span style="color: #8b2252;">'-F'</span>,
+                        <span style="color: #483d8b;">help</span>=<span style="color: #8b2252;">'name of the intput file'</span>)
+
+    parser.add_argument(<span style="color: #8b2252;">'--output'</span>, <span style="color: #8b2252;">'-O'</span>,
+                        <span style="color: #483d8b;">help</span>=(<span style="color: #8b2252;">"name of the output file; "</span> +
+                              <span style="color: #8b2252;">"defaults to &lt;inputfilename&gt;.rst"</span>))
+    <span style="color: #a020f0;">return</span> parser
+
+
+<span style="color: #a020f0;">if</span> <span style="color: #483d8b;">__name__</span> == <span style="color: #8b2252;">"__main__"</span>:
+    <span style="color: #8b2252;">""" Run as a stand-alone script """</span>
+
+    <span style="color: #a0522d;">parser</span> = get_parser()       <span style="color: #b22222;"># </span><span style="color: #b22222;">Start the command-line argument parsing</span>
+    <span style="color: #a0522d;">args</span> = parser.parse_args()  <span style="color: #b22222;"># </span><span style="color: #b22222;">Read the command-line arguments</span>
+
+    <span style="color: #a020f0;">if</span> args.<span style="color: #483d8b;">input</span>:              <span style="color: #b22222;"># </span><span style="color: #b22222;">If there is an argument,</span>
+        command_line(args)      <span style="color: #b22222;"># </span><span style="color: #b22222;">run the command-line version</span>
+    <span style="color: #a020f0;">else</span>:
+        gui()                   <span style="color: #b22222;"># </span><span style="color: #b22222;">otherwise run the GUI version</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2">Tkinter</h2>
+<div class="outline-text-2" id="text-orgheadline2">
+<p>
+There are many resources for Python&rsquo;s Tk integration library
+(<a href="https://wiki.python.org/moin/TkInter">Tkinter</a>) on the Internet, but the basics are:
+</p>
+
+<ul class="org-ul">
+<li>create the widgets (buttons, labels, text entry fields, etc.) you
+want, and use the <a href="http://effbot.org/tkinterbook/pack.htm">pack()</a> function to get them arranged.</li>
+
+<li>add functions that are called when the buttons are pressed; these
+are called <b>callback functions</b> because once the loop is started
+in the next step, the only way out of the loop is to take a brief
+detour from the loop to the function associated with the widget
+(typically buttons)</li>
+
+<li>call the function <code>mainloop()</code></li>
+</ul>
+
+<blockquote>
+<p>
+As a side note, this is how most graphical user interfaces work; in
+Microsoft Windows this is called <code>GetMessage()</code>, in Mac OS X it is
+<code>CFRunLoopRun()</code>, in Android apps it is <code>android.os.Looper</code>.
+</p>
+</blockquote>
+
+<p>
+With a text entry field and a <b>Go</b> button to process the file, this
+little program could be considered complete.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">gui</span>():
+    <span style="color: #8b2252;">"""make the GUI version of this command that is run if no options are</span>
+<span style="color: #8b2252;">    provided on the command line"""</span>
+
+    <span style="color: #a020f0;">def</span> <span style="color: #0000ff;">button_go_callback</span>():
+        <span style="color: #8b2252;">""" what to do when the "Go" button is pressed """</span>
+        <span style="color: #a0522d;">input_file</span> = entry.get()
+        <span style="color: #a020f0;">if</span> input_file.rsplit(<span style="color: #8b2252;">"."</span>)[-1] != <span style="color: #8b2252;">"csv"</span>:
+            statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Filename must end in `.csv'"</span>)
+            message.configure(fg=<span style="color: #8b2252;">"red"</span>)
+            <span style="color: #a020f0;">return</span>
+        <span style="color: #a020f0;">else</span>:
+            <span style="color: #a0522d;">table_contents</span> = read_csv(input_file)
+            <span style="color: #a020f0;">if</span> table_contents <span style="color: #a020f0;">is</span> <span style="color: #008b8b;">None</span>:
+                statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Error reading file `{}'"</span>.<span style="color: #483d8b;">format</span>(input_file))
+                message.configure(fg=<span style="color: #8b2252;">"red"</span>)
+                <span style="color: #a020f0;">return</span>
+            <span style="color: #a0522d;">output_file</span> = get_output_filename(input_file)
+            <span style="color: #a020f0;">if</span> write_table(output_file, table_contents):
+                statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Output is in {}"</span>.<span style="color: #483d8b;">format</span>(output_file))
+                message.configure(fg=<span style="color: #8b2252;">"black"</span>)
+            <span style="color: #a020f0;">else</span>:
+                statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Writing file "</span>
+                               <span style="color: #8b2252;">"`{}' did not succeed"</span>.<span style="color: #483d8b;">format</span>(output_file))
+                message.configure(fg=<span style="color: #8b2252;">"red"</span>)
+
+    <span style="color: #a0522d;">root</span> = Tk()
+    <span style="color: #a0522d;">frame</span> = Frame(root)
+    frame.pack()
+
+    <span style="color: #a0522d;">statusText</span> = StringVar(root)
+    statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Enter CSV filename, "</span>
+                   <span style="color: #8b2252;">"then press the Go button"</span>)
+
+    <span style="color: #a0522d;">label</span> = Label(root, text=<span style="color: #8b2252;">"CSV file: "</span>)
+    label.pack()
+    <span style="color: #a0522d;">entry</span> = Entry(root, width=50)
+    entry.pack()
+
+    <span style="color: #a0522d;">button_go</span> = Button(root,
+                       text=<span style="color: #8b2252;">"Go"</span>,
+                       command=button_go_callback)
+    button_go.pack()
+
+    <span style="color: #a0522d;">message</span> = Label(root, textvariable=statusText)
+    message.pack()
+
+    mainloop()
+</pre>
+</div>
+
+<p>
+This code has two parts:
+</p>
+<ol class="org-ol">
+<li>The main function that creates a text entry field and a <b>Go</b>
+       button then calls <code>mainLoop()</code></li>
+<li>A sub-function (or nested function or inner function) that
+calls the same functions as the command-line version of the
+program and updates the status line in the GUI as appropriate.</li>
+</ol>
+
+<p>
+Using this, however, means you have to know the path to the CSV file
+and type it in to the text entry box.  That is not how most modern
+applications work, usually there is a file browser&#x2026;
+</p>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3">tkFileDialog</h3>
+<div class="outline-text-3" id="text-orgheadline3">
+<p>
+The <code>tkFileDialog</code> presents an OS-native file browsing and selection
+dialog.  This script takes the selected file name and populates the
+text entry box for the CSV file with the full path to the selected
+file.  The nicest part of this is that it only takes a few lines of
+Python to do this.
+</p>
+
+<p>
+We add a <b>Browse</b> button and another nested function to be its
+callback function.  The callback function simply lets
+<code>tkFileDialog.askopenfilename()</code> give us the name of the file the
+user selected from the file browser and then fills in the entry
+field (cleverly named <code>entry</code> in our program) with the full path
+and file name.
+</p>
+
+<p>
+When the <b>Browse</b> button is pressed the <code>browse_button_callback</code>
+function is called because the button was created with:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a0522d;">button_browse</span> = Button(root,
+                       text=<span style="color: #8b2252;">"Browse"</span>,
+                       command=button_browse_callback)
+</pre>
+</div>
+<p>
+and the file name entry field was created with:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a0522d;">entry</span> = Entry(root, width=50)
+</pre>
+</div>
+<p>
+then the filename comes from the <code>askopenfilename</code> function in
+<code>tkFileDialog</code> and is used to populate the text entry field.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">button_browse_callback</span>():
+    <span style="color: #8b2252;">""" What to do when the Browse button is pressed """</span>
+    <span style="color: #a0522d;">filename</span> = tkFileDialog.askopenfilename()
+    entry.delete(0, END)
+    entry.insert(0, filename)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4">What do we have now?</h2>
+<div class="outline-text-2" id="text-orgheadline4">
+<p>
+Now we have pretty simply Python program that:
+</p>
+<ul class="org-ul">
+<li><p>
+can be run from the command line using standard command line
+options and offering a help menu when the command line option is
+<code>--help</code>
+</p>
+<pre class="example">
+$ ./makersttable.py --help
+usage: makersttable.py [-h] [--input INPUT] [--output OUTPUT]
+
+convert csv to rst table
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --input INPUT, -F INPUT
+                        name of the intput file
+  --output OUTPUT, -O OUTPUT
+                        name of the output file; defaults to
+                        &lt;inputfilename&gt;.rst
+</pre></li>
+<li>in the absence of command line options, a graphical application
+is started that allows the user to type in a file name or select
+one from a file browser, then click <b>Go</b></li>
+<li>either option results in the creation of a file with a
+reStructuredText table in it based on the contents of a file with
+comma-separated values (CSV) in it</li>
+</ul>
+
+<p>
+With a simple input file formatted like this:
+</p>
+<pre class="example">
+Header Col 1, Header Col 2, Header Col3
+This is the first value, This is the second value, This is the third value
+Red, Blue, Green
+42, 10, 1
+</pre>
+<p>
+the Python program can be run from the command line like:
+</p>
+<pre class="example">
+$ ./makersttable.py -F test.csv
+rst table is in file `test.rst'
+</pre>
+<p>
+and the resulting <code>test.rst</code> file looks like:
+</p>
+<pre class="example">
++-------------------------+--------------------------+-------------------------+
+| Header Col 1            | Header Col 2             | Header Col3             |
++=========================+==========================+=========================+
+| This is the first value | This is the second value | This is the third value |
++-------------------------+--------------------------+-------------------------+
+| Red                     | Blue                     | Green                   |
++-------------------------+--------------------------+-------------------------+
+| 42                      | 10                       | 1                       |
++-------------------------+--------------------------+-------------------------+
+</pre>
+<p>
+Or, the Python program can be run like:
+</p>
+<pre class="example">
+$ ./makersttable.py
+</pre>
+<p>
+and you&rsquo;ll get a graphical interface that looks like:
+</p>
+
+
+<div class="figure">
+<p><img src="assets/makersttable-1.png" alt="makersttable-1.png" />
+</p>
+<p><span class="figure-number">Figure 1:</span> Initial GUI Screen</p>
+</div>
+
+<p>
+Pressing the <b>Browse</b> button will present a file dialog:
+</p>
+
+
+<div class="figure">
+<p><img src="assets/makersttable-2.png" alt="makersttable-2.png" />
+</p>
+<p><span class="figure-number">Figure 2:</span> The file browsing dialog box</p>
+</div>
+
+<p>
+Selecting a file will populate the entry field:
+</p>
+
+
+<div class="figure">
+<p><img src="assets/makersttable-3.png" alt="makersttable-3.png" />
+</p>
+<p><span class="figure-number">Figure 3:</span> The selected filename shown in the entry field</p>
+</div>
+
+<p>
+And pressing the <b>Go</b> button converts the file; the path to which
+is in the status message area of the GUI:
+</p>
+
+
+<div class="figure">
+<p><img src="assets/makersttable-4.png" alt="makersttable-4.png" />
+</p>
+<p><span class="figure-number">Figure 4:</span> The path to rST file is shown in the status area</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline5" class="outline-2">
+<h2 id="orgheadline5">The Whole Python Program</h2>
+<div class="outline-text-2" id="text-orgheadline5">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #b22222;">#</span><span style="color: #b22222;">!/usr/bin/env python</span>
+
+<span style="color: #8b2252;">"""Convert CSV to reStructuredText tables</span>
+
+<span style="color: #8b2252;">A command-line and PythonTk GUI program to do a simple conversion from</span>
+<span style="color: #8b2252;">CSV files to reStructuredText tables</span>
+
+<span style="color: #8b2252;">A. Caird (acaird@gmail.com)</span>
+<span style="color: #8b2252;">2016</span>
+
+<span style="color: #8b2252;">"""</span>
+
+<span style="color: #a020f0;">import</span> argparse
+<span style="color: #a020f0;">import</span> csv
+<span style="color: #a020f0;">from</span> tabulate <span style="color: #a020f0;">import</span> tabulate
+<span style="color: #a020f0;">import</span> tkFileDialog
+<span style="color: #a020f0;">from</span> Tkinter <span style="color: #a020f0;">import</span> *
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">get_output_filename</span>(input_file_name):
+    <span style="color: #8b2252;">""" replace the suffix of the file with .rst """</span>
+    <span style="color: #a020f0;">return</span> input_file_name.rpartition(<span style="color: #8b2252;">"."</span>)[0] + <span style="color: #8b2252;">".rst"</span>
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">gui</span>():
+    <span style="color: #8b2252;">"""make the GUI version of this command that is run if no options are</span>
+<span style="color: #8b2252;">    provided on the command line"""</span>
+
+    <span style="color: #a020f0;">def</span> <span style="color: #0000ff;">button_go_callback</span>():
+        <span style="color: #8b2252;">""" what to do when the "Go" button is pressed """</span>
+        <span style="color: #a0522d;">input_file</span> = entry.get()
+        <span style="color: #a020f0;">if</span> input_file.rsplit(<span style="color: #8b2252;">"."</span>)[-1] != <span style="color: #8b2252;">"csv"</span>:
+            statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Filename must end in `.csv'"</span>)
+            message.configure(fg=<span style="color: #8b2252;">"red"</span>)
+            <span style="color: #a020f0;">return</span>
+        <span style="color: #a020f0;">else</span>:
+            <span style="color: #a0522d;">table_contents</span> = read_csv(input_file)
+            <span style="color: #a020f0;">if</span> table_contents <span style="color: #a020f0;">is</span> <span style="color: #008b8b;">None</span>:
+                statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Error reading file `{}'"</span>.<span style="color: #483d8b;">format</span>(input_file))
+                message.configure(fg=<span style="color: #8b2252;">"red"</span>)
+                <span style="color: #a020f0;">return</span>
+            <span style="color: #a0522d;">output_file</span> = get_output_filename(input_file)
+            <span style="color: #a020f0;">if</span> write_table(output_file, table_contents):
+                statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Output is in {}"</span>.<span style="color: #483d8b;">format</span>(output_file))
+                message.configure(fg=<span style="color: #8b2252;">"black"</span>)
+            <span style="color: #a020f0;">else</span>:
+                statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Writing file "</span>
+                               <span style="color: #8b2252;">"`{}' did not succeed"</span>.<span style="color: #483d8b;">format</span>(output_file))
+                message.configure(fg=<span style="color: #8b2252;">"red"</span>)
+
+    <span style="color: #a020f0;">def</span> <span style="color: #0000ff;">button_browse_callback</span>():
+        <span style="color: #8b2252;">""" What to do when the Browse button is pressed """</span>
+        <span style="color: #a0522d;">filename</span> = tkFileDialog.askopenfilename()
+        entry.delete(0, END)
+        entry.insert(0, filename)
+
+    <span style="color: #a0522d;">root</span> = Tk()
+    <span style="color: #a0522d;">frame</span> = Frame(root)
+    frame.pack()
+
+    <span style="color: #a0522d;">statusText</span> = StringVar(root)
+    statusText.<span style="color: #483d8b;">set</span>(<span style="color: #8b2252;">"Press Browse button or enter CSV filename, "</span>
+                   <span style="color: #8b2252;">"then press the Go button"</span>)
+
+    <span style="color: #a0522d;">label</span> = Label(root, text=<span style="color: #8b2252;">"CSV file: "</span>)
+    label.pack()
+    <span style="color: #a0522d;">entry</span> = Entry(root, width=50)
+    entry.pack()
+    <span style="color: #a0522d;">separator</span> = Frame(root, height=2, bd=1, relief=SUNKEN)
+    separator.pack(fill=X, padx=5, pady=5)
+
+    <span style="color: #a0522d;">button_go</span> = Button(root,
+                       text=<span style="color: #8b2252;">"Go"</span>,
+                       command=button_go_callback)
+    <span style="color: #a0522d;">button_browse</span> = Button(root,
+                           text=<span style="color: #8b2252;">"Browse"</span>,
+                           command=button_browse_callback)
+    <span style="color: #a0522d;">button_exit</span> = Button(root,
+                         text=<span style="color: #8b2252;">"Exit"</span>,
+                         command=sys.<span style="color: #008b8b;">exit</span>)
+    button_go.pack()
+    button_browse.pack()
+    button_exit.pack()
+
+    <span style="color: #a0522d;">separator</span> = Frame(root, height=2, bd=1, relief=SUNKEN)
+    separator.pack(fill=X, padx=5, pady=5)
+
+    <span style="color: #a0522d;">message</span> = Label(root, textvariable=statusText)
+    message.pack()
+
+    mainloop()
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">write_table</span>(outputfile, table_contents):
+    <span style="color: #8b2252;">""" Write out the .rst file with the table in it</span>
+<span style="color: #8b2252;">    """</span>
+    <span style="color: #a020f0;">with</span> <span style="color: #483d8b;">open</span>(outputfile, <span style="color: #8b2252;">"wb"</span>) <span style="color: #a020f0;">as</span> output_file:
+        <span style="color: #a020f0;">try</span>:
+            output_file.write(tabulate(table_contents,
+                                       tablefmt=<span style="color: #8b2252;">"grid"</span>,
+                                       headers=<span style="color: #8b2252;">"firstrow"</span>))
+        <span style="color: #a020f0;">except</span>:
+            <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">False</span>
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">True</span>
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">command_line</span>(args):
+    <span style="color: #8b2252;">""" Run the command-line version</span>
+<span style="color: #8b2252;">    """</span>
+    <span style="color: #a020f0;">if</span> args.output <span style="color: #a020f0;">is</span> <span style="color: #008b8b;">None</span>:
+        <span style="color: #a0522d;">args.output</span> = get_output_filename(args.<span style="color: #483d8b;">input</span>)
+
+    <span style="color: #a0522d;">table_contents</span> = read_csv(args.<span style="color: #483d8b;">input</span>)
+
+    <span style="color: #a020f0;">if</span> write_table(args.output, table_contents):
+        <span style="color: #a020f0;">print</span> <span style="color: #8b2252;">"rst table is in file `{}'"</span>.<span style="color: #483d8b;">format</span>(args.output)
+    <span style="color: #a020f0;">else</span>:
+        <span style="color: #a020f0;">print</span> <span style="color: #8b2252;">"Writing file `{}' did not succeed."</span>.<span style="color: #483d8b;">format</span>(args.output)
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">read_csv</span>(filename):
+    <span style="color: #8b2252;">""" Read the CSV file</span>
+
+<span style="color: #8b2252;">    This fails pretty silently on any exception at all</span>
+<span style="color: #8b2252;">    """</span>
+    <span style="color: #a020f0;">try</span>:
+        <span style="color: #a020f0;">with</span> <span style="color: #483d8b;">open</span>(filename, <span style="color: #8b2252;">'rb'</span>) <span style="color: #a020f0;">as</span> csvfile:
+            <span style="color: #a0522d;">dialect</span> = csv.Sniffer().sniff(csvfile.read(1024))
+            csvfile.seek(0)
+            <span style="color: #a0522d;">reader</span> = csv.reader(csvfile, dialect)
+            <span style="color: #a0522d;">r</span> = []
+            <span style="color: #a020f0;">for</span> row <span style="color: #a020f0;">in</span> reader:
+                r.append(row)
+    <span style="color: #a020f0;">except</span>:
+        <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">None</span>
+
+    <span style="color: #a020f0;">return</span> r
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">get_parser</span>():
+    <span style="color: #8b2252;">""" The argument parser of the command-line version """</span>
+    <span style="color: #a0522d;">parser</span> = argparse.ArgumentParser(description=(<span style="color: #8b2252;">'convert csv to rst table'</span>))
+
+    parser.add_argument(<span style="color: #8b2252;">'--input'</span>, <span style="color: #8b2252;">'-F'</span>,
+                        <span style="color: #483d8b;">help</span>=<span style="color: #8b2252;">'name of the intput file'</span>)
+
+    parser.add_argument(<span style="color: #8b2252;">'--output'</span>, <span style="color: #8b2252;">'-O'</span>,
+                        <span style="color: #483d8b;">help</span>=(<span style="color: #8b2252;">"name of the output file; "</span> +
+                              <span style="color: #8b2252;">"defaults to &lt;inputfilename&gt;.rst"</span>))
+    <span style="color: #a020f0;">return</span> parser
+
+
+<span style="color: #a020f0;">if</span> <span style="color: #483d8b;">__name__</span> == <span style="color: #8b2252;">"__main__"</span>:
+    <span style="color: #8b2252;">""" Run as a stand-alone script """</span>
+
+    <span style="color: #a0522d;">parser</span> = get_parser()       <span style="color: #b22222;"># </span><span style="color: #b22222;">Start the command-line argument parsing</span>
+    <span style="color: #a0522d;">args</span> = parser.parse_args()  <span style="color: #b22222;"># </span><span style="color: #b22222;">Read the command-line arguments</span>
+
+    <span style="color: #a020f0;">if</span> args.<span style="color: #483d8b;">input</span>:              <span style="color: #b22222;"># </span><span style="color: #b22222;">If there is an argument,</span>
+        command_line(args)      <span style="color: #b22222;"># </span><span style="color: #b22222;">run the command-line version</span>
+    <span style="color: #a020f0;">else</span>:
+        gui()                   <span style="color: #b22222;"># </span><span style="color: #b22222;">otherwise run the GUI version</span>
+</pre>
+</div>
+</div>
+</div>
