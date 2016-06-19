@@ -1,0 +1,465 @@
+---
+layout: post
+title: Event Density Plot
+tagline: ... I wonder what this is really called ...
+categories: computer python datascience
+tags: python data science plot event density
+---
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1">Hopes, Dreams, Wishes, and Desires</h2>
+<div class="outline-text-2" id="text-orgheadline1">
+<p>
+I want to visualize how many concurrent events exist in a time period
+along with how frequently they start and end.  I don&rsquo;t need to read
+numbers off the visualization, I just want to get a relative sense of
+how many events are starting, ongoing, and ending over a time period
+with some resolution.  Something that looks like this:
+</p>
+
+
+<div class="figure">
+<p><object type="image/svg+xml" data="assets/edplot.svg" >
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Looking at the plot, you can immediately see when:
+</p>
+<ul class="org-ul">
+<li>the most events were starting (about in the middle of the time
+range)</li>
+<li>the most events were happening (about in the first third of the time range)</li>
+<li>the most events were ending (about at the end of the first third of
+the time range).</li>
+</ul>
+<p>
+With that information the reader can ask the next questions in more
+useful ways:
+</p>
+<ul class="org-ul">
+<li>&ldquo;why did we stop starting events about half way through the time
+range?&rdquo;</li>
+<li>&ldquo;why did we stop so many events after the first third of the time
+range?&rdquo;</li>
+<li>&ldquo;why was nothing at all happening for the last 5&#x2013;10% of the time
+range?&rdquo;</li>
+</ul>
+<p>
+Those questions aren&rsquo;t about the data directly, but about the
+application of the data, which is what data are for (despite people
+loving it for its own sake sometimes) and they aren&rsquo;t obvious from the
+input data (Table <a href="#orgtable1">1</a>).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2">Practice Data</h2>
+<div class="outline-text-2" id="text-orgheadline2">
+<p>
+To start, I create some fake data with this Python script where all
+time is between 1 and 100, there are 20 events, and the longest event
+duration is 30.  If it helps you can think of these numbers as seconds
+after 4:15am on Thursday, June 16th, 2016.  Or days after January
+1st, 2000.  It doesn&rsquo;t matter.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a020f0;">import</span> random
+<span style="color: #a020f0;">from</span> tabulate <span style="color: #a020f0;">import</span> tabulate
+<span style="color: #a0522d;">data</span> = []
+<span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(1,20):
+    <span style="color: #a0522d;">start</span> = random.randint(1,70)
+    <span style="color: #a0522d;">end</span> = start + random.randint(1,30)
+    data.append((start,end))
+
+data.sort()
+<span style="color: #a020f0;">print</span> tabulate(data, tablefmt=<span style="color: #8b2252;">"orgtbl"</span>, headers=([<span style="color: #8b2252;">"Start"</span>,<span style="color: #8b2252;">"End"</span>]))
+</pre>
+</div>
+
+<table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Sample Event Start/End Data</caption>
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Start</th>
+<th scope="col" class="org-right">End</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">11</td>
+</tr>
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-right">27</td>
+</tr>
+
+<tr>
+<td class="org-right">8</td>
+<td class="org-right">35</td>
+</tr>
+
+<tr>
+<td class="org-right">10</td>
+<td class="org-right">11</td>
+</tr>
+
+<tr>
+<td class="org-right">13</td>
+<td class="org-right">37</td>
+</tr>
+
+<tr>
+<td class="org-right">14</td>
+<td class="org-right">35</td>
+</tr>
+
+<tr>
+<td class="org-right">22</td>
+<td class="org-right">34</td>
+</tr>
+
+<tr>
+<td class="org-right">24</td>
+<td class="org-right">36</td>
+</tr>
+
+<tr>
+<td class="org-right">28</td>
+<td class="org-right">51</td>
+</tr>
+
+<tr>
+<td class="org-right">31</td>
+<td class="org-right">59</td>
+</tr>
+
+<tr>
+<td class="org-right">33</td>
+<td class="org-right">34</td>
+</tr>
+
+<tr>
+<td class="org-right">36</td>
+<td class="org-right">47</td>
+</tr>
+
+<tr>
+<td class="org-right">36</td>
+<td class="org-right">58</td>
+</tr>
+
+<tr>
+<td class="org-right">42</td>
+<td class="org-right">51</td>
+</tr>
+
+<tr>
+<td class="org-right">42</td>
+<td class="org-right">51</td>
+</tr>
+
+<tr>
+<td class="org-right">44</td>
+<td class="org-right">66</td>
+</tr>
+
+<tr>
+<td class="org-right">53</td>
+<td class="org-right">74</td>
+</tr>
+
+<tr>
+<td class="org-right">69</td>
+<td class="org-right">95</td>
+</tr>
+
+<tr>
+<td class="org-right">69</td>
+<td class="org-right">96</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3">Organizing the Data</h2>
+<div class="outline-text-2" id="text-orgheadline3">
+<p>
+The next step is to see how many events are active, starting, and
+ending at each time over all time (1&#x2013;100 in our case).
+</p>
+
+<p>
+This next bit of Python simply bins the data from the table above into
+our 100 example time bins, which I won&rsquo;t make you read through, but
+you&rsquo;ll need to bin your data in a similar way.  The format of the data
+is:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Time</td>
+<td class="org-left">Number of Events</td>
+<td class="org-left">Number of Events</td>
+<td class="org-left">Number of Events</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><b>Ending</b> at this time</td>
+<td class="org-left"><b>Ongoing</b> at this time</td>
+<td class="org-left"><b>Starting</b> at this time</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+For example, if the frequency of your events is a few every minute,
+your binned data might look like:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Time</th>
+<th scope="col" class="org-right">Ending</th>
+<th scope="col" class="org-right">Ongoing</th>
+<th scope="col" class="org-right">Starting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">13:50</td>
+<td class="org-right">4</td>
+<td class="org-right">10</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">13:51</td>
+<td class="org-right">2</td>
+<td class="org-right">11</td>
+<td class="org-right">1</td>
+</tr>
+
+<tr>
+<td class="org-right">13:52</td>
+<td class="org-right">0</td>
+<td class="org-right">12</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-right">13:53</td>
+<td class="org-right">8</td>
+<td class="org-right">8</td>
+<td class="org-right">2</td>
+</tr>
+
+<tr>
+<td class="org-right">13:54</td>
+<td class="org-right">1</td>
+<td class="org-right">9</td>
+<td class="org-right">4</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+although, since there is no data displayed for the x-axis (the time),
+it is a lot easier to convert the time into relative time.  In this
+example, the times could be 49800, 49860, 49920, etc.  Or if you have
+a date, using the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix epoch time</a> (seconds since 00:00:00 UTC 1
+January 1970) makes things easy.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #a0522d;">timebin</span> = <span style="color: #483d8b;">dict</span>()
+<span style="color: #a0522d;">startbin</span> = <span style="color: #483d8b;">dict</span>()
+<span style="color: #a0522d;">endbin</span> = <span style="color: #483d8b;">dict</span>()
+<span style="color: #a020f0;">for</span> timeincr <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(1, 101):
+    <span style="color: #a0522d;">timebin</span>[timeincr] = 0
+    <span style="color: #a0522d;">startbin</span>[timeincr] = 0
+    <span style="color: #a0522d;">endbin</span>[timeincr] = 0
+    <span style="color: #a020f0;">for</span> s, e <span style="color: #a020f0;">in</span> timedata:
+        <span style="color: #a020f0;">if</span> s == timeincr:
+            <span style="color: #a0522d;">startbin</span>[timeincr] += 1
+        <span style="color: #a020f0;">if</span> e == timeincr:
+            <span style="color: #a0522d;">endbin</span>[timeincr] += 1
+        <span style="color: #a020f0;">if</span> s &lt;= timeincr <span style="color: #a020f0;">and</span> e &gt;= timeincr:
+            <span style="color: #a020f0;">if</span> timeincr <span style="color: #a020f0;">in</span> timebin:
+                <span style="color: #a0522d;">timebin</span>[timeincr] += 1
+<span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">sorted</span>(timebin):
+    <span style="color: #a020f0;">print</span> <span style="color: #8b2252;">"|{} | {} | {} | {}"</span>.<span style="color: #483d8b;">format</span>(m, endbin[m],
+                                      timebin[m], startbin[m])
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4">Plotting the Density of the Bins</h2>
+<div class="outline-text-2" id="text-orgheadline4">
+<p>
+Once we have our bins, then it&rsquo;s a matter of makeing a density plot
+over time for each of the three events (starting, ongoing, and
+ending).
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python" id="orgsrcblock1"><span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
+
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">makebarplot</span>(bins):
+    <span style="color: #a0522d;">time</span> = [b[0] <span style="color: #a020f0;">for</span> b <span style="color: #a020f0;">in</span> bins]   <span style="color: #b22222;"># </span><span style="color: #b22222;">extract the x-axis data</span>
+    <span style="color: #a0522d;">fig</span> = plt.figure()            <span style="color: #b22222;"># </span><span style="color: #b22222;">get the matplotlib plot figure</span>
+    fig.set_size_inches(8, 1)     <span style="color: #b22222;"># </span><span style="color: #b22222;">set the size of the plot</span>
+    <span style="color: #a0522d;">ax</span> = fig.add_subplot(1, 1, 1) <span style="color: #b22222;"># </span><span style="color: #b22222;">add a plot to the figure; Subplot</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">is confusing, though.  The magical "(1, 1, 1)" here means there</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">will be one row, one column, and we are working with plot number</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">1, all of which is the same as just one plot.  There is a little</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">more documentation on this at:</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplot</span>
+    fig.patch.set_visible(<span style="color: #008b8b;">False</span>)  <span style="color: #b22222;"># </span><span style="color: #b22222;">make the background transparent</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off the borders (called spines)</span>
+    ax.spines[<span style="color: #8b2252;">'top'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+    ax.spines[<span style="color: #8b2252;">'bottom'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+    ax.spines[<span style="color: #8b2252;">'right'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+    ax.spines[<span style="color: #8b2252;">'left'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">set all of the ticks to 0 length</span>
+    ax.tick_params(axis=u<span style="color: #8b2252;">'both'</span>, which=u<span style="color: #8b2252;">'both'</span>,length=0)
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">hide everything about the x-axis</span>
+    ax.axes.get_xaxis().set_visible(<span style="color: #008b8b;">False</span>)
+
+    <span style="color: #a0522d;">barwidth</span> = 1                  <span style="color: #b22222;"># </span><span style="color: #b22222;">remove gaps between bars</span>
+    <span style="color: #a0522d;">color</span> = [<span style="color: #8b2252;">"red"</span>, <span style="color: #8b2252;">"blue"</span>, <span style="color: #8b2252;">"green"</span>] <span style="color: #b22222;"># </span><span style="color: #b22222;">set the colors for</span>
+    <span style="color: #a020f0;">for</span> row <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(1, <span style="color: #483d8b;">len</span>(color)+1): <span style="color: #b22222;"># </span><span style="color: #b22222;">make as many rows as colors</span>
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">extract the correct column</span>
+        <span style="color: #a0522d;">ongoing</span> = [b[row] <span style="color: #a020f0;">for</span> b <span style="color: #a020f0;">in</span> bins]
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">scale the data to the maximum</span>
+        <span style="color: #a0522d;">ongoing</span> = [c/<span style="color: #483d8b;">float</span>(<span style="color: #483d8b;">max</span>(ongoing)) <span style="color: #a020f0;">for</span> c <span style="color: #a020f0;">in</span> ongoing]
+
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">draw a black line at the left end</span>
+        <span style="color: #a0522d;">left</span> = 10
+        <span style="color: #a0522d;">border_width</span> = 20
+        <span style="color: #a0522d;">d</span> = border_width
+        ax.barh(row, d, barwidth, color=<span style="color: #8b2252;">"black"</span>,
+                left=left, edgecolor=<span style="color: #8b2252;">"none"</span>,
+                linewidth=0)
+        <span style="color: #a0522d;">left</span> += d
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">fill in the horizontal bar with the right color density</span>
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">(alpha)</span>
+        <span style="color: #a020f0;">for</span> d, c <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">zip</span>(time, ongoing):
+            ax.barh(row, d, barwidth,
+                    alpha=0.9*c+.01,
+                    color=color[row-1],
+                    left=left,
+                    edgecolor=<span style="color: #8b2252;">"none"</span>,
+                    linewidth=0)
+            <span style="color: #a0522d;">left</span> += d
+
+        <span style="color: #b22222;"># </span><span style="color: #b22222;">draw a black line at the right end</span>
+        <span style="color: #a0522d;">d</span> = border_width
+        ax.barh(row, d, barwidth,
+                color=<span style="color: #8b2252;">"black"</span>,
+                left=left, edgecolor=<span style="color: #8b2252;">"none"</span>,
+                linewidth=0)
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">label the rows</span>
+    plt.yticks([1.5, 2.5, 3.5], [<span style="color: #8b2252;">'stopping'</span>, <span style="color: #8b2252;">'ongoing'</span>, <span style="color: #8b2252;">'starting'</span>], size=10)
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">return the plot to __main__</span>
+    <span style="color: #a020f0;">return</span> plt
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">do some housekeeping that makes it all go in OrgMode (and hence PDF</span>
+<span style="color: #b22222;"># </span><span style="color: #b22222;">and HTML)</span>
+<span style="color: #a020f0;">if</span> <span style="color: #483d8b;">__name__</span> == <span style="color: #8b2252;">"__main__"</span>:
+    <span style="color: #a0522d;">plt</span> = makebarplot(bins)
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">The file extension controls the output format; .png and .pdf are</span>
+    <span style="color: #b22222;"># </span><span style="color: #b22222;">good choices along with .svg</span>
+    <span style="color: #a0522d;">filename</span>=<span style="color: #8b2252;">"edplot.svg"</span>
+    plt.savefig(filename)
+    <span style="color: #a020f0;">return</span> filename
+</pre>
+</div>
+
+
+<div class="figure">
+<p><object type="image/svg+xml" data="assets/edplot.svg" >
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+And now you can see the number of starting events in green, the number
+of ongoing events in blue, and the number of ending events in red.
+The darker the color, the more events of that type are happening at
+that time, hence the name, <i>event density plot</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline5" class="outline-2">
+<h2 id="orgheadline5">The Future</h2>
+<div class="outline-text-2" id="text-orgheadline5">
+<p>
+This could pretty readily be a Python class, and may be that
+someday, but for now the <code>makebarplot</code> function is sufficient and
+hopefully easy to understand and translate to the language of your
+choice.
+</p>
+
+<p>
+I would also like to include more examples, but thought that would
+be as likely to add confusion as clarity.
+</p>
+</div>
+</div>
