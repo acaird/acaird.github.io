@@ -1,14 +1,11 @@
 ---
 layout: post
 title: Event Density Plot
-tagline: I wonder what these are really called
-categories: 
-tags: python data science plot event density matplotlib
+tagline: ... I wonder what this is really called ...
+categories: computer python datascience
+tags: python data science plot event density
 ---
 
-<div id="outline-container-orgheadline1" class="outline-2">
-<h2 id="orgheadline1">Hopes, Dreams, Wishes, and Desires</h2>
-<div class="outline-text-2" id="text-orgheadline1">
 <p>
 I want to visualize how many concurrent events exist in a time period
 along with how frequently they start and end.  I don&rsquo;t need to read
@@ -52,12 +49,10 @@ application of the data, which is what data are for (despite people
 loving it for its own sake sometimes) and they aren&rsquo;t obvious from the
 input data (Table <a href="#orgtable1">1</a>).
 </p>
-</div>
-</div>
 
-<div id="outline-container-orgheadline2" class="outline-2">
-<h2 id="orgheadline2">Practice Data</h2>
-<div class="outline-text-2" id="text-orgheadline2">
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1">Practice Data</h2>
+<div class="outline-text-2" id="text-orgheadline1">
 <p>
 To start, I create some fake data with this Python script where all
 time is between 1 and 100, there are 20 events, and the longest event
@@ -195,9 +190,9 @@ data.sort()
 </div>
 </div>
 
-<div id="outline-container-orgheadline3" class="outline-2">
-<h2 id="orgheadline3">Organizing the Data</h2>
-<div class="outline-text-2" id="text-orgheadline3">
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2">Organizing the Data</h2>
+<div class="outline-text-2" id="text-orgheadline2">
 <p>
 The next step is to see how many events are active, starting, and
 ending at each time over all time (1&#x2013;100 in our case).
@@ -346,9 +341,9 @@ January 1970) makes things easy.
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline4" class="outline-2">
-<h2 id="orgheadline4">Plotting the Density of the Bins</h2>
-<div class="outline-text-2" id="text-orgheadline4">
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3">Plotting the Density of the Bins</h2>
+<div class="outline-text-2" id="text-orgheadline3">
 <p>
 Once we have our bins, then it&rsquo;s a matter of makeing a density plot
 over time for each of the three events (starting, ongoing, and
@@ -447,9 +442,9 @@ that time, hence the name, <i>event density plot</i>.
 </div>
 </div>
 
-<div id="outline-container-orgheadline5" class="outline-2">
-<h2 id="orgheadline5">The Future</h2>
-<div class="outline-text-2" id="text-orgheadline5">
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4">The Future</h2>
+<div class="outline-text-2" id="text-orgheadline4">
 <p>
 This could pretty readily be a Python class, and may be that
 someday, but for now the <code>makebarplot</code> function is sufficient and
