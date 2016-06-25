@@ -1,0 +1,154 @@
+---
+layout: post
+title: Dotplots with Matplotlib
+tagline: because I couldn't find this elsewhere
+categories:
+tags: python data science plot dotplot chartjunk matplotlib
+---
+
+<p>
+I like the dotplots that R + ggplot2 can make.  There are lots of
+examples of this on the Internet.  At least one is at <a href="http://www.r-bloggers.com/summarising-data-using-dot-plots/">r-bloggers</a>, but
+Python is useful for many reasons, so I want to make a decent looking,
+<a href="https://en.wikipedia.org/wiki/Chartjunk">chartjunk</a>-free dotplot using matplotlib.
+</p>
+
+<p>
+Dotplots are a much better choice than pie charts for representing
+most data and can take the place of most bar charts and present a much
+cleaner looking graphic.  Most bar charts do not use the width or area
+of the bar to represent anything, so the size of the bar is, at best,
+chart junk, or, at worst, misleading.
+</p>
+
+<p>
+Making dotplots using Python and matplotlib is not well documented
+that I could find, so I figured it out myself with the help of many
+Google results.
+</p>
+
+<p>
+Some sample data is in Table <a href="#orgtable1">1</a>.  If columns for your data are
+flipped, change the point arrays (<code>p</code>) in the code that are indexed to
+<code>[0]</code> to <code>[1]</code> and vice versa.
+</p>
+
+<table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Fruit!</caption>
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Count</th>
+<th scope="col" class="org-left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">10</td>
+<td class="org-left">apple</td>
+</tr>
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-left">pear</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">avocado</td>
+</tr>
+
+<tr>
+<td class="org-right">8</td>
+<td class="org-left">orange</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">peach</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="figure">
+<p><object type="image/svg+xml" data="/assets/hbarplot.svg" >
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+The following code will produce the plot above.  Hopefully the
+comments will help.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python" id="orgsrcblock1"><span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
+
+<span style="color: #a0522d;">d</span> = fruit
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">sort the data</span>
+<span style="color: #a0522d;">d</span> = <span style="color: #483d8b;">sorted</span>(d, reverse=<span style="color: #008b8b;">False</span>)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Get the plot aspect right for thinner bars that aren't too spread out</span>
+<span style="color: #a0522d;">fig</span>, <span style="color: #a0522d;">ax</span> = plt.subplots(figsize=(12,2.5))
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Create the bars</span>
+<span style="color: #b22222;"># </span><span style="color: #b22222;">The parameters are:</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- the number of bars for the y-axis</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- the values from the first column of data</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- the width of the bars out to the points</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- color = the color of the bars</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- edgecolor = the color of the bars' borders</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- alpha = the transparency of the bars</span>
+<span style="color: #a0522d;">bars</span> = ax.barh(<span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(d)), [p[0] <span style="color: #a020f0;">for</span> p <span style="color: #a020f0;">in</span> d], 0.001,
+                color=<span style="color: #8b2252;">"lightgray"</span>, edgecolor=<span style="color: #8b2252;">"lightgray"</span>, alpha=0.4)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Create the points using normal x-y scatter coordinates</span>
+<span style="color: #b22222;"># </span><span style="color: #b22222;">The parameters are:</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- the x values from the first column of the data</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- the y values, which are just the indices of the data</span>
+<span style="color: #b22222;">#   </span><span style="color: #b22222;">- the size of the points</span>
+<span style="color: #a0522d;">points</span> = ax.scatter([p[0] <span style="color: #a020f0;">for</span> p <span style="color: #a020f0;">in</span> d], <span style="color: #483d8b;">range</span>(<span style="color: #483d8b;">len</span>(d)), s=30)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Create the ytic locations centered on the bars</span>
+<span style="color: #a0522d;">yticloc</span> = []
+[yticloc.append(bar.get_y() + bar.get_height()/2.) <span style="color: #a020f0;">for</span> bar <span style="color: #a020f0;">in</span> bars]
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Turn off all of the borders</span>
+ax.spines[<span style="color: #8b2252;">'top'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+ax.spines[<span style="color: #8b2252;">'bottom'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+ax.spines[<span style="color: #8b2252;">'right'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+ax.spines[<span style="color: #8b2252;">'left'</span>].set_visible(<span style="color: #008b8b;">False</span>)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">set all of the ticks to 0 length</span>
+ax.tick_params(axis=u<span style="color: #8b2252;">'both'</span>, which=u<span style="color: #8b2252;">'both'</span>,length=0)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">set the tic locations and labels</span>
+ax.set_yticks(yticloc)
+ax.set_yticklabels([p[1] <span style="color: #a020f0;">for</span> p <span style="color: #a020f0;">in</span> d])
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">set the x- and y-axis limits a little bigger so things look nice</span>
+ax.set_xlim([0,<span style="color: #483d8b;">max</span>([p[0] <span style="color: #a020f0;">for</span> p <span style="color: #a020f0;">in</span> d])+1.1])
+ax.set_ylim([-0.7,<span style="color: #483d8b;">len</span>(d)])
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Turn on the X (vertical) gridlines</span>
+ax.xaxis.grid(<span style="color: #008b8b;">True</span>)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Re-wrap the figure so everything fits</span>
+plt.tight_layout(<span style="color: #008b8b;">True</span>)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">Save the figure</span>
+<span style="color: #a0522d;">filename</span> = <span style="color: #8b2252;">"hbarplot.svg"</span>
+plt.savefig(filename)
+
+<span style="color: #b22222;"># </span><span style="color: #b22222;">this is for org-mode, in general it produces a Python error</span>
+<span style="color: #a020f0;">return</span> filename
+</pre>
+</div>
