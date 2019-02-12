@@ -1,0 +1,569 @@
+---
+layout: post
+title: A Simple Web App: Python, Flask, Docker, Kubernetes, Microsoft Azure, and GoDaddy
+tagline: zero-to-webapp in 58 easy steps
+categories:
+tags: python flask cloud webapp hosting web application flask docker kubernetes microsoft azure godaddy dns 
+---
+
+<p>
+You&rsquo;re talking with your wife one d<a href="https://www.letterkenny.tv/">a</a>aayyy&#x2026; and realize that you
+could improve her life by letting her create printable calendars and
+importable ICS files for events she has to schedule.  And that should
+be on the web, because while your wife is very smart, she is not very
+technical.
+</p>
+
+<p>
+The problem is that we have a simple input and from a web site we want
+printable PDF calendars and an <a href="https://en.wikipedia.org/wiki/ICalendar">iCalendar or ICS</a> file that can be
+imported into calendar programs.
+</p>
+
+
+<p>
+The input is just a column of dates and a column of events.  An
+example of it for scheduling people to work looks like:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-right">2019-02-01</td>
+<td class="org-left">Alicia, Michelle, Dolly</td>
+</tr>
+
+<tr>
+<td class="org-right">2019-02-02</td>
+<td class="org-left">Jim, Stephen, Ian, and Bernard</td>
+</tr>
+
+<tr>
+<td class="org-right">2019-02-03</td>
+<td class="org-left">Wayne, Daryl, Katy</td>
+</tr>
+
+<tr>
+<td class="org-right">2019-02-04</td>
+<td class="org-left">Alicia, Jim, Wayne</td>
+</tr>
+
+<tr>
+<td class="org-right">2019-02-05</td>
+<td class="org-left">closed</td>
+</tr>
+
+<tr>
+<td class="org-right">2019-02-06</td>
+<td class="org-left">Michelle, Stephen, Daryl</td>
+</tr>
+
+<tr>
+<td class="org-right">2019-02-07</td>
+<td class="org-left">Dolly, Bernard, Katy</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+We will start with a Python program that can process that into
+printable PDF calendars and iCalendar files, then turn that into a web
+application using Flask.  Once we have a Flask application, we will
+package that into a Docker container and publish it to the Docker
+Hub so it can be read by our cloud provider&rsquo;s environment.  I chose to
+use Microsoft&rsquo;s Azure cloud environment, which uses Kubernetes to
+orchestrate the environment needed to instantiate our Docker container
+and get web traffic to it.  I had a domain at GoDaddy that I wanted to
+use for this website, and that is the final step.
+</p>
+
+<p>
+The Github project for this is at:
+<a href="https://github.com/acaird/xlscal-to-pdf-ics">https://github.com/acaird/xlscal-to-pdf-ics</a> 
+</p>
+
+<div id="outline-container-orgf2a8612" class="outline-2">
+<h2 id="orgf2a8612">Python</h2>
+<div class="outline-text-2" id="text-orgf2a8612">
+<p>
+Happily for us, Python can read that file as a <code>.csv</code> file (<a href="https://docs.python.org/3/library/csv.html">csv</a>) or
+an Excel (<code>.xlsx</code>) file (<a href="https://github.com/python-excel/xlrd">xlrd</a>).  Even more happily, it can output
+PDF files using <a href="https://bitbucket.org/rptlab/reportlab/src/default/">ReportLab</a> and iCalendar files using <a href="https://icalendar.readthedocs.io/en/latest/">icalendar</a>.
+</p>
+
+<p>
+The function for generating a PDF calendar looks like:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #81A1C1;">def</span> <span style="color: #88C0D0;">make_pdf_cals</span>(events):
+    <span style="color: #D8DEE9;">buf</span> = BytesIO()
+    <span style="color: #D8DEE9;">stylesheet</span> = getSampleStyleSheet()
+    <span style="color: #D8DEE9;">doc</span> = SimpleDocTemplate(buf, pagesize=letter)
+    <span style="color: #D8DEE9;">doc.pagesize</span> = landscape(letter)
+    <span style="color: #D8DEE9;">elements</span> = []
+
+    <span style="color: #D8DEE9;">months</span> = <span style="color: #81A1C1;">set</span>([d.month <span style="color: #81A1C1;">for</span> d <span style="color: #81A1C1;">in</span> events])
+    <span style="color: #D8DEE9;">years</span> = <span style="color: #81A1C1;">set</span>([d.year <span style="color: #81A1C1;">for</span> d <span style="color: #81A1C1;">in</span> events])
+
+    <span style="color: #81A1C1;">for</span> year <span style="color: #81A1C1;">in</span> years:
+        <span style="color: #81A1C1;">for</span> month <span style="color: #81A1C1;">in</span> months:
+            elements.append(
+                Paragraph(
+                    <span style="color: #A3BE8C;">"{} {}"</span>.<span style="color: #81A1C1;">format</span>(calendar.month_name[month], year),
+                    stylesheet[<span style="color: #A3BE8C;">"Title"</span>],
+                )
+            )
+            <span style="color: #D8DEE9;">cal</span> = [[<span style="color: #A3BE8C;">"Mon"</span>, <span style="color: #A3BE8C;">"Tue"</span>, <span style="color: #A3BE8C;">"Wed"</span>, <span style="color: #A3BE8C;">"Thu"</span>, <span style="color: #A3BE8C;">"Fri"</span>, <span style="color: #A3BE8C;">"Sat"</span>, <span style="color: #A3BE8C;">"Sun"</span>]]
+            cal.extend(calendar.monthcalendar(year, month))
+            <span style="color: #D8DEE9;">cal</span> = fill_cal(cal, month, year, events)
+            <span style="color: #D8DEE9;">table</span> = Table(cal, 7 * [1.25 * inch], <span style="color: #81A1C1;">len</span>(cal) * [0.8 * inch])
+            table.setStyle(
+                TableStyle(
+                    [
+                        (<span style="color: #A3BE8C;">"FONT"</span>, (0, 0), (-1, -1), <span style="color: #A3BE8C;">"Helvetica"</span>),
+                        (<span style="color: #A3BE8C;">"FONT"</span>, (0, 0), (-1, 0), <span style="color: #A3BE8C;">"Helvetica-Bold"</span>),
+                        (<span style="color: #A3BE8C;">"FONTSIZE"</span>, (0, 0), (-1, -1), 8),
+                        (<span style="color: #A3BE8C;">"INNERGRID"</span>, (0, 0), (-1, -1), 0.25, colors.black),
+                        (<span style="color: #A3BE8C;">"BOX"</span>, (0, 0), (-1, -1), 0.25, colors.green),
+                        (<span style="color: #A3BE8C;">"ALIGN"</span>, (0, 0), (-1, -1), <span style="color: #A3BE8C;">"LEFT"</span>),
+                        (<span style="color: #A3BE8C;">"VALIGN"</span>, (0, 0), (-1, -1), <span style="color: #A3BE8C;">"TOP"</span>),
+                    ]
+                )
+            )
+
+            elements.append(table)
+            elements.append(PageBreak())
+
+    doc.build(elements)
+
+    <span style="color: #D8DEE9;">pdf</span> = buf.getvalue()
+
+    <span style="color: #81A1C1;">return</span> pdf
+</pre>
+</div>
+<p>
+and the function for generating the iCalendar file looks like:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #81A1C1;">def</span> <span style="color: #88C0D0;">make_ics</span>(events):
+    <span style="color: #D8DEE9;">ical</span> = Calendar()
+
+    <span style="color: #81A1C1;">for</span> m <span style="color: #81A1C1;">in</span> <span style="color: #81A1C1;">sorted</span>(events):
+        <span style="color: #D8DEE9;">event</span> = Event()
+        event.add(<span style="color: #A3BE8C;">"summary"</span>, events[m])
+        event.add(<span style="color: #A3BE8C;">"dtstart"</span>, m.date())
+
+        ical.add_component(event)
+
+    <span style="color: #81A1C1;">return</span> ical.to_ical(ical)
+</pre>
+</div>
+
+<p>
+Once you have that, then it&rsquo;s a matter of making it into a <a href="http://flask.pocoo.org/">Flask</a>
+app; there are lots of tutorials on the web about that and you can
+see the details in the final result.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1c75cb2" class="outline-2">
+<h2 id="org1c75cb2">Docker</h2>
+<div class="outline-text-2" id="text-org1c75cb2">
+<p>
+Once you have a Flask app, it needs to be packaged with everything
+it needs to run so it is portable, and <a href="https://www.docker.com/">Docker</a> is a good way to do
+that.
+</p>
+
+<p>
+Once you have Docker installed on your system, it&rsquo;s a simply matter
+to create a Docker image.
+</p>
+
+<ol class="org-ol">
+<li><p>
+Create a file called <code>Dockerfile</code> that contains a Python/Flask
+image from the Docker Hub and adds what you need for your
+application.  Ours looks like:
+</p>
+<pre class="example">
+FROM tiangolo/uwsgi-nginx-flask:python3.7
+
+RUN pip install xlrd
+RUN pip install python-dateutil
+RUN pip install reportlab
+RUN pip install icalendar
+RUN pip install flask_bootstrap
+
+COPY ./app /app
+</pre>
+
+<p>
+Where we used Sebastián Ramírez&rsquo;s image from
+<a href="https://github.com/tiangolo/uwsgi-nginx-flask-docker">https://github.com/tiangolo/uwsgi-nginx-flask-docker</a> to start,
+then added the Python packages we need.
+</p>
+
+<p>
+Lastly we copied in the contents of our <code>app</code> directory, which
+contains our Python script, called <code>app.py</code> and a <code>templates</code>
+directory with some Flask templates.
+</p></li>
+
+<li><p>
+Build the Docker image on your computer:
+</p>
+<pre class="example">
+docker build -t acaird/xls2cal .
+</pre>
+<p>
+but change the <code>acaird</code> to your own Docker Hub name (I think),
+and don&rsquo;t forget the <code>.</code> at the end so it knows to read the
+<code>Dockerfile</code> from the current directory.
+</p></li>
+
+<li><p>
+Run your Docker image locally:
+</p>
+<pre class="example">
+docker run --rm -d --name xls2cal -p 80:80 acaird/xls2cal
+</pre>
+<p>
+changing the tag at the end to match the tag you used in step 2.
+The options are:
+</p>
+<dl class="org-dl">
+<dt><code>run</code></dt><dd>runs a Docker container</dd>
+
+<dt><code>--rm</code></dt><dd>removes the container after it exits</dd>
+
+<dt><code>-d</code></dt><dd>runs the container in the background, without this the
+<code>docker run</code> command will wait in your shell</dd>
+
+<dt><code>--name xls2cal</code></dt><dd>gives the container a name; Docker will
+assign one if you don&rsquo;t give it one, but it is convenient to
+have one</dd>
+
+<dt><code>-p 80:80</code></dt><dd>sets the port on the localhost (your computer) to
+80 and sends traffic to port 80 in the Docker
+container; in our case, this is where <code>nginx</code> is
+listening to send our requests to <code>uwsgi</code> which
+will send them to our Flask application</dd>
+
+<dt><code>acaird/xls2cal</code></dt><dd>is the tag of the image that is to be
+started in the container</dd>
+</dl></li>
+
+<li>Use your web browser to go to <code>http://localhost</code> and make sure
+your web application is working in its containerized environment</li>
+
+<li><p>
+Once everything is working, create yourself a free Docker Hub
+account at <a href="https://hub.docker.com/">https://hub.docker.com/</a> and log in to it from your
+computer by typing:
+</p>
+<pre class="example">
+docker login
+</pre>
+<p>
+then push your image to the Docker hub:
+</p>
+<pre class="example">
+docker push acaird/xls2cal
+</pre></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org35bc129" class="outline-2">
+<h2 id="org35bc129">Azure, with a brief detour to Kubernetes</h2>
+<div class="outline-text-2" id="text-org35bc129">
+<p>
+Now you have a functioning container that will run anywhere that
+supports Docker images, and you need a place to run it.
+</p>
+
+<p>
+The canonical cloud provider is Amazon Web Services (<a href="http://aws.amazon.com">AWS</a>) and, for
+containers spefically, <a href="https://aws.amazon.com/fargate/">Fargate</a>, but I couldn&rsquo;t follow their
+documentation immediately, so I moved on.  
+</p>
+
+<p>
+The second cloud provider that might come to mind is Google and
+their <a href="https://cloud.google.com/kubernetes-engine/">Kubernetes Engine</a>; <a href="https://cloud.google.com/cloud-build/docs/quickstart-docker">Google&rsquo;s</a> <a href="https://console.cloud.google.com/kubernetes">documentation</a> was good, but when I
+tried following their example, there were no resources:
+</p>
+<pre class="example">
+ERROR: (gcloud.container.clusters.create) Operation [&lt;Operation clusterConditions: [&lt;StatusCondition code: CodeValueValuesEnum(GCE_STOCKOUT, 1)
+ message: u'Try a different location, or try again later: Google Compute Engine does not have enough resources available to fulfill request: us-central1-b.'&gt;]
+ detail: u'Try a different location, or try again later: Google Compute Engine does not have enough resources available to fulfill request: us-central1-b.'
+ endTime: u'2019-02-07T01:52:24.015219227Z'
+ name: u'operation-1549504333886-880ea104'
+ nodepoolConditions: []
+ operationType: OperationTypeValueValuesEnum(CREATE_CLUSTER, 1)
+ selfLink: u'https://container.googleapis.com/v1/projects/180749766837/zones/us-central1-b/operations/operation-1549504333886-880ea104'
+ startTime: u'2019-02-07T01:52:13.886673043Z'
+ status: StatusValueValuesEnum(DONE, 3)
+ statusMessage: u'Try a different location, or try again later: Google Compute Engine does not have enough resources available to fulfill request: us-central1-b.'
+ targetLink: u'https://container.googleapis.com/v1/projects/180749766837/zones/us-central1-b/clusters/xlsx-cal'
+ zone: u'us-central1-b'&gt;] finished with error: Try a different location, or try again later: Google Compute Engine does not have enough resources available to fulfill request: us-central1-b.
+</pre>
+<p>
+on searching the Internet for this error (ok, I Googled it), I found
+that this is not uncommon.  Being impatient, I moved on.
+</p>
+
+<p>
+While Microsoft is a behemoth, they are newer to the cloud world
+than Amazon or Google, so they were my third choice and who I ended
+up using.
+</p>
+
+<p>
+I started with their documentation <a href="https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough">Quickstart: Deploy an Azure
+Kubernetes Service (AKS) cluster using the Azure CLI</a>.  After
+creating the account as instructed on that page, I installed the
+command line tool for working with Azure cloud resources called <code>az</code>
+(I do not like graphical interfaces).  On my Mac, I use <a href="http://brew.sh">Brew</a> to
+install software, and the Azure command line client is available
+from there (for what it&rsquo;s worth, I couldn&rsquo;t find Google&rsquo;s CLI
+there), and typing:
+</p>
+<pre class="example">
+$ brew info azure-cli
+azure-cli: stable 2.0.57 (bottled), HEAD
+Microsoft Azure CLI 2.0
+https://docs.microsoft.com/cli/azure/overview
+/usr/local/Cellar/azure-cli/2.0.57 (22,407 files, 100.5MB) *
+  Poured from bottle on 2019-02-07 at 06:45:38
+From: https://github.com/Homebrew/homebrew-core/blob/master/Formula/azure-cli.rb
+</pre>
+<p>
+gives me a useful link to the docs and typing <code>brew install
+  azure-cli</code> installed the <code>az</code> command for me.
+</p>
+
+<p>
+I then followed their instructions and ran parts of the test
+environment.  I didn&rsquo;t do all of it, because that seemed like a
+lot.  Also, I had my own Docker image ready and waiting.
+</p>
+
+<p>
+I stripped down their Kubernetes manifest file to a simpler one that
+looks like:
+</p>
+<pre class="example">
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xls2cal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xls2cal
+  template:
+    metadata:
+      labels:
+	app: xls2cal
+    spec:
+      containers:
+      - name: xls2cal
+	image: acaird/xls2cal
+	resources:
+	  requests:
+	    cpu: 100m
+	    memory: 128Mi
+	  limits:
+	    cpu: 250m
+	    memory: 256Mi
+	ports:
+	- containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xls2cal
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: xls2cal
+</pre>
+
+<p>
+This Kubernetes manifest has two main parts: the Deployment, which
+describes the container and assigns a label (<code>app: xls2cal</code>) to it
+and an Service, which exposes port 80 to a LoadBalancer, which is
+provided by Azure.  What you really care about is the line that
+says:
+</p>
+<pre class="example">
+image: acaird/xls2cal  
+</pre>
+<p>
+because that tells Kubernetes what Docker image to run.
+</p>
+
+<p>
+The general steps once you have the Kubernetes manifest above and
+have adjusted it to run your container are:
+</p>
+
+<ol class="org-ol">
+<li><p>
+Log in to Azure using the Azure command line interface (CLI) 
+</p>
+<pre class="example">
+az login
+</pre></li>
+
+<li><p>
+Create a group:
+</p>
+<pre class="example">
+az group create --name acaird-xls2cal --location eastus
+</pre></li>
+
+<li><p>
+Create a single-node Kubernetes cluster:
+</p>
+<pre class="example">
+az aks create \
+    --resource-group acaird-xls2cal \
+    --name xls2cal \
+    --node-count 1 \
+    --generate-ssh-keys
+</pre></li>
+
+<li><p>
+Add the credentials for that Kubernetes cluster to your local
+<code>kubectl</code> configuration:
+</p>
+<pre class="example">
+az aks get-credentials --resource-group acaird-xls2cal --name xls2cal
+</pre></li>
+
+<li><p>
+Check that you have a node, and learn a little about it:
+</p>
+<pre class="example">
+kubectl get nodes -o wide
+</pre></li>
+
+<li><p>
+Confirm that your <code>kubectl</code> is pointed at the correct context:
+</p>
+<pre class="example">
+kubectl config get-contexts
+</pre></li>
+
+<li><p>
+Send the Kubernetes manifest YAML file to the cluster:
+</p>
+<pre class="example">
+kubectl apply -f xls2cal.yaml
+</pre></li>
+
+<li><p>
+Start checking the state of what you have created:
+</p>
+<pre class="example">
+kubectl get pods,svc -o wide
+</pre>
+<p>
+after a while you should see the column <code>EXTERNAL-IP</code> go from
+saying <code>&lt;pending&gt;</code> to being populated with an IP address
+</p></li>
+
+<li>Open your web browser to <code>http://YourAssignedExternalIP/</code> and you
+should see your web application.</li>
+
+<li>Do a little dance of thanks and amazement.</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org47f9bd3" class="outline-2">
+<h2 id="org47f9bd3">DNS with GoDaddy</h2>
+<div class="outline-text-2" id="text-org47f9bd3">
+<p>
+I have my domain registered at GoDaddy, and they will also provide
+DNS services for hostnames in that domain.
+</p>
+
+<p>
+Looking at the Azure tutorial titled <a href="https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain">Map an existing custom DNS name
+to Azure App Service</a> the example in the <a href="https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain#access-dns-records-with-domain-provider">Access DNS records with
+domain provider</a> is the same as GoDaddy, which was very convenient.
+</p>
+
+
+<p>
+To add a hostname at GoDaddy simply go to
+<a href="https://dcc.godaddy.com/manage/YOURDOMAIN.TLD/dns">https://dcc.godaddy.com/manage/YOURDOMAIN.TLD/dns</a> (of course,
+replacing <code>YOURDOMAIN.TLD</code> with your actually domain, like
+<code>mysweetdomain.biz</code> or whatever) click &ldquo;Add&rdquo;, select &ldquo;A&rdquo; as the type
+(an <a href="https://support.dnsimple.com/articles/a-record/">A record</a>), type in the hostname of your choice, and the IP
+address from above.
+</p>
+
+<p>
+If you are using MacOS or Linux, you can type:
+</p>
+<pre class="example">
+dig hostname.mysweetdomain.biz
+</pre>
+<p>
+and you will see GoDaddy&rsquo;s DNS servers respond with the hostname you
+configured and the IP address that was assigned above.
+</p>
+
+<p>
+Now you can point your web browser at
+<a href="http://hostname.mysweetdomain.com">http://hostname.mysweetdomain.com</a> and you&rsquo;ll see your web
+application.  
+</p>
+</div>
+</div>
+<div id="outline-container-orgc720895" class="outline-2">
+<h2 id="orgc720895">Security</h2>
+<div class="outline-text-2" id="text-orgc720895">
+<p>
+You should do your best to make sure your application is secure - it
+was only a few minutes after mine was live that it was immediately
+probed by an <a href="https://nmap.org/"><code>nmap</code></a> scan.
+</p>
+</div>
+</div>
+<div id="outline-container-org0bd6507" class="outline-2">
+<h2 id="org0bd6507">Summary</h2>
+<div class="outline-text-2" id="text-org0bd6507">
+<p>
+You have to know a little bit about a lot of technologies to get all
+of this going, but none of it is rocket science, and it is all
+pretty independent and each one is a useful skill to know on its
+own: 
+</p>
+
+<ul class="org-ul">
+<li>Learn some Python</li>
+<li>Learn about the Python Flask library</li>
+<li>Learn a little about Docker</li>
+<li>Learn a little about Kubernetes</li>
+<li>Get a Microsoft Azure account</li>
+<li>Buy a domain name</li>
+<li>Follow the Azure documentation links and tie it all together</li>
+</ul>
+</div>
+</div>
