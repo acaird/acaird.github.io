@@ -1,0 +1,177 @@
+<p>
+To plot functions on the computer, you need to install a program
+called <code>gnuplot</code>.  See the section below called <a href="#org653682b">Installing gnuplot</a> for
+how to do that.
+</p>
+
+<p>
+To start <code>gnuplot</code> you first have to open the Terminal program on your
+Mac.  You will be able to type into that window.  You should type
+<code>gnuplot</code> and press Return.  Then you&rsquo;ll see:
+</p>
+<pre class="example">
+
+	G N U P L O T
+	Version 5.2 patchlevel 6    last modified 2019-01-01
+
+	Copyright (C) 1986-1993, 1998, 2004, 2007-2018
+	Thomas Williams, Colin Kelley and many others
+
+	gnuplot home:     http://www.gnuplot.info
+	faq, bugs, etc:   type "help FAQ"
+	immediate help:   type "help"  (plot window: hit 'h')
+
+Terminal type is now 'qt'
+gnuplot&gt;
+</pre>
+
+<p>
+Now you need to do a few things to set up the plot.  To turn on grid
+lines, type <code>set grid</code> and press Return.  It will look like:
+</p>
+<pre class="example">
+gnuplot&gt; set grid
+gnuplot&gt;
+</pre>
+
+<p>
+Next you need to define your functions.  Their names can be anything
+you want and they are what will appear in the legend, so chose
+something that makes sense (it is possible to change the legend, but
+it is easier to let <code>gnuplot</code> chose it for you.  For example, we will
+use the names <code>noshrink</code> and <code>mighty</code> from a recent math homework.
+Formulae in <code>gnuplot</code> are not represented with <code>x</code> and <code>y</code>, but with
+<code>f(x)</code> and <code>x</code>, where <code>f(x)</code> is just like <code>y</code> and the <code>f</code> part can be
+any name.  This will look like:
+</p>
+<pre class="example">
+gnuplot&gt; noshrink(x) = 4.5 * x
+gnuplot&gt; mighty(x) = x + 45
+gnuplot&gt;
+</pre>
+<p>
+and this is the same as \(y = 4.5 \times x\) for <code>noshrink</code> and 
+\(y = x + 45\) for <code>mighty</code>.
+</p>
+
+<p>
+At this point, you have done three things:
+</p>
+<ol class="org-ol">
+<li>Turned on the grid in your plot</li>
+<li>Defined the formula for <code>noshrink</code></li>
+<li>Defined the formula for <code>mighty</code></li>
+</ol>
+<p>
+You can define as few as one formula or as many as you want.
+</p>
+
+<p>
+To plot your formulae and see them on the screen, you need to know
+what the range of <code>x</code> values are that you want to use.  In the example
+below we have chosen a range from 0 to 60 by typing <code>x=[0:60]</code> as part
+of the <code>plot</code> command:
+</p>
+<pre class="example">
+gnuplot&gt; plot [x=0:60] noshrink(x), mighty(x)
+gnuplot&gt;
+</pre>
+<p>
+and you will see a window pop up on the screen that looks like the
+picture in Figure <a href="#org41b03d6">1</a>.
+</p>
+
+<div id="org41b03d6" class="figure">
+<p><img src="assets/2019-03-24-first-plot.png" alt="2019-03-24-first-plot.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>A sample plot</p>
+</div>
+
+<p>
+If the plot looks right, you can save it to a PDF file for printing or
+emailing. Saving a plot to a PDF is a few more steps that you have to
+type at the <code>gnuplot&gt;</code> prompt.  You need to set the output type (PDF)
+and the name of the output file and then make the plot again and
+finally set the output back to the screen:
+</p>
+<pre class="example">
+gnuplot&gt; set term pdf
+
+Terminal type is now 'pdfcairo'
+Options are ' transparent enhanced fontscale 0.5 size 5.00in, 3.00in '
+gnuplot&gt; set output "my-plot.pdf"
+gnuplot&gt; replot
+gnuplot&gt; unset term
+
+Terminal type is now 'qt'
+gnuplot&gt;
+</pre>
+<p>
+You can change the name of the file from <code>my-plot.pdf</code> to anything you
+want; it&rsquo;s best to end it with <code>.pdf</code> though.  You can open the PDF
+file with Preview and print it if you want.  To open the file in
+Preview without exiting <code>gnuplot</code> you can type <code>! open my-plot.pdf</code>
+(or whatever the name of your files is) at the <code>gnuplot&gt;</code> prompt,
+like:
+</p>
+<pre class="example">
+gnuplot&gt; !open my-plot.pdf
+gnuplot&gt;
+</pre>
+<p>
+and Preview will open and show you your file.
+</p>
+
+<p>
+When you&rsquo;re done, you can exit <code>gnuplot</code> by typing <code>exit</code> and pressing
+Return. 
+</p>
+
+<div id="outline-container-org653682b" class="outline-2">
+<h2 id="org653682b">Installing gnuplot</h2>
+<div class="outline-text-2" id="text-org653682b">
+<p>
+You can install <code>gnuplot</code> two ways.  The best way is to first
+install <code>brew</code> by going to <a href="https://brew.sh/">https://brew.sh/</a> and following the
+instructions; you will have to open the Terminal program to do this.
+When <code>brew</code> is installed, in Terminal (it can be the same one or a
+new one) type <code>brew install gnuplot</code> and wait for it to install.
+Then you can follow the instructions above.
+</p>
+
+<p>
+You can also go to <a href="http://www.gnuplot.info/">http://www.gnuplot.info/</a> and follow the
+instructions there to install it.  It is really easier to install it
+using <code>brew</code>, though.  If you aren&rsquo;t using a Mac, you can still
+install <code>gnuplot</code> and follow most of the instructions here, but some
+things may look or act slightly different.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaac2e49" class="outline-2">
+<h2 id="orgaac2e49">Why would I want to do this?</h2>
+<div class="outline-text-2" id="text-orgaac2e49">
+<p>
+I don&rsquo;t know, I guess you want to plot functions without buying
+software.  You&rsquo;ve read this far, though, so I can tell you why <i>I</i>
+did this.  My daughter is learning about functions in Math and as
+part of their homework they have to plot them.  She has a graphing
+calculator and graph paper, but computers are better at making
+useful plots than either of those things.  <code>gnuplot</code> is free and
+straightforward to use (and, if you start using it more, it can be
+<b>very</b> powerful, so it&rsquo;s not a bad thing to learn about) and runs on
+Macs and Windows and Linux and probably many other kinds of
+computers, so it was a better option than buying software.  Also,
+public school teachers with tiny budgets might find this helpful for
+making their lessons or quizzes or examples or whatever.
+</p>
+
+<p>
+There are many, many resources on the Internet on using Gnuplot.
+There are also some good books about it, like <a href="https://www.manning.com/books/gnuplot-in-action-second-edition">Gnuplot in Action</a> from
+<a href="http://www.manning.com">Manning Publications</a> (I don&rsquo;t benefit from these links, I&rsquo;m just a
+satisfied customer).
+</p>
+</div>
+</div>
