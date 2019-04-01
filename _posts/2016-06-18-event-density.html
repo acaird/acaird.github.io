@@ -13,8 +13,6 @@ numbers off the visualization, I just want to get a relative sense of
 how many events are starting, ongoing, and ending over a time period
 with some resolution.  Something that looks like this:
 </p>
-
-
 <div class="figure">
 <p><object type="image/svg+xml" data="/assets/edplot.svg" >
 Sorry, your browser does not support SVG.</object>
@@ -47,12 +45,12 @@ range?&rdquo;</li>
 Those questions aren&rsquo;t about the data directly, but about the
 application of the data, which is what data are for (despite people
 loving it for its own sake sometimes) and they aren&rsquo;t obvious from the
-input data (Table <a href="#orgtable1">1</a>).
+input data (Table <a href="#org34a87d8">1</a>).
 </p>
 
-<div id="outline-container-orgheadline1" class="outline-2">
-<h2 id="orgheadline1">Practice Data</h2>
-<div class="outline-text-2" id="text-orgheadline1">
+<div id="outline-container-orgca660d7" class="outline-2">
+<h2 id="orgca660d7">Practice Data</h2>
+<div class="outline-text-2" id="text-orgca660d7">
 <p>
 To start, I create some fake data with this Python script where all
 time is between 1 and 100, there are 20 events, and the longest event
@@ -62,21 +60,20 @@ after 4:15am on Thursday, June 16th, 2016.  Or days after January
 </p>
 
 <div class="org-src-container">
-
-<pre class="src src-python"><span style="color: #a020f0;">import</span> random
-<span style="color: #a020f0;">from</span> tabulate <span style="color: #a020f0;">import</span> tabulate
-<span style="color: #a0522d;">data</span> = []
-<span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(1,20):
-    <span style="color: #a0522d;">start</span> = random.randint(1,70)
-    <span style="color: #a0522d;">end</span> = start + random.randint(1,30)
+<pre class="src src-python"><span style="color: #81A1C1;">import</span> random
+<span style="color: #81A1C1;">from</span> tabulate <span style="color: #81A1C1;">import</span> tabulate
+<span style="color: #D8DEE9;">data</span> = []
+<span style="color: #81A1C1;">for</span> m <span style="color: #81A1C1;">in</span> <span style="color: #81A1C1;">range</span>(1,20):
+    <span style="color: #D8DEE9;">start</span> = random.randint(1,70)
+    <span style="color: #D8DEE9;">end</span> = start + random.randint(1,30)
     data.append((start,end))
 
 data.sort()
-<span style="color: #a020f0;">print</span> tabulate(data, tablefmt=<span style="color: #8b2252;">"orgtbl"</span>, headers=([<span style="color: #8b2252;">"Start"</span>,<span style="color: #8b2252;">"End"</span>]))
+<span style="color: #81A1C1;">print</span> tabulate(data, tablefmt=<span style="color: #A3BE8C;">"orgtbl"</span>, headers=([<span style="color: #A3BE8C;">"Start"</span>,<span style="color: #A3BE8C;">"End"</span>]))
 </pre>
 </div>
 
-<table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org34a87d8" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Sample Event Start/End Data</caption>
 
 <colgroup>
@@ -190,9 +187,9 @@ data.sort()
 </div>
 </div>
 
-<div id="outline-container-orgheadline2" class="outline-2">
-<h2 id="orgheadline2">Organizing the Data</h2>
-<div class="outline-text-2" id="text-orgheadline2">
+<div id="outline-container-org6697e9c" class="outline-2">
+<h2 id="org6697e9c">Organizing the Data</h2>
+<div class="outline-text-2" id="text-org6697e9c">
 <p>
 The next step is to see how many events are active, starting, and
 ending at each time over all time (1&#x2013;100 in our case).
@@ -318,32 +315,33 @@ January 1970) makes things easy.
 </p>
 
 <div class="org-src-container">
-
-<pre class="src src-python"><span style="color: #a0522d;">timebin</span> = <span style="color: #483d8b;">dict</span>()
-<span style="color: #a0522d;">startbin</span> = <span style="color: #483d8b;">dict</span>()
-<span style="color: #a0522d;">endbin</span> = <span style="color: #483d8b;">dict</span>()
-<span style="color: #a020f0;">for</span> timeincr <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(1, 101):
-    <span style="color: #a0522d;">timebin</span>[timeincr] = 0
-    <span style="color: #a0522d;">startbin</span>[timeincr] = 0
-    <span style="color: #a0522d;">endbin</span>[timeincr] = 0
-    <span style="color: #a020f0;">for</span> s, e <span style="color: #a020f0;">in</span> timedata:
-        <span style="color: #a020f0;">if</span> s == timeincr:
-            <span style="color: #a0522d;">startbin</span>[timeincr] += 1
-        <span style="color: #a020f0;">if</span> e == timeincr:
-            <span style="color: #a0522d;">endbin</span>[timeincr] += 1
-        <span style="color: #a020f0;">if</span> s &lt;= timeincr <span style="color: #a020f0;">and</span> e &gt;= timeincr:
-            <span style="color: #a020f0;">if</span> timeincr <span style="color: #a020f0;">in</span> timebin:
-                <span style="color: #a0522d;">timebin</span>[timeincr] += 1
-<span style="color: #a020f0;">for</span> m <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">sorted</span>(timebin):
-    <span style="color: #a020f0;">print</span> <span style="color: #8b2252;">"|{} | {} | {} | {}"</span>.<span style="color: #483d8b;">format</span>(m, endbin[m],
+<pre class="src src-python">
+<span style="color: #D8DEE9;">timebin</span> = <span style="color: #81A1C1;">dict</span>()
+<span style="color: #D8DEE9;">startbin</span> = <span style="color: #81A1C1;">dict</span>()
+<span style="color: #D8DEE9;">endbin</span> = <span style="color: #81A1C1;">dict</span>()
+<span style="color: #81A1C1;">for</span> timeincr <span style="color: #81A1C1;">in</span> <span style="color: #81A1C1;">range</span>(1, 101):
+    <span style="color: #D8DEE9;">timebin</span>[timeincr] = 0
+    <span style="color: #D8DEE9;">startbin</span>[timeincr] = 0
+    <span style="color: #D8DEE9;">endbin</span>[timeincr] = 0
+    <span style="color: #81A1C1;">for</span> s, e <span style="color: #81A1C1;">in</span> timedata:
+        <span style="color: #81A1C1;">if</span> s == timeincr:
+            <span style="color: #D8DEE9;">startbin</span>[timeincr] += 1
+        <span style="color: #81A1C1;">if</span> e == timeincr:
+            <span style="color: #D8DEE9;">endbin</span>[timeincr] += 1
+        <span style="color: #81A1C1;">if</span> s &lt;= timeincr <span style="color: #81A1C1;">and</span> e &gt;= timeincr:
+            <span style="color: #81A1C1;">if</span> timeincr <span style="color: #81A1C1;">in</span> timebin:
+                <span style="color: #D8DEE9;">timebin</span>[timeincr] += 1
+<span style="color: #81A1C1;">for</span> m <span style="color: #81A1C1;">in</span> <span style="color: #81A1C1;">sorted</span>(timebin):
+    <span style="color: #81A1C1;">print</span> <span style="color: #A3BE8C;">"|{} | {} | {} | {}"</span>.<span style="color: #81A1C1;">format</span>(m, endbin[m],
                                       timebin[m], startbin[m])
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-orgheadline3" class="outline-2">
-<h2 id="orgheadline3">Plotting the Density of the Bins</h2>
-<div class="outline-text-2" id="text-orgheadline3">
+
+<div id="outline-container-org3e1ceb0" class="outline-2">
+<h2 id="org3e1ceb0">Plotting the Density of the Bins</h2>
+<div class="outline-text-2" id="text-org3e1ceb0">
 <p>
 Once we have our bins, then it&rsquo;s a matter of makeing a density plot
 over time for each of the three events (starting, ongoing, and
@@ -351,84 +349,84 @@ ending).
 </p>
 
 <div class="org-src-container">
+<pre class="src src-python" id="org2409373"><span style="color: #81A1C1;">import</span> matplotlib.pyplot <span style="color: #81A1C1;">as</span> plt
 
-<pre class="src src-python" id="orgsrcblock1"><span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
 
+<span style="color: #81A1C1;">def</span> <span style="color: #88C0D0;">makebarplot</span>(bins):
+    <span style="color: #D8DEE9;">time</span> = [b[0] <span style="color: #81A1C1;">for</span> b <span style="color: #81A1C1;">in</span> bins]   <span style="color: #4c566a;"># </span><span style="color: #4c566a;">extract the x-axis data</span>
+    <span style="color: #D8DEE9;">fig</span> = plt.figure()            <span style="color: #4c566a;"># </span><span style="color: #4c566a;">get the matplotlib plot figure</span>
+    fig.set_size_inches(8, 1)     <span style="color: #4c566a;"># </span><span style="color: #4c566a;">set the size of the plot</span>
+    <span style="color: #D8DEE9;">ax</span> = fig.add_subplot(1, 1, 1) <span style="color: #4c566a;"># </span><span style="color: #4c566a;">add a plot to the figure; Subplot</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">is confusing, though.  The magical "(1, 1, 1)" here means there</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">will be one row, one column, and we are working with plot number</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">1, all of which is the same as just one plot.  There is a little</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">more documentation on this at:</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplot</span>
+    fig.patch.set_visible(<span style="color: #81A1C1;">False</span>)  <span style="color: #4c566a;"># </span><span style="color: #4c566a;">make the background transparent</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">turn off the borders (called spines)</span>
+    ax.spines[<span style="color: #A3BE8C;">'top'</span>].set_visible(<span style="color: #81A1C1;">False</span>)
+    ax.spines[<span style="color: #A3BE8C;">'bottom'</span>].set_visible(<span style="color: #81A1C1;">False</span>)
+    ax.spines[<span style="color: #A3BE8C;">'right'</span>].set_visible(<span style="color: #81A1C1;">False</span>)
+    ax.spines[<span style="color: #A3BE8C;">'left'</span>].set_visible(<span style="color: #81A1C1;">False</span>)
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">set all of the ticks to 0 length</span>
+    ax.tick_params(axis=u<span style="color: #A3BE8C;">'both'</span>, which=u<span style="color: #A3BE8C;">'both'</span>,length=0)
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">hide everything about the x-axis</span>
+    ax.axes.get_xaxis().set_visible(<span style="color: #81A1C1;">False</span>)
 
-<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">makebarplot</span>(bins):
-    <span style="color: #a0522d;">time</span> = [b[0] <span style="color: #a020f0;">for</span> b <span style="color: #a020f0;">in</span> bins]   <span style="color: #b22222;"># </span><span style="color: #b22222;">extract the x-axis data</span>
-    <span style="color: #a0522d;">fig</span> = plt.figure()            <span style="color: #b22222;"># </span><span style="color: #b22222;">get the matplotlib plot figure</span>
-    fig.set_size_inches(8, 1)     <span style="color: #b22222;"># </span><span style="color: #b22222;">set the size of the plot</span>
-    <span style="color: #a0522d;">ax</span> = fig.add_subplot(1, 1, 1) <span style="color: #b22222;"># </span><span style="color: #b22222;">add a plot to the figure; Subplot</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">is confusing, though.  The magical "(1, 1, 1)" here means there</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">will be one row, one column, and we are working with plot number</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">1, all of which is the same as just one plot.  There is a little</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">more documentation on this at:</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplot</span>
-    fig.patch.set_visible(<span style="color: #008b8b;">False</span>)  <span style="color: #b22222;"># </span><span style="color: #b22222;">make the background transparent</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">turn off the borders (called spines)</span>
-    ax.spines[<span style="color: #8b2252;">'top'</span>].set_visible(<span style="color: #008b8b;">False</span>)
-    ax.spines[<span style="color: #8b2252;">'bottom'</span>].set_visible(<span style="color: #008b8b;">False</span>)
-    ax.spines[<span style="color: #8b2252;">'right'</span>].set_visible(<span style="color: #008b8b;">False</span>)
-    ax.spines[<span style="color: #8b2252;">'left'</span>].set_visible(<span style="color: #008b8b;">False</span>)
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">set all of the ticks to 0 length</span>
-    ax.tick_params(axis=u<span style="color: #8b2252;">'both'</span>, which=u<span style="color: #8b2252;">'both'</span>,length=0)
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">hide everything about the x-axis</span>
-    ax.axes.get_xaxis().set_visible(<span style="color: #008b8b;">False</span>)
+    <span style="color: #D8DEE9;">barwidth</span> = 1                  <span style="color: #4c566a;"># </span><span style="color: #4c566a;">remove gaps between bars</span>
+    <span style="color: #D8DEE9;">color</span> = [<span style="color: #A3BE8C;">"red"</span>, <span style="color: #A3BE8C;">"blue"</span>, <span style="color: #A3BE8C;">"green"</span>] <span style="color: #4c566a;"># </span><span style="color: #4c566a;">set the colors for</span>
+    <span style="color: #81A1C1;">for</span> row <span style="color: #81A1C1;">in</span> <span style="color: #81A1C1;">range</span>(1, <span style="color: #81A1C1;">len</span>(color)+1): <span style="color: #4c566a;"># </span><span style="color: #4c566a;">make as many rows as colors</span>
+        <span style="color: #4c566a;"># </span><span style="color: #4c566a;">extract the correct column</span>
+        <span style="color: #D8DEE9;">ongoing</span> = [b[row] <span style="color: #81A1C1;">for</span> b <span style="color: #81A1C1;">in</span> bins]
+        <span style="color: #4c566a;"># </span><span style="color: #4c566a;">scale the data to the maximum</span>
+        <span style="color: #D8DEE9;">ongoing</span> = [c/<span style="color: #81A1C1;">float</span>(<span style="color: #81A1C1;">max</span>(ongoing)) <span style="color: #81A1C1;">for</span> c <span style="color: #81A1C1;">in</span> ongoing]
 
-    <span style="color: #a0522d;">barwidth</span> = 1                  <span style="color: #b22222;"># </span><span style="color: #b22222;">remove gaps between bars</span>
-    <span style="color: #a0522d;">color</span> = [<span style="color: #8b2252;">"red"</span>, <span style="color: #8b2252;">"blue"</span>, <span style="color: #8b2252;">"green"</span>] <span style="color: #b22222;"># </span><span style="color: #b22222;">set the colors for</span>
-    <span style="color: #a020f0;">for</span> row <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(1, <span style="color: #483d8b;">len</span>(color)+1): <span style="color: #b22222;"># </span><span style="color: #b22222;">make as many rows as colors</span>
-        <span style="color: #b22222;"># </span><span style="color: #b22222;">extract the correct column</span>
-        <span style="color: #a0522d;">ongoing</span> = [b[row] <span style="color: #a020f0;">for</span> b <span style="color: #a020f0;">in</span> bins]
-        <span style="color: #b22222;"># </span><span style="color: #b22222;">scale the data to the maximum</span>
-        <span style="color: #a0522d;">ongoing</span> = [c/<span style="color: #483d8b;">float</span>(<span style="color: #483d8b;">max</span>(ongoing)) <span style="color: #a020f0;">for</span> c <span style="color: #a020f0;">in</span> ongoing]
-
-        <span style="color: #b22222;"># </span><span style="color: #b22222;">draw a black line at the left end</span>
-        <span style="color: #a0522d;">left</span> = 10
-        <span style="color: #a0522d;">border_width</span> = 20
-        <span style="color: #a0522d;">d</span> = border_width
-        ax.barh(row, d, barwidth, color=<span style="color: #8b2252;">"black"</span>,
-                left=left, edgecolor=<span style="color: #8b2252;">"none"</span>,
+        <span style="color: #4c566a;"># </span><span style="color: #4c566a;">draw a black line at the left end</span>
+        <span style="color: #D8DEE9;">left</span> = 10
+        <span style="color: #D8DEE9;">border_width</span> = 20
+        <span style="color: #D8DEE9;">d</span> = border_width
+        ax.barh(row, d, barwidth, color=<span style="color: #A3BE8C;">"black"</span>,
+                left=left, edgecolor=<span style="color: #A3BE8C;">"none"</span>,
                 linewidth=0)
-        <span style="color: #a0522d;">left</span> += d
-        <span style="color: #b22222;"># </span><span style="color: #b22222;">fill in the horizontal bar with the right color density</span>
-        <span style="color: #b22222;"># </span><span style="color: #b22222;">(alpha)</span>
-        <span style="color: #a020f0;">for</span> d, c <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">zip</span>(time, ongoing):
+        <span style="color: #D8DEE9;">left</span> += d
+        <span style="color: #4c566a;"># </span><span style="color: #4c566a;">fill in the horizontal bar with the right color density</span>
+        <span style="color: #4c566a;"># </span><span style="color: #4c566a;">(alpha)</span>
+        <span style="color: #81A1C1;">for</span> d, c <span style="color: #81A1C1;">in</span> <span style="color: #81A1C1;">zip</span>(time, ongoing):
             ax.barh(row, d, barwidth,
                     alpha=0.9*c+.01,
                     color=color[row-1],
                     left=left,
-                    edgecolor=<span style="color: #8b2252;">"none"</span>,
+                    edgecolor=<span style="color: #A3BE8C;">"none"</span>,
                     linewidth=0)
-            <span style="color: #a0522d;">left</span> += d
+            <span style="color: #D8DEE9;">left</span> += d
 
-        <span style="color: #b22222;"># </span><span style="color: #b22222;">draw a black line at the right end</span>
-        <span style="color: #a0522d;">d</span> = border_width
+        <span style="color: #4c566a;"># </span><span style="color: #4c566a;">draw a black line at the right end</span>
+        <span style="color: #D8DEE9;">d</span> = border_width
         ax.barh(row, d, barwidth,
-                color=<span style="color: #8b2252;">"black"</span>,
-                left=left, edgecolor=<span style="color: #8b2252;">"none"</span>,
+                color=<span style="color: #A3BE8C;">"black"</span>,
+                left=left, edgecolor=<span style="color: #A3BE8C;">"none"</span>,
                 linewidth=0)
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">label the rows</span>
-    plt.yticks([1.5, 2.5, 3.5], [<span style="color: #8b2252;">'stopping'</span>, <span style="color: #8b2252;">'ongoing'</span>, <span style="color: #8b2252;">'starting'</span>], size=10)
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">return the plot to __main__</span>
-    <span style="color: #a020f0;">return</span> plt
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">label the rows</span>
+    plt.yticks([1.5, 2.5, 3.5], [<span style="color: #A3BE8C;">'stopping'</span>, <span style="color: #A3BE8C;">'ongoing'</span>, <span style="color: #A3BE8C;">'starting'</span>], size=10)
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">return the plot to __main__</span>
+    <span style="color: #81A1C1;">return</span> plt
 
-<span style="color: #b22222;"># </span><span style="color: #b22222;">do some housekeeping that makes it all go in OrgMode (and hence PDF</span>
-<span style="color: #b22222;"># </span><span style="color: #b22222;">and HTML)</span>
-<span style="color: #a020f0;">if</span> <span style="color: #483d8b;">__name__</span> == <span style="color: #8b2252;">"__main__"</span>:
-    <span style="color: #a0522d;">plt</span> = makebarplot(bins)
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">The file extension controls the output format; .png and .pdf are</span>
-    <span style="color: #b22222;"># </span><span style="color: #b22222;">good choices along with .svg</span>
-    <span style="color: #a0522d;">filename</span>=<span style="color: #8b2252;">"edplot.svg"</span>
+<span style="color: #4c566a;"># </span><span style="color: #4c566a;">do some housekeeping that makes it all go in OrgMode (and hence PDF</span>
+<span style="color: #4c566a;"># </span><span style="color: #4c566a;">and HTML)</span>
+<span style="color: #81A1C1;">if</span> <span style="color: #81A1C1;">__name__</span> == <span style="color: #A3BE8C;">"__main__"</span>:
+    <span style="color: #D8DEE9;">plt</span> = makebarplot(bins)
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">The file extension controls the output format; .png and .pdf are</span>
+    <span style="color: #4c566a;"># </span><span style="color: #4c566a;">good choices along with .svg</span>
+    <span style="color: #D8DEE9;">filename</span>=<span style="color: #A3BE8C;">"edplot.svg"</span>
     plt.savefig(filename)
-    <span style="color: #a020f0;">return</span> filename
+    <span style="color: #81A1C1;">return</span> filename
+
 </pre>
 </div>
 
 
 <div class="figure">
-<p><object type="image/svg+xml" data="/assets/edplot.svg" >
+<p><object type="image/svg+xml" data="edplot.svg" class="org-svg">
 Sorry, your browser does not support SVG.</object>
 </p>
 </div>
@@ -442,9 +440,9 @@ that time, hence the name, <i>event density plot</i>.
 </div>
 </div>
 
-<div id="outline-container-orgheadline4" class="outline-2">
-<h2 id="orgheadline4">The Future</h2>
-<div class="outline-text-2" id="text-orgheadline4">
+<div id="outline-container-orgfd97a1c" class="outline-2">
+<h2 id="orgfd97a1c">The Future</h2>
+<div class="outline-text-2" id="text-orgfd97a1c">
 <p>
 This could pretty readily be a Python class, and may be that
 someday, but for now the <code>makebarplot</code> function is sufficient and
@@ -456,5 +454,20 @@ choice.
 I would also like to include more examples, but thought that would
 be as likely to add confusion as clarity.
 </p>
+</div>
+</div>
+
+<div id="outline-container-orgb27579f" class="outline-2">
+<h2 id="orgb27579f">Addenda</h2>
+<div class="outline-text-2" id="text-orgb27579f">
+</div>
+<div id="outline-container-orgc228573" class="outline-3">
+<h3 id="orgc228573"><span class="timestamp-wrapper"><span class="timestamp">[2019-03-31 Sun]</span></span></h3>
+<div class="outline-text-3" id="text-orgc228573">
+<p>
+As an example (thanks Daren!) of this, <a href="/assets/2016-06-18-event-density/eventDensityPlot.ipynb">here is an iPython
+notebook</a>. 
+</p>
+</div>
 </div>
 </div>
