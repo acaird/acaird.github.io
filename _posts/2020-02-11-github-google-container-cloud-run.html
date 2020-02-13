@@ -216,11 +216,11 @@ I started with.  My YAML file looks something like:
       - v*
 
 <span style="color: #616e88;"># </span><span style="color: #616e88;">Environment variables available to all jobs and steps in this workflow</span>
-<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL: $\{\{ secrets.GKE_EMAIL \}\}</span>
-<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY: $\{\{ secrets.GKE_KEY \}\}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL: \${{ secrets.GKE_EMAIL }}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY: \${{ secrets.GKE_KEY }}</span>
 <span style="color: #D8DEE9;">env</span>:
-  <span style="color: #D8DEE9;">GITHUB_SHA</span>: $\{\{ github.sha \}\}
-  <span style="color: #D8DEE9;">GITHUB_REF</span>: $\{\{ github.ref \}\}
+  <span style="color: #D8DEE9;">GITHUB_SHA</span>: \${{ github.sha }}
+  <span style="color: #D8DEE9;">GITHUB_REF</span>: \${{ github.ref }}
   <span style="color: #D8DEE9;">IMAGE</span>: [IMAGE_NAME]
   <span style="color: #D8DEE9;">REGISTRY_HOSTNAME</span>: gcr.io
 
