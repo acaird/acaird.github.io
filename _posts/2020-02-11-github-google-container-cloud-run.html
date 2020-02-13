@@ -216,11 +216,11 @@ I started with.  My YAML file looks something like:
       - v*
 
 <span style="color: #616e88;"># </span><span style="color: #616e88;">Environment variables available to all jobs and steps in this workflow</span>
-<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL: $&#007b;{ secrets.GKE_EMAIL }}</span>
-<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY: $&#007b;{ secrets.GKE_KEY }}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL:{% raw %} ${{ secrets.GKE_EMAIL }} {% endraw %}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY:{% raw %} ${{ secrets.GKE_KEY }} {% endraw %}</span>
 <span style="color: #D8DEE9;">env</span>:
-  <span style="color: #D8DEE9;">GITHUB_SHA</span>: $&#007b;{ github.sha }}
-  <span style="color: #D8DEE9;">GITHUB_REF</span>: $&#007b;{ github.ref }}
+  <span style="color: #D8DEE9;">GITHUB_SHA</span>:{% raw %} ${{ github.sha }} {% endraw %}
+  <span style="color: #D8DEE9;">GITHUB_REF</span>:{% raw %} ${{ github.ref }} {% endraw %}
   <span style="color: #D8DEE9;">IMAGE</span>: [IMAGE_NAME]
   <span style="color: #D8DEE9;">REGISTRY_HOSTNAME</span>: gcr.io
 
