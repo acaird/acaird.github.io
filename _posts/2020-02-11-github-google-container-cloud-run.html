@@ -237,32 +237,32 @@ I started with.  My YAML file looks something like:
     <span style="color: #616e88;"># </span><span style="color: #616e88;">Setup gcloud CLI</span>
     - <span style="color: #D8DEE9;">uses</span>: GoogleCloudPlatform/github-actions/setup-gcloud@master
       <span style="color: #D8DEE9;">with</span>:
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #D8DEE9;">version</span>: <span style="color: #A3BE8C;">'270.0.0'</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #D8DEE9;">service_account_key</span>: ${{ secrets.GCR_KEY }}
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #D8DEE9;">version</span>: <span style="color: #A3BE8C;">'270.0.0'</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #D8DEE9;">service_account_key</span>: ${{ secrets.GCR_KEY }}
 
     <span style="color: #616e88;"># </span><span style="color: #616e88;">Configure docker to use the gcloud command-line tool as a credential helper</span>
     - <span style="color: #D8DEE9;">run</span>: |
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #616e88;"># </span><span style="color: #616e88;">Set up docker to authenticate</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #616e88;"># </span><span style="color: #616e88;">via gcloud command-line tool.</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">gcloud auth configure-docker</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #616e88;"># </span><span style="color: #616e88;">Set up docker to authenticate</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #616e88;"># </span><span style="color: #616e88;">via gcloud command-line tool.</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">gcloud auth configure-docker</span>
 
     <span style="color: #616e88;"># </span><span style="color: #616e88;">Build the Docker image</span>
     - <span style="color: #D8DEE9;">name</span>: Build
       <span style="color: #D8DEE9;">run</span>: |
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>export TAG=`echo $GITHUB_REF | awk -F/ <span style="color: #A3BE8C;">'{print $NF}'</span>`
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">echo $TAG</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker build -t <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span> \
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>  --build-arg GITHUB_SHA=<span style="color: #A3BE8C;">"$GITHUB_SHA"</span> \
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>  --build-arg GITHUB_REF=<span style="color: #A3BE8C;">"$GITHUB_REF"</span> .
+<span style="color: #ff0000;  font-weight: bold;">        </span>export TAG=`echo $GITHUB_REF | awk -F/ <span style="color: #A3BE8C;">'{print $NF}'</span>`
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">echo $TAG</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span>docker build -t <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span> \
+<span style="color: #ff0000;  font-weight: bold;">        </span>  --build-arg GITHUB_SHA=<span style="color: #A3BE8C;">"$GITHUB_SHA"</span> \
+<span style="color: #ff0000;  font-weight: bold;">        </span>  --build-arg GITHUB_REF=<span style="color: #A3BE8C;">"$GITHUB_REF"</span> .
 
     <span style="color: #616e88;"># </span><span style="color: #616e88;">Push the Docker image to Google Container Registry</span>
     - <span style="color: #D8DEE9;">name</span>: Publish
       <span style="color: #D8DEE9;">run</span>: |
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>export TAG=`echo $GITHUB_REF | awk -F/ <span style="color: #A3BE8C;">'{print $NF}'</span>`
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">echo $TAG</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker push <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker tag <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span> <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:latest
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker push <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:latest
+<span style="color: #ff0000;  font-weight: bold;">        </span>export TAG=`echo $GITHUB_REF | awk -F/ <span style="color: #A3BE8C;">'{print $NF}'</span>`
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">echo $TAG</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span>docker push <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span>docker tag <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span> <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:latest
+<span style="color: #ff0000;  font-weight: bold;">        </span>docker push <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:latest
 </pre>
 </div>
 <p>
@@ -493,17 +493,17 @@ YAML file in a section that looks like:
   <span style="color: #D8DEE9;">run</span>: |
     <span style="color: #A3BE8C;">PROJECT=MyProject</span>
 <span style="color: #A3BE8C;">    REGION=$(gcloud run services list --platform managed --format=flattened | \</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">                </span><span style="color: #A3BE8C;"> grep metadata.labels.cloud.googleapis.com/location | \</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">                </span><span style="color: #A3BE8C;"> cut -d: -f2 | \</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">                </span> sed <span style="color: #A3BE8C;">'s/\s+//'</span>)
+<span style="color: #ff0000;  font-weight: bold;">                </span><span style="color: #A3BE8C;"> grep metadata.labels.cloud.googleapis.com/location | \</span>
+<span style="color: #ff0000;  font-weight: bold;">                </span><span style="color: #A3BE8C;"> cut -d: -f2 | \</span>
+<span style="color: #ff0000;  font-weight: bold;">                </span> sed <span style="color: #A3BE8C;">'s/\s+//'</span>)
 <span style="color: #A3BE8C;">    if $(echo $REGION | wc -l) -gt 1; then</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>echo <span style="color: #A3BE8C;">"Using the last region in the list of regions"</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">REGION=$(echo $REGION | tail -1)</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span>echo <span style="color: #A3BE8C;">"Using the last region in the list of regions"</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">REGION=$(echo $REGION | tail -1)</span>
 <span style="color: #A3BE8C;">    fi</span>
 <span style="color: #A3BE8C;">    gcloud run deploy $PROJECT \</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">   --platform managed \</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">   --region $REGION \</span>
-<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">   --image gcr.io/${PROJECT}/${PROJECT}:latest</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">   --platform managed \</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">   --region $REGION \</span>
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #A3BE8C;">   --image gcr.io/${PROJECT}/${PROJECT}:latest</span>
 </pre>
 </div>
 
