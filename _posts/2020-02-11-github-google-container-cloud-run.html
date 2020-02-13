@@ -54,7 +54,7 @@ Sorry, your Purple-ness, that was unwarrented.
 <h2 id="orga06a3ef">Linking Github and Google</h2>
 <div class="outline-text-2" id="text-orga06a3ef">
 <p>
-The docker image it built at Github, then pushed to the Google
+The docker image is built at Github, then pushed to the Google
 Container Registry, so before even building the image, you should
 give Github access to your project&rsquo;s GCR bucket.
 </p>
@@ -216,11 +216,11 @@ I started with.  My YAML file looks something like:
       - v*
 
 <span style="color: #616e88;"># </span><span style="color: #616e88;">Environment variables available to all jobs and steps in this workflow</span>
-<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL: ${{ secrets.GKE_EMAIL }}</span>
-<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY: ${{ secrets.GKE_KEY }}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL: $\{\{ secrets.GKE_EMAIL \}\}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY: $\{\{ secrets.GKE_KEY \}\}</span>
 <span style="color: #D8DEE9;">env</span>:
-  <span style="color: #D8DEE9;">GITHUB_SHA</span>: ${{ github.sha }}
-  <span style="color: #D8DEE9;">GITHUB_REF</span>: ${{ github.ref }}
+  <span style="color: #D8DEE9;">GITHUB_SHA</span>: $\{\{ github.sha \}\}
+  <span style="color: #D8DEE9;">GITHUB_REF</span>: $\{\{ github.ref \}\}
   <span style="color: #D8DEE9;">IMAGE</span>: [IMAGE_NAME]
   <span style="color: #D8DEE9;">REGISTRY_HOSTNAME</span>: gcr.io
 
@@ -238,7 +238,7 @@ I started with.  My YAML file looks something like:
     - <span style="color: #D8DEE9;">uses</span>: GoogleCloudPlatform/github-actions/setup-gcloud@master
       <span style="color: #D8DEE9;">with</span>:
 <span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #D8DEE9;">version</span>: <span style="color: #A3BE8C;">'270.0.0'</span>
-<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #D8DEE9;">service_account_key</span>: ${{ secrets.GCR_KEY }}
+<span style="color: #ff0000;  font-weight: bold;">        </span><span style="color: #D8DEE9;">service_account_key</span>: $\{\{ secrets.GCR_KEY \}\}
 
     <span style="color: #616e88;"># </span><span style="color: #616e88;">Configure docker to use the gcloud command-line tool as a credential helper</span>
     - <span style="color: #D8DEE9;">run</span>: |
