@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-02-13 Thu 15:15 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Using Github Actions to Build and Push Images to Google Container Registry</title>
+<meta name="generator" content="Org mode" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Using Github Actions to Build and Push Images to Google Container Registry</h1>
+<div class="HTML">
+<p>
+&#x2014;
+layout: post
+title: Using Github Actions to Build and Push Images to Google Container Registry
+tagline: look, it&rsquo;s a little baby no-cost CI!
+categories: computers
+tags: github google container registry docker gcr actions workflow
+&#x2014;
+</p>
+
+</div>
+
+<p>
+I was following Alex Olivier&rsquo;s blog post <a href="https://alexolivier.me/posts/deploy-container-stateless-cheap-google-cloud-run-serverless">Deploy your side-projects at
+scale for basically nothing - Google Cloud Run</a> (which, by the way, is
+<i>really good</i> and you should read it if you want to run web-apps at
+next to zero cost, for real) that obviously uses Google&rsquo;s Cloud Run
+(which is Google&rsquo;s <a href="https://knative.dev/">knative</a> service).  Google&rsquo;s Cloud Run requires that
+the related Docker image is in the Google Container Registry (GCR)
+(well, mostly requires that).  This blog post is a follow-on to Alex&rsquo;s
+blog post, so if you haven&rsquo;t followed along with his steps, some of
+the assumptions I make might not be valid (or, at least, might be
+confusing), however, you can likely learn some things without reading
+Alex&rsquo;s post but, honestly, are you so busy you can only read one blog
+post?
+</p>
+
+<p>
+My code is in Github and I wanted to be able to build images and push
+them to GCR automatically so that I could later deploy them to Google
+Cloud Run.  There is some starting configuration at
+<a href="https://github.com/actions/starter-workflows/blob/master/ci/google.yml">https://github.com/actions/starter-workflows/blob/master/ci/google.yml</a>
+that is pretty good, but it includes code to deploy to the Google
+Kubernetes Engine, which I didn&rsquo;t need.  It didn&rsquo;t, however, include
+some details that would have been handy, which I hope to expound on in
+a useful way here&#x2026;
+</p>
+<p class="verse">
+Dearly beloved,<br />
+We are gathered here today<br />
+To get through this thing called &ldquo;CI&rdquo;<br />
+Magic word, &ldquo;CI&rdquo;<br />
+It means &ldquo;continuous&rdquo;, and that goes on for a long time<br />
+But I&rsquo;m here to tell you there is something else<br />
+OK, not really.  People really like CI in the late 20-teens, early 2020s.<br />
+So go crazy.<br />
+</p>
+<p>
+Sorry, your Purple-ness, that was unwarrented.
+</p>
+
+<div id="outline-container-org9570063" class="outline-2">
+<h2 id="org9570063">Linking Github and Google</h2>
+<div class="outline-text-2" id="text-org9570063">
+<p>
+The docker image it built at Github, then pushed to the Google
+Container Registry, so before even building the image, you should
+give Github access to your project&rsquo;s GCR bucket.
+</p>
+
+<p>
+There are a lot of nice notes at Google&rsquo;s page titled <a href="https://cloud.google.com/iam/docs/creating-managing-service-account-keys#iam-service-account-keys-create-console">Creating and
+managing service account keys</a>, but if you&rsquo;ve started with <a href="https://alexolivier.me/posts/deploy-container-stateless-cheap-google-cloud-run-serverless">Alex&rsquo;s
+blog post</a> you probably have the <code>gcloud</code> client installed on your
+computer, and these steps should help.
+</p>
+
+<p>
+First, authenticate your local <code>gcloud</code> installation to your Google
+account:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud auth login
+</pre>
+</div>
+<p>
+which will open your web brower and prompt you to log in to Google.
+If you&rsquo;ve followed Alex&rsquo;s post, you might already be logged in.
+</p>
+
+<p>
+Second, you need to get the service account for your Google Cloud
+Run project (remember, see Alex&rsquo;s blog post):
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud iam service-accounts list --project [project_name]
+</pre>
+</div>
+<p>
+This will produce something like:
+</p>
+<pre class="example">
+NAME                             EMAIL                                               DISABLED
+Default compute service account  999999999999-compute@developer.gserviceaccount.com  False
+</pre>
+<p>
+The value that is in the <code>EMAIL</code> column is the IAM account that
+needed to generate a key that will go into a GitHub secret.  The
+command to make that key is:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud iam service-accounts keys <span style="color: #A3BE8C;">\</span>
+       create ~/my_awesome_secret_key.json <span style="color: #A3BE8C;">\</span>
+       --iam-account 999999999999-compute@developer.gserviceaccount.com <span style="color: #A3BE8C;">\</span>
+       --project [project_name]
+</pre>
+</div>
+<p>
+This command will write a key to the file
+<code>my_awesome_secret_key.json</code> in your home directory.  Don&rsquo;t publish
+this anywhere someone might find it or put it in a Git repository,
+it is a private key to your Google cloud project.
+</p>
+
+<p>
+The third and final step to connecting Github and your Google Cloud
+project is to put a base-64 encoded copy of your private key in a
+<a href="https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets">Github secret</a>.  From a Mac terminal, you can type:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">cat ~/my_awesome_secret_key.json | base64 | pbcopy
+</pre>
+</div>
+<p>
+to &ldquo;copy&rdquo; the base-64-encoded secret key to the clipboard.  On Linux
+you can type:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">cat ~/my_awesome_secret_key.json | base64 | xclip -selection -clipboard
+</pre>
+</div>
+<p>
+to do the same.  I don&rsquo;t know how to base64-encode something or copy
+it to the clipboard from the command line on Windows, I suggest
+using <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">Windows Subsystem for Linux</a> if at all possible, but that&rsquo;s a
+whole other thing.
+</p>
+
+<p>
+Once you have the base64-encoded key file, go to the project&rsquo;s page
+at Github and, from the list of options along the top of the project
+(below the title), click &ldquo;Settings&rdquo; then from the menu on the left
+click &ldquo;Secrets&rdquo;.  Click the &ldquo;Add a New Secret&rdquo; link in the middle of
+the page.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/2020-02-11-ggccr-add-new-secret.png" alt="2020-02-11-ggccr-add-new-secret.png" width="70%" />
+</p>
+<p><span class="figure-number">Figure 1: </span>The Github Project Page&rsquo;s Secrets Management Tab Click the &ldquo;Add a new secret&rdquo; link</p>
+</div>
+
+<p>
+Set the Name to <code>GCR_KEY</code> and the Value to the base64-encoded
+version of <code>$PATH_TO_KEY_FILE</code>.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/2020-02-11-ggccr-adding-secret.png" alt="2020-02-11-ggccr-adding-secret.png" width="70%" />
+</p>
+<p><span class="figure-number">Figure 2: </span>Adding a secret to the Github Project Page Name the secret and add the contents of the secret; in this case the contents should be base64-encoded.  Part of the secret in this screenshot is blanked-out, yours will look complete</p>
+</div>
+
+<p>
+Click the &ldquo;Add Secret&rdquo; button and you&rsquo;ll see your secret&rsquo;s name in
+the list.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/2020-02-11-ggccr-saving-secret.png" alt="2020-02-11-ggccr-saving-secret.png" width="70%" />
+</p>
+<p><span class="figure-number">Figure 3: </span>Listing the secrets associated with a Github project This is the list of secrets for the Github project; here you can see the <code>GCR_KEY</code> secret listed</p>
+</div>
+
+<p>
+Now this Github repository can access the Google project matching
+the key; there may be better security that this, but :shrug: If you
+have suggestions, find me on Twitter <a href="https://twitter.com/acaird">@acaird</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge88bfcc" class="outline-2">
+<h2 id="orge88bfcc">Setting up Github to build your Docker image</h2>
+<div class="outline-text-2" id="text-orge88bfcc">
+<p>
+Github offers a free tier of CI that includes 2,000 minutes of build
+time per month, there are more details at the <a href="https://github.com/features/actions">Github Actions page</a>
+and <a href="https://github.blog/2019-08-08-github-actions-now-supports-ci-cd/">this blog post</a>. For building Docker images for a small project,
+this is almost certainly plenty.
+</p>
+
+<p>
+I chose to trigger builds when I push a Git tag, but you have the
+option of starting a build when you push a branch.  For more
+details, see Github&rsquo;s documentation for <a href="https://help.github.com/en/actions/reference/events-that-trigger-workflows">events that trigger
+workflows</a>.
+</p>
+
+<p>
+This is all configured by adding a YAML file to the
+<code>.github/workflows</code> directory in your Git repository.  I called my
+YAML file <code>google.yml</code> because that was the name of the example file
+I started with.  My YAML file looks something like:
+</p>
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #D8DEE9;">name</span>: Build and Push to GCR
+
+<span style="color: #D8DEE9;">on</span>:
+  <span style="color: #D8DEE9;">push</span>:
+    <span style="color: #D8DEE9;">tags</span>:
+      - v*
+
+<span style="color: #616e88;"># </span><span style="color: #616e88;">Environment variables available to all jobs and steps in this workflow</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_EMAIL: ${{ secrets.GKE_EMAIL }}</span>
+<span style="color: #616e88;">#  </span><span style="color: #616e88;">GKE_KEY: ${{ secrets.GKE_KEY }}</span>
+<span style="color: #D8DEE9;">env</span>:
+  <span style="color: #D8DEE9;">GITHUB_SHA</span>: ${{ github.sha }}
+  <span style="color: #D8DEE9;">GITHUB_REF</span>: ${{ github.ref }}
+  <span style="color: #D8DEE9;">IMAGE</span>: [IMAGE_NAME]
+  <span style="color: #D8DEE9;">REGISTRY_HOSTNAME</span>: gcr.io
+
+
+<span style="color: #D8DEE9;">jobs</span>:
+  <span style="color: #D8DEE9;">setup-build-publish-deploy</span>:
+    <span style="color: #D8DEE9;">name</span>: Setup, Build, and Publish
+    <span style="color: #D8DEE9;">runs-on</span>: ubuntu-latest
+    <span style="color: #D8DEE9;">steps</span>:
+
+    - <span style="color: #D8DEE9;">name</span>: Checkout
+      <span style="color: #D8DEE9;">uses</span>: actions/checkout@v2
+
+    <span style="color: #616e88;"># </span><span style="color: #616e88;">Setup gcloud CLI</span>
+    - <span style="color: #D8DEE9;">uses</span>: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      <span style="color: #D8DEE9;">with</span>:
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #D8DEE9;">version</span>: <span style="color: #A3BE8C;">'270.0.0'</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #D8DEE9;">service_account_key</span>: ${{ secrets.GCR_KEY }}
+
+    <span style="color: #616e88;"># </span><span style="color: #616e88;">Configure docker to use the gcloud command-line tool as a credential helper</span>
+    - <span style="color: #D8DEE9;">run</span>: |
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #616e88;"># </span><span style="color: #616e88;">Set up docker to authenticate</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #616e88;"># </span><span style="color: #616e88;">via gcloud command-line tool.</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">gcloud auth configure-docker</span>
+
+    <span style="color: #616e88;"># </span><span style="color: #616e88;">Build the Docker image</span>
+    - <span style="color: #D8DEE9;">name</span>: Build
+      <span style="color: #D8DEE9;">run</span>: |
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>export TAG=`echo $GITHUB_REF | awk -F/ <span style="color: #A3BE8C;">'{print $NF}'</span>`
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">echo $TAG</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker build -t <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span> \
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>  --build-arg GITHUB_SHA=<span style="color: #A3BE8C;">"$GITHUB_SHA"</span> \
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>  --build-arg GITHUB_REF=<span style="color: #A3BE8C;">"$GITHUB_REF"</span> .
+
+    <span style="color: #616e88;"># </span><span style="color: #616e88;">Push the Docker image to Google Container Registry</span>
+    - <span style="color: #D8DEE9;">name</span>: Publish
+      <span style="color: #D8DEE9;">run</span>: |
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>export TAG=`echo $GITHUB_REF | awk -F/ <span style="color: #A3BE8C;">'{print $NF}'</span>`
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">echo $TAG</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker push <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker tag <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:<span style="color: #A3BE8C;">"$TAG"</span> <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:latest
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>docker push <span style="color: #A3BE8C;">"$REGISTRY_HOSTNAME"</span>/<span style="color: #A3BE8C;">"$IMAGE"</span>:latest
+</pre>
+</div>
+<p>
+The only change you need to make to this file is to change
+<code>[IMAGE_NAME]</code> to be what you want to name your Docker image.
+</p>
+
+<p>
+Stepping through this file:
+</p>
+<ol class="org-ol">
+<li><p>
+The first section determines what triggers the execution of the
+rest of the file; in this case, if there is a tag that starts
+with <code>v</code> the rest of the file will be processed, otherwise
+nothing happens.  This is set by the lines
+</p>
+<pre class="example">
+on:
+  push:
+    tags:
+      - v*
+</pre>
+<p>
+This will also match the tags <code>victory</code> and <code>vodka</code>; you could
+tighten up the regular expression if you&rsquo;re worried about that;
+I&rsquo;m not (also, I might want to trigger a build with the tag
+<code>vodka</code>, you don&rsquo;t know).
+</p></li>
+<li>The second section sets some environment variables for use
+elsewhere in the processing</li>
+<li>Then we have one job with several steps, the steps are:
+<ul class="org-ul">
+<li>checkout our code</li>
+<li>set up the <code>gcloud</code> environment using the secret we configured
+in the previous section</li>
+<li>set up the <code>gcloud</code> Docker environment</li>
+<li>run <code>docker build</code> with some options (the <code>Build</code> step)</li>
+<li>run <code>docker push</code> to push the image to the Google Container
+Registry (the <code>Publish</code> step) twice, once with a tag that
+matches the Git tag and once with the <code>latest</code> tag.</li>
+</ul></li>
+</ol>
+
+<p>
+I wanted to use the Git tag as the tag for my Docker image, but
+<code>github.ref</code> is the full reference; that is, if your Git tag is
+<code>v0.81</code>, the tag is <code>refs/tags/v0.81</code> and that is not a valid (or
+desired) Docker image tag.  The <code>export TAG ...</code> line splits the
+input on <code>/</code> and takes the last field which is, in this example,
+<code>v0.81</code>; happily, this is the tag we wanted all along.  Hooray.
+</p>
+
+<p>
+Once you have a YAML file in the right place, <code>git commit</code> it and
+push it to Github.  Whether that triggers a build or not, Github
+will parse the YAML and make sure it is valid. To check this, go to
+the &ldquo;Actions&rdquo; tab of your Github project and look at the list of
+events.  If there is an error in your YAML the name of the event
+will be the file name, not the name of the job.  Clicking that event
+will show you your file with a message like:
+</p>
+<pre class="example">
+Check failure on line 1 in .github/workflows/google.yml
+
+GitHub Actions / .github/workflows/google.yml
+
+Invalid Workflow File
+You have an error in your yaml syntax on line 25
+</pre>
+<p>
+If you commit the YAML file and there are no errors there won&rsquo;t be
+anything (or, if you&rsquo;ve commited it before, anything new) listed in
+the &ldquo;Actions&rdquo; tab.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1cb1f30" class="outline-2">
+<h2 id="org1cb1f30">Initiating and Monitoring a Build and Push</h2>
+<div class="outline-text-2" id="text-org1cb1f30">
+<p>
+The initiation part is easy - simply push a tag (if you&rsquo;re using the
+example above) or a branch (if you switched the <code>on: push:</code> section
+to <code>branch: &lt;something&gt;</code>).  Github will then start running the build
+rules in the YAML file in your repository.
+</p>
+
+<p>
+The monitoring is a little more involved, but not difficult - the
+&ldquo;Actions&rdquo; tab in your Github project will list the jobs, click the
+top one (the most recent one) and then, on the left, click the Job
+name; if you followed the example above, it is &ldquo;Setup, Build, and
+Publish&rdquo;, if you changed <code>jobs: &lt;jobname&gt;: name:</code>, it will be what
+you set that to.  That will open what looks a little like a terminal
+window with the steps of the job in it, each one will get a
+checkmark as they succeed.  You can monitor the steps of the job in
+real time.
+</p>
+
+
+<div class="figure">
+<p><img src="/assets/2020-02-11-ggccr-monitoring-build.png" alt="2020-02-11-ggccr-monitoring-build.png" width="70%" />
+</p>
+<p><span class="figure-number">Figure 4: </span>The Github Actions monitoring window Here you can see each step with its expando-triangle; clicking the triangle will show the logs for that step of the job.  On the left you can see the name of this Action (&ldquo;Build and Push to GCR&rdquo;) and the name of the one in the job (&ldquo;Setup, Build, and Publish&rdquo;)</p>
+</div>
+
+<p>
+To confirm that the image is actually pushed to the Google Container
+Registry for your project, you can run:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud container images list --project MyProject
+</pre>
+</div>
+<p>
+which will report the images in <code>MyProject</code>, like:
+</p>
+<pre class="example">
+NAME
+gcr.io/MyProject/MyProject
+Only listing images in gcr.io/MyProject. Use --repository to list images in other repositories.
+</pre>
+<p>
+Once you have the list of images (from the <code>NAME</code> column) you can
+then run <code>container images list-tags</code>:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud container images list-tags gcr.io/MyProject/MyProject
+</pre>
+</div>
+<p>
+to see what images are available.  You&rsquo;ll see something that looks like:
+</p>
+<pre class="example">
+DIGEST        TAGS              TIMESTAMP
+e3ae68fe03b8  latest,v0.84      2020-02-11T15:14:39
+b7baca4e21ec  v0.83             2020-02-11T15:09:08
+</pre>
+<p>
+which confirms that properly tagged images are being pushed to GCR.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6ac2e0d" class="outline-2">
+<h2 id="org6ac2e0d">Using the new image in your Google Cloud Run instance</h2>
+<div class="outline-text-2" id="text-org6ac2e0d">
+<p>
+I don&rsquo;t automatically switch to the new image in my Google Cloud Run
+instance in the &ldquo;push&rdquo; step of the CI (but more on this later).  I
+guess I&rsquo;m old and conservative and this new-fangled CD makes me a
+little nervous.  Also, these graphical web pages are not my
+favorite.  Also, get off my lawn.
+</p>
+
+<p>
+To switch to your new image you can use the Google Cloud Run web
+pages, and I&rsquo;ve done this to good effect before.  We aren&rsquo;t doing
+that now, because command line tools are better (for one, they can
+go into shell scripts or Github actions YAML files).
+</p>
+
+<p>
+Updating the image used by a Google Cloud Run project isn&rsquo;t that
+complicated, there are only a few steps:
+</p>
+
+<ol class="org-ol">
+<li>Make sure you have an image tagged <code>latest</code>; if you&rsquo;ve gotten
+this far and followed the steps, you do.  You don&rsquo;t <i>really</i> have
+to, but you should know what tag you want to use.</li>
+
+<li><p>
+Confirm the available images
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud container images list-tags gcr.io/MyProject/MyProject
+</pre>
+</div></li>
+
+<li><p>
+Find out what region your Google Cloud Run project is running in:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud run services list --platform managed
+</pre>
+</div></li>
+
+<li><p>
+Update the image to the one currently tagged <code>latest</code> by typing:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud run deploy MyProject <span style="color: #A3BE8C;">\</span>
+       --platform managed <span style="color: #A3BE8C;">\</span>
+       --region MyRegion <span style="color: #A3BE8C;">\</span>
+       --image gcr.io/MyProject/MyProject:latest
+</pre>
+</div></li>
+</ol>
+
+<p>
+These last two steps can be done in a shell script that looks like:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #616e88;">#</span><span style="color: #616e88;">!/bin/</span><span style="color: #81A1C1;">bash</span>
+<span style="color: #D8DEE9;">PROJECT</span>=MyProject
+<span style="color: #D8DEE9;">REGION</span>=$(<span style="color: #fa8072;">gcloud</span> run services list --platform managed --format=flattened | <span style="color: #A3BE8C;">\</span>
+             grep metadata.labels.cloud.googleapis.com/location | <span style="color: #A3BE8C;">\</span>
+             cut -d: -f2 | <span style="color: #A3BE8C;">\</span>
+             sed <span style="color: #A3BE8C;">'s/\s+//'</span>)
+<span style="color: #81A1C1;">if</span> $(<span style="color: #fa8072;">echo</span> $<span style="color: #D8DEE9;">REGION</span> | wc -l) -gt 1; <span style="color: #81A1C1;">then</span>
+    <span style="color: #81A1C1;">echo</span> <span style="color: #A3BE8C;">"Using the last region in the list of regions"</span>
+    <span style="color: #D8DEE9;">REGION</span>=$(<span style="color: #fa8072;">echo</span> $<span style="color: #D8DEE9;">REGION</span> | tail -1)
+<span style="color: #81A1C1;">fi</span>
+gcloud run deploy $<span style="color: #D8DEE9;">PROJECT</span> <span style="color: #A3BE8C;">\</span>
+       --platform managed <span style="color: #A3BE8C;">\</span>
+       --region $<span style="color: #D8DEE9;">REGION</span> <span style="color: #A3BE8C;">\</span>
+       --image gcr.io/${<span style="color: #D8DEE9;">PROJECT</span>}/${<span style="color: #D8DEE9;">PROJECT</span>}:latest
+</pre>
+</div>
+<p>
+Such a shell script could be added as a step in the Github action
+YAML file in a section that looks like:
+</p>
+<div class="org-src-container">
+<pre class="src src-yaml">- <span style="color: #D8DEE9;">name</span>: Deploy
+  <span style="color: #D8DEE9;">run</span>: |
+    <span style="color: #A3BE8C;">PROJECT=MyProject</span>
+<span style="color: #A3BE8C;">    REGION=$(gcloud run services list --platform managed --format=flattened | \</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">                </span><span style="color: #A3BE8C;"> grep metadata.labels.cloud.googleapis.com/location | \</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">                </span><span style="color: #A3BE8C;"> cut -d: -f2 | \</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">                </span> sed <span style="color: #A3BE8C;">'s/\s+//'</span>)
+<span style="color: #A3BE8C;">    if $(echo $REGION | wc -l) -gt 1; then</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span>echo <span style="color: #A3BE8C;">"Using the last region in the list of regions"</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">REGION=$(echo $REGION | tail -1)</span>
+<span style="color: #A3BE8C;">    fi</span>
+<span style="color: #A3BE8C;">    gcloud run deploy $PROJECT \</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">   --platform managed \</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">   --region $REGION \</span>
+<span style="color: #ff0000; background-color: #ff0000; font-weight: bold;">        </span><span style="color: #A3BE8C;">   --image gcr.io/${PROJECT}/${PROJECT}:latest</span>
+</pre>
+</div>
+
+<p>
+After you&rsquo;ve deployed the new Docker image, you can confirm that it
+is being used:
+</p>
+
+<ol class="org-ol">
+<li><p>
+Check that there is a new revision of the service:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud run revisions list --region MyRegion --platform managed
+</pre>
+</div></li>
+
+<li><p>
+Once you know the name of the new revision, check what image it
+is using:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcloud run revisions describe <span style="color: #A3BE8C;">\</span>
+     --region MyRegion <span style="color: #A3BE8C;">\</span>
+     --platform managed <span style="color: #A3BE8C;">\</span>
+     --format=json MyProject-00004-hab | <span style="color: #A3BE8C;">\</span>
+  grep image
+</pre>
+</div>
+<p>
+and you should see that the SHA256 hash of image, as reported in
+<code>imageDigest</code>, matches that in the output of the <code>container
+     images list-tags</code> command.
+</p></li>
+</ol>
+
+<p>
+Accessing the URL of your service will now reflect the changes you
+committed many steps back.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2d2f725" class="outline-2">
+<h2 id="org2d2f725">Summary</h2>
+<div class="outline-text-2" id="text-org2d2f725">
+<p>
+While there is a lot here, there aren&rsquo;t too many steps at a
+high-level:
+</p>
+<ol class="org-ol">
+<li>Grant Github the ability to push Docker images to your Google
+project&rsquo;s Container Registry</li>
+<li>Write some instructions in YAML for Github to follow so it builds
+a Docker image and pushes it to the appropriate container
+registry</li>
+<li>A few manual steps to have your Google Cloud Run instance use
+your new image</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Created: 2020-02-13 Thu 15:15</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
