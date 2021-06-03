@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/acaird
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://acaird.github.io
+  * I am acaird (https://keybase.io/acaird) on keybase.
+  * I have a public key ASCllkZlRMkIlES0YwcUMuaMMtHBCJiNKqPuRVqSAyawdAo
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "0120a596466544c9089444b463071432e68c32d1c108988d2aa3ee455a920326b0740a",
+      "host": "keybase.io",
+      "kid": "0120a596466544c9089444b463071432e68c32d1c108988d2aa3ee455a920326b0740a",
+      "uid": "251c04a214b9187f83db560d825d9119",
+      "username": "acaird"
+    },
+    "merkle_root": {
+      "ctime": 1622751843,
+      "hash": "f142595e5774b81ee7d86fc4b0fd3889b762e0cecc2c2fbff2c10480595311a254551cd782ae466e079bb26cda4c7c67c1f2e99d7270855771d622b4ccac006d",
+      "hash_meta": "d61c9876a551bc1ea340fc3d9ac34db73296635d018e89f61b90156ad83b58f0",
+      "seqno": 20109183
+    },
+    "service": {
+      "entropy": "wIfbJb19nm8SNJNhNeDOVfWS",
+      "hostname": "acaird.github.io",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "5.6.2"
+  },
+  "ctime": 1622751874,
+  "expire_in": 504576000,
+  "prev": "2630b2760906014d0e7f8cf0bd26e1fd315d85fb1cd03b492eed2b3ab46259a6",
+  "seqno": 9,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgpZZGZUTJCJREtGMHFDLmjDLRwQiYjSqj7kVakgMmsHQKp3BheWxvYWTESpcCCcQgJjCydgkGAU0Of4zwvSbh/TFdhfsc0DtJLu0rOrRiWabEIBMJkVQxehzw2oTYdtYFdLAPjbq5F4ou3KwUdmcq+nDjAgHCo3NpZ8RA9ajgJuERbreM4eYbiYiQaSQH+udcBNKtx1ZEqH9T5IFh0emgGAjao81vXJpPEYiTDCNR/m3Z2wqdhNMl3WiuAqhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIOxCuqoo3sbx4rx13RPaDaLxvNoYLKYSUODTprbqQMh0o3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/acaird
+
+==================================================================
